@@ -682,6 +682,11 @@ button:disabled { cursor: default; }
   color: #242c27;
   transform-origin: bottom center;
   animation: qijinMarkIn .35s cubic-bezier(.18,.89,.32,1.22);
+  transition: opacity .22s ease, transform .22s ease;
+}
+.qijin-mark.concealed {
+  opacity: 0 !important;
+  animation: none !important;
 }
 .qijin-mark.red { color: #aa3b32; }
 .qijin-mark b {
@@ -1912,6 +1917,39 @@ button:disabled { cursor: default; }
 }
 .fly-layer .pcard.fly-card:hover { transform: none; }
 .fly-layer .pcard.fly-card .card-art { transition: none; }
+
+/* 技能收回的牌在原位留下的虚影 */
+.ghost-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  overflow: hidden;
+  pointer-events: none;
+}
+.card-ghost {
+  position: fixed;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  outline: 1px dashed rgba(160, 214, 192, .72);
+  outline-offset: 2px;
+  opacity: .68;
+  filter: saturate(.5) brightness(1.08);
+  box-shadow: 0 0 0 1px rgba(126, 180, 157, .32), 0 0 20px rgba(126, 180, 157, .28);
+}
+.card-ghost .played-cards {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+.card-ghost .pcard {
+  margin-left: 0;
+  cursor: default;
+  box-shadow: none;
+}
 .fly-back {
   position: absolute;
   inset: 0;
@@ -3783,13 +3821,13 @@ body { font-size: 17px; }
   .tutorial-copy span { font-size: 8px; }
   .tutorial-exit { height: 28px; padding: 0 8px; font-size: 9px; }
 
-  .sticker-tray { width: min(350px, calc(var(--ui-vw) - 16px)); padding: 9px; bottom: 58px; right: 4px; max-height: calc(var(--ui-vh) - 200px); }
-  .sticker-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-  .sticker-item-art { width: 104px; height: 104px; }
+  .sticker-tray { width: min(300px, calc(var(--ui-vw) - 16px)); padding: 9px; bottom: 58px; right: 4px; max-height: calc(var(--ui-vh) - 200px); }
+  .sticker-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .sticker-item-art { width: 52px; height: 52px; }
   .sticker-item b { font-size: 10px; }
   .sticker-item i { display: none; }
-  .sticker-pop { width: 252px; }
-  .sticker-pop-art { width: 224px; height: 224px; }
+  .sticker-pop { width: 126px; }
+  .sticker-pop-art { width: 112px; height: 112px; }
   .sticker-pop-label { font-size: 9px; padding: 2px 7px; }
 }
 
@@ -4300,6 +4338,7 @@ body { font-size: 17px; }
 
   <div class="toast-layer" id="toast-layer" aria-live="polite"></div>
   <div class="fly-layer" id="fly-layer" aria-hidden="true"></div>
+  <div class="ghost-layer" id="ghost-layer" aria-hidden="true"></div>
   <div class="arrow-layer" id="arrow-layer" aria-hidden="true"></div>
   <div class="turn-arrow" id="turn-arrow" aria-hidden="true"></div>
   <div class="reveal-layer" id="reveal-layer" aria-hidden="true"></div>
@@ -4516,7 +4555,7 @@ body { font-size: 17px; }
           </div>
         </div>
       </div>
-      <p class="tutorial-finish-note">王炸（大王 + 小王）是唯一能压过 2244 镇山炸的牌。记住这条边界，教学就到这里。</p>
+      <p class="tutorial-finish-note">青衫客随后打出王炸，压过了你的 2244 镇山炸。王炸（大王 + 小王）也是唯一能压过镇山炸的牌。记住这条边界，教学就到这里。</p>
       <button class="btn btn-primary tutorial-finish-btn" id="btn-tutorial-finish" type="button">返回技能说明</button>
     </div>
   </div>
@@ -6832,6 +6871,8 @@ body { font-size: 17px; }
     tutorial: null,
     tutorialDone: false,
     tutorialFinaleResolve: null,
+    tutorialRocketDemo: false,
+    tutorialQijinDemo: false,
     guideSkill: null,
     stickerTrayOpen: false,
     stickerLastAt: 0,
@@ -6922,8 +6963,8 @@ body { font-size: 17px; }
         { h: '触发', p: '之后其他两名玩家每打出一手牌并完成结算，若这手牌含与枪痕同花色的牌，出牌者收回一张该花色的牌，枪痕消散。' },
         { h: '限制', p: '同一手牌最多触发一次；自己的牌、过牌、技能弃牌、大小王都不触发。若这手牌本来能直接获胜，也会先收牌，从而拦下胜局。' }
       ],
-      tutorial: '教学关已替你摆好一对 7。点「七进七出」会自动选牌，再点「出牌」留下两道枪痕。',
-      objective: '点「七进七出」，再点「出牌」打出对 7。'
+      tutorial: '教学关已替你摆好一对 7。点「七进七出」再点「出牌」，对 7 会滑到头像上方变成枪痕；随后青衫客会打出对 8 引动枪痕，被收回一张牌，让你看清触发效果。',
+      objective: '打出对 7，看 AI 引动枪痕。'
     },
     yuanmen: {
       mark: '辕',
@@ -7225,6 +7266,8 @@ body { font-size: 17px; }
     G.tutorial = null;
     G.tutorialDone = false;
     G.tutorialFinaleResolve = null;
+    G.tutorialRocketDemo = false;
+    G.tutorialQijinDemo = false;
     G.aiStickerShown = false;
     one('#app').classList.remove('tutorial-active');
     $('tutorial-hud').hidden = true;
@@ -7401,7 +7444,7 @@ body { font-size: 17px; }
     var last = null;
     if (skill === 'siliang' && stage === 2) {
       hands[0] = ['S4', 'H4', 'S2', 'H2', 'S3', 'H5', 'C7', 'D8'];
-      hands[1] = ['S6', 'H6', 'C8', 'D9', 'S10', 'H10', 'CJ', 'DJ'];
+      hands[1] = ['S6', 'H6', 'C8', 'D9', 'JOKER_S', 'JOKER_B', 'CJ', 'DJ'];
       hands[2] = ['C3', 'D3', 'S5', 'H7', 'C9', 'D10', 'HQ', 'HK'];
       last = { player: 2, ids: ['SA', 'HA', 'CA', 'DA'] };
       g.bombs = 1;
@@ -7425,9 +7468,9 @@ body { font-size: 17px; }
       hands[1] = ['S4', 'H3', 'C4', 'D3', 'S7', 'H8', 'C10', 'DA'];
       hands[2] = ['C3', 'D4', 'S6', 'H6', 'S8', 'D10', 'CA', 'D9'];
     } else if (skill === 'qijin') {
-      hands[0] = ['S7', 'H7', 'S3', 'H4', 'C5', 'D6', 'S8', 'H9'];
-      hands[1] = ['S4', 'H5', 'C7', 'D8', 'S9', 'H10'];
-      hands[2] = ['C3', 'D5', 'S6', 'H8', 'C9', 'D10'];
+      hands[0] = ['S7', 'H7', 'S3', 'H4', 'C5', 'D6', 'C8', 'H9'];
+      hands[1] = ['S4', 'H5', 'C7', 'S8', 'H8', 'S9', 'H10'];
+      hands[2] = ['C3', 'D5', 'S6', 'D8', 'C9', 'D10'];
     } else if (skill === 'yuanmen') {
       hands[0] = ['SA', 'H3', 'C4', 'D5', 'S6', 'H7', 'C8', 'S9'];
       hands[1] = ['S3', 'H4', 'C5', 'D6', 'S7', 'H8', 'C9', 'D9'];
@@ -7493,6 +7536,8 @@ body { font-size: 17px; }
     G.yuanmenResolve = null;
     G.yuanmenMax = 0;
     G.tutorialFinaleResolve = null;
+    G.tutorialRocketDemo = false;
+    G.tutorialQijinDemo = false;
     G.handAnimation = true;
     closeStickerTray();
     closeLog(true);
@@ -7565,8 +7610,44 @@ body { font-size: 17px; }
     G.busy = false;
     await sleep(650);
     if (!G.tutorial) return;
-    await showSiliangFinale();
-    completeTutorial();
+    await playSiliangRocketResponse();
+  }
+
+  async function playSiliangRocketResponse() {
+    var g = G.game;
+    if (!g || !G.tutorial) return;
+    var jokers = g.players[1].hand.filter(function (c) { return c.joker; });
+    if (jokers.length < 2) {
+      await showSiliangFinale();
+      completeTutorial();
+      return;
+    }
+    var res = E.playCards(g, 1, jokers.map(function (c) { return c.id; }));
+    if (!res.ok) {
+      console.warn('教学王炸演示失败:', res.error);
+      await showSiliangFinale();
+      completeTutorial();
+      return;
+    }
+    G.tutorialRocketDemo = true;
+    toast('青衫客 · 王炸！压过 2244 镇山炸', 'skill');
+    await afterPlayEvent(res, 1, jokers, null);
+  }
+
+  async function playQijinTutorialResponse() {
+    var g = G.game;
+    if (!g || !G.tutorial || g.turn !== 1) { completeTutorial(); return; }
+    var pair = g.players[1].hand.filter(function (c) { return c.rank === 8; }).slice(0, 2);
+    if (pair.length < 2) { completeTutorial(); return; }
+    var res = E.playCards(g, 1, pair.map(function (c) { return c.id; }));
+    if (!res.ok) {
+      console.warn('教学七进七出演示失败:', res.error);
+      completeTutorial();
+      return;
+    }
+    G.tutorialQijinDemo = true;
+    toast('青衫客 打出对 8 · 枪痕被引动', 'skill');
+    await afterPlayEvent(res, 1, pair, null);
   }
 
   function showSiliangFinale() {
@@ -7597,6 +7678,8 @@ body { font-size: 17px; }
     G.epoch += 1;
     G.tutorial = null;
     G.tutorialDone = false;
+    G.tutorialRocketDemo = false;
+    G.tutorialQijinDemo = false;
     if (G.tutorialFinaleResolve) {
       var finale = G.tutorialFinaleResolve;
       G.tutorialFinaleResolve = null;
@@ -7839,6 +7922,7 @@ body { font-size: 17px; }
     clearAITimer();
     var g = G.game;
     if (!g) return;
+    pruneGhosts();
     if (g.phase === 'over') { finishGame(); return; }
     if (G.startVisible) return;
     if (G.overlayOpen) { pauseClock(); return; }
@@ -8057,6 +8141,7 @@ body { font-size: 17px; }
 
   async function afterPlayEvent(res, actorId, cards, originRects) {
     var g = G.game;
+    pruneGhosts();
     var p = g.players[actorId];
     var combo = res.combo;
     G.busy = true;
@@ -8070,6 +8155,7 @@ body { font-size: 17px; }
       setSpeech(actorId, combo.label, combo.special ? 'skill' : (combo.bomb ? 'bomb' : ''));
     }
     renderAll();
+    if (res.qijinActivated) setQijinMarksConcealed(actorId, true);
     G.el.clockLabel.textContent = '出牌中';
     await animatePlayCards(actorId, cards, originRects);
     if (combo.bomb) {
@@ -8087,8 +8173,20 @@ body { font-size: 17px; }
     } else {
       await sleep(180);
     }
+    if (res.qijinActivated) {
+      await animateQijinCardsToMarks(actorId, cards);
+    }
     if (res.qijinPending) {
       await handleQijinEvent(res.qijin);
+      return;
+    }
+    if (G.tutorial && G.tutorialRocketDemo && actorId === 1) {
+      G.tutorialRocketDemo = false;
+      G.busy = false;
+      await sleep(900);
+      if (!G.tutorial) return;
+      await showSiliangFinale();
+      completeTutorial();
       return;
     }
     if (G.tutorial && G.tutorial.skill === 'siliang' &&
@@ -8099,8 +8197,9 @@ body { font-size: 17px; }
     }
     if (G.tutorial && G.tutorial.skill === 'qijin' && res.qijinActivated) {
       G.busy = false;
-      await sleep(900);
-      completeTutorial();
+      await sleep(700);
+      if (!G.tutorial) return;
+      await playQijinTutorialResponse();
       return;
     }
     G.busy = false;
@@ -9099,6 +9198,67 @@ body { font-size: 17px; }
     el.classList.add('triggering');
   }
 
+  function qijinMarkWrap(ownerId) {
+    return ownerId === 0 ? one('.self-profile .avatar-wrap') : one('#seat-' + ownerId + ' .avatar-wrap');
+  }
+
+  function setQijinMarksConcealed(ownerId, concealed) {
+    var wrap = qijinMarkWrap(ownerId);
+    if (!wrap) return;
+    all('.qijin-mark', wrap).forEach(function (el) {
+      el.classList.toggle('concealed', !!concealed);
+    });
+  }
+
+  async function animateQijinCardsToMarks(ownerId, cards) {
+    var wrap = qijinMarkWrap(ownerId);
+    if (!wrap || !cards || !cards.length) return;
+    var marks = all('.qijin-mark', wrap);
+    if (!marks.length) return;
+    var fromMap = {};
+    var toRects = [];
+    var valid = true;
+    cards.forEach(function (card, i) {
+      var cardEl = one('#played-cards .pcard[data-id="' + card.id + '"]');
+      var from = rectOf(cardEl);
+      var to = rectOf(marks[Math.min(i, marks.length - 1)]);
+      if (!from || !to) { valid = false; return; }
+      fromMap[card.id] = from;
+      toRects.push(to);
+    });
+    if (!valid || toRects.length !== cards.length) {
+      setQijinMarksConcealed(ownerId, false);
+      return;
+    }
+    setQijinMarksConcealed(ownerId, true);
+    await animateSkillCards(cards, fromMap, toRects, {
+      duration: 720,
+      arc: 26,
+      fadeOut: true
+    });
+    setQijinMarksConcealed(ownerId, false);
+  }
+
+  async function animateQijinMarkStrike(event, markEl, markRect, targetRect) {
+    if (!event.mark || !event.mark.card || !markRect || !targetRect) {
+      if (event.mark) flashQijinMark(event.mark.key);
+      await sleep(320);
+      return;
+    }
+    var fromMap = {};
+    fromMap[event.mark.card.id] = markRect;
+    var flight = animateSkillCards([event.mark.card], fromMap, [targetRect], {
+      duration: 620,
+      arc: 34,
+      fadeOut: true
+    });
+    if (markEl) {
+      markEl.style.transition = 'opacity .12s ease';
+      markEl.style.opacity = '0';
+    }
+    await flight;
+  }
+
   async function handleQijinPending() {
     if (G.qijinRunning) return;
     var g = G.game;
@@ -9139,11 +9299,16 @@ body { font-size: 17px; }
     var ownerName = g.players[owner].name;
     var actorName = g.players[actorId].name;
     var cardEl = one('#played-cards .pcard[data-id="' + event.card.id + '"]');
-    var fromRect = rectOf(cardEl) || playAreaRect();
+    var cardRect = rectOf(cardEl);
+    var fromRect = cardRect || playAreaRect();
+    var removedIndex = g.lastPlay ? g.lastPlay.cards.findIndex(function (c) {
+      return c.id === event.card.id;
+    }) : -1;
 
-    flashQijinMark(event.mark.key || (event.mark && event.mark.key));
+    var markEl = one('.qijin-mark[data-mark-key="' + event.mark.key + '"]');
     sfx('gun');
-    await sleep(420);
+    await animateQijinMarkStrike(event, markEl, rectOf(markEl), cardRect);
+    await sleep(180);
     if (owner === 0) {
       await cinematic('qijin', '枪出如龙', '你', '七进七出 · 回马一枪', 1050);
     } else {
@@ -9155,12 +9320,24 @@ body { font-size: 17px; }
     var res = E.resolveQijin(g);
     if (!res.ok) {
       console.warn('七进七出结算失败:', res.error);
+      if (markEl) markEl.style.opacity = '';
       G.qijinRunning = false;
       G.busy = false;
       beginTurn();
       return;
     }
     renderAll();
+    var ghost = spawnCardGhost(res.card, cardRect, g.lastPlay);
+    if (ghost && removedIndex >= 0 && g.lastPlay && g.lastPlay.cards.length) {
+      var fan = $('played-cards');
+      var slot = document.createElement('div');
+      slot.className = 'pcard ghost-slot';
+      slot.setAttribute('aria-hidden', 'true');
+      slot.style.visibility = 'hidden';
+      fan.insertBefore(slot, fan.children[removedIndex] || null);
+      ghost._slot = slot;
+      computePlayedOverlap();
+    }
     var destEl = actorId === 0 ? one('#hand .pcard[data-id="' + res.card.id + '"]') : null;
     var destRect = destEl ? rectOf(destEl) : playerFanRect(actorId);
     if (destEl) destEl.style.visibility = 'hidden';
@@ -9184,6 +9361,12 @@ body { font-size: 17px; }
     G.qijinRunning = false;
     G.busy = false;
     G.mode = 'playing';
+    if (G.tutorialQijinDemo) {
+      G.tutorialQijinDemo = false;
+      await sleep(500);
+      completeTutorial();
+      return;
+    }
     if (g.phase === 'over') { finishGame(); return; }
     afterAction();
   }
@@ -9592,6 +9775,7 @@ body { font-size: 17px; }
       if (res && res.triggered) {
         var actor = g.players[actorId];
         G.busy = true;
+        var aGhost = spawnCardGhost(res.aCard, aRect);
         renderAll();
         var destEl = actorId === 0 ? one('#hand .pcard[data-id="' + res.aCard.id + '"]') : null;
         var destRect = destEl ? rectOf(destEl) : playerFanRect(actorId);
@@ -9620,7 +9804,9 @@ body { font-size: 17px; }
             { duration: 210, easing: 'cubic-bezier(.2,.8,.2,1)' });
         }
         toast(actor.name + ' 抢下 ' + res.aCard.label + '，弃两张 9，夺得牌权', 'skill');
-        await sleep(220);
+        if (aGhost) await sleep(800);
+        else await sleep(220);
+        removeCardGhost(aGhost);
         if (G.epoch !== ep) return;
       } else if (!useYuanmen) {
         toast('无人抢牌，牌局继续', '');
@@ -9650,6 +9836,7 @@ body { font-size: 17px; }
     G.finished = true;
     clearAITimer();
     stopClock();
+    clearGhosts();
     G.busy = false;
     G.thinkingId = null;
     G.mode = 'over';
@@ -9863,6 +10050,7 @@ body { font-size: 17px; }
     });
     G.seatSkillTimers = {};
     if ($('fly-layer')) $('fly-layer').innerHTML = '';
+    clearGhosts();
     if ($('arrow-layer')) $('arrow-layer').innerHTML = '';
     if ($('reveal-layer')) $('reveal-layer').innerHTML = '';
     if ($('sticker-layer')) $('sticker-layer').innerHTML = '';
@@ -10270,6 +10458,43 @@ body { font-size: 17px; }
     box.style.setProperty('--lap', lap.toFixed(1) + 'px');
   }
 
+  // 技能把桌面上的牌收回手牌时，在原牌位留下可读的虚影。
+  function spawnCardGhost(card, rect, anchorLastPlay) {
+    var layer = $('ghost-layer');
+    if (!layer || !card || !rect) return null;
+    var ghost = document.createElement('div');
+    ghost.className = 'card-ghost';
+    ghost.style.left = rect.x + 'px';
+    ghost.style.top = rect.y + 'px';
+    ghost.style.width = rect.w + 'px';
+    ghost.style.height = rect.h + 'px';
+    ghost._lastPlay = anchorLastPlay || null;
+    ghost.innerHTML = '<div class="played-cards">' +
+      cardMarkup(card, { interactive: false, noAnim: true }) +
+      '</div>';
+    layer.appendChild(ghost);
+    return ghost;
+  }
+
+  function removeCardGhost(ghost) {
+    if (!ghost) return;
+    if (ghost._slot && ghost._slot.parentNode) ghost._slot.remove();
+    if (ghost.parentNode) ghost.remove();
+  }
+
+  function clearGhosts() {
+    if ($('ghost-layer')) $('ghost-layer').innerHTML = '';
+    all('#played-cards .ghost-slot').forEach(function (el) { el.remove(); });
+  }
+
+  // 虚影绑定在当前桌面牌上：下一手管上、或桌面牌被清空/新出牌权出现时移除。
+  function pruneGhosts() {
+    var g = G.game;
+    all('#ghost-layer .card-ghost').forEach(function (ghost) {
+      if (!g || !g.lastPlay || ghost._lastPlay !== g.lastPlay) removeCardGhost(ghost);
+    });
+  }
+
   function renderControls() {
     var g = G.game;
     var human = g.players[0];
@@ -10539,7 +10764,7 @@ body { font-size: 17px; }
     pop.innerHTML = '<div class="sticker-pop-art">' + S.sticker(key) + '</div>' +
       '<span class="sticker-pop-label">' + name + ' · ' + S.label(key) + '</span>';
     layer.appendChild(pop);
-    var size = window.innerWidth < 760 ? 252 : 292;
+    var size = window.innerWidth < 760 ? 126 : 292;
     var vw = appWidth();
     var left;
     if (id === 1) left = r.x - size + 18;
@@ -11497,7 +11722,9 @@ body { font-size: 17px; }
     renderSkills: renderSkills,
     revealDrawnCard: revealDrawnCard,
     handleQijinEvent: handleQijinEvent,
-    executeYuanmen: executeYuanmen
+    executeYuanmen: executeYuanmen,
+    spawnCardGhost: spawnCardGhost,
+    clearGhosts: clearGhosts
   };
 })();
 
