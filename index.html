@@ -3821,13 +3821,13 @@ body { font-size: 17px; }
   .tutorial-copy span { font-size: 8px; }
   .tutorial-exit { height: 28px; padding: 0 8px; font-size: 9px; }
 
-  .sticker-tray { width: min(300px, calc(var(--ui-vw) - 16px)); padding: 9px; bottom: 58px; right: 4px; max-height: calc(var(--ui-vh) - 200px); }
+  .sticker-tray { width: min(230px, calc(var(--ui-vw) - 16px)); padding: 9px; bottom: 58px; right: 4px; max-height: calc(var(--ui-vh) - 200px); }
   .sticker-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  .sticker-item-art { width: 52px; height: 52px; }
+  .sticker-item-art { width: 26px; height: 26px; }
   .sticker-item b { font-size: 10px; }
   .sticker-item i { display: none; }
-  .sticker-pop { width: 126px; }
-  .sticker-pop-art { width: 112px; height: 112px; }
+  .sticker-pop { width: 63px; }
+  .sticker-pop-art { width: 56px; height: 56px; }
   .sticker-pop-label { font-size: 9px; padding: 2px 7px; }
 }
 
@@ -10764,7 +10764,7 @@ body { font-size: 17px; }
     pop.innerHTML = '<div class="sticker-pop-art">' + S.sticker(key) + '</div>' +
       '<span class="sticker-pop-label">' + name + ' · ' + S.label(key) + '</span>';
     layer.appendChild(pop);
-    var size = window.innerWidth < 760 ? 126 : 292;
+    var size = window.innerWidth < 760 ? 63 : 292;
     var vw = appWidth();
     var left;
     if (id === 1) left = r.x - size + 18;
