@@ -3762,7 +3762,7 @@ body { font-size: 17px; }
         </section>
         <section>
           <h3>三、计时与计分</h3>
-          <p>每次轮到你出牌有 60 秒。超时自动不出；若你是首出，则自动打出最小单张。技能选择有 20 秒，A 抢牌窗口 4 秒；辕门与九九归一同时可选时，辕门窗口 5 秒、抢 A 总窗口 7 秒。</p>
+          <p>每次轮到你出牌有 60 秒。超时自动不出；若你是首出，则自动打出最小单张。技能选择有 20 秒，A 抢牌窗口 4 秒；辕门与九九归一同时可选时，辕门窗口 5 秒、抢 A 总窗口 7 秒。过五关选弃超时，会自动选中点数最小的至多两张。</p>
           <p>底分为叫分。每出一个炸弹 / 王炸 / 镇山炸，倍数 ×2；春天或反春天再 ×2。地主胜：地主 +2×底分×倍数，农民各扣 1×；农民胜则相反。</p>
           <p class="rule-note">AI 出牌思考时间在 1–5 秒内随机；两名 AI 水平相近，会互相配合、保留炸弹并主动使用技能。</p>
         </section>
@@ -6846,7 +6846,7 @@ body { font-size: 17px; }
     var id = card.dataset.id;
     if (!id) return;
     cancelDragSelect();
-    var mode = G.mode === 'guowu-choice' || G.mode === 'yuanmen-choice' ? 'add' : (G.selected.has(id) ? 'remove' : 'add');
+    var mode = G.selected.has(id) ? 'remove' : 'add';
     G.press = {
       id: id,
       pointerId: ev.pointerId,
@@ -7579,7 +7579,6 @@ body { font-size: 17px; }
     var resolve = G.guowuResolve;
     G.guowuResolve = null;
     clearChoiceTimer();
-    if (auto) toast('选择超时，自动弃牌', '');
     resolve(cards.map(function (c) { return c.id; }));
   }
 
@@ -8291,7 +8290,7 @@ body { font-size: 17px; }
     if (g.phase !== 'playing') return;
     if (g.reaction) return;
     if (G.mode === 'guowu-choice') {
-      if (G.guowuResolve) confirmGuowu(true);
+      if (G.guowuResolve) autoGuowuDiscard();
       return;
     }
     if (G.mode === 'sanren-return') {
@@ -8421,11 +8420,12 @@ body { font-size: 17px; }
   function autoGuowuDiscard() {
     if (G.mode !== 'guowu-choice') return;
     var g = G.game;
-    var hand = g.players[0].hand.slice().sort(function (a, b) { return b.point - a.point; });
-    G.selected = new Set(hand.slice(0, 2).map(function (c) { return c.id; }));
+    var hand = g.players[0].hand.slice().sort(function (a, b) { return a.point - b.point; });
+    var pick = hand.slice(0, Math.min(2, hand.length));
+    G.selected = new Set(pick.map(function (c) { return c.id; }));
     applySelectionVisuals();
     renderControls();
-    toast('选择超时，自动弃置点数最高的两张', '');
+    toast('选择超时，自动选择点数最小的 ' + pick.length + ' 张', '');
     confirmGuowu(true);
   }
 
