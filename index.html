@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0b1513">
+  <meta name="description" content="单机技能斗地主：四两拨千斤、三人行必有我师、九九归一、过五关斩六将。">
+  <title>江湖 · 技能斗地主</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='5' fill='%239b342c'/%3E%3Crect x='4' y='4' width='56' height='56' rx='3' fill='none' stroke='%23e8c891' stroke-width='1.5'/%3E%3Ctext x='32' y='43' font-size='34' text-anchor='middle' fill='%23f4dfb6' font-family='KaiTi,serif'%3E江%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app" id="app">
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient-moon"></div>
+    <div class="ambient-mountains m1"></div>
+    <div class="ambient-mountains m2"></div>
+    <div class="ambient-mist"></div>
+    <div class="ambient-grain"></div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-seal" aria-hidden="true"><span>江</span><span>湖</span></div>
+      <div class="brand-copy">
+        <h1>技能斗地主</h1>
+        <p>一桌风云 · 四门绝技</p>
+      </div>
+    </div>
+    <div class="hud" aria-label="牌局信息">
+      <div class="hud-cell"><b id="hud-round">—</b><span>牌局</span></div>
+      <div class="hud-divider"></div>
+      <div class="hud-cell"><b id="hud-base">—</b><span>底分</span></div>
+      <div class="hud-divider"></div>
+      <div class="hud-cell"><b id="hud-mult">×1</b><span>倍数</span></div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="btn-log" type="button" title="战报">
+        <span class="icon">卷</span><span>战报</span>
+      </button>
+      <button class="icon-btn" id="btn-rules" type="button" title="江湖规矩">
+        <span class="icon">规</span><span>规矩</span>
+      </button>
+      <button class="icon-btn sound-on" id="btn-sound" type="button" title="音效开关">
+        <span class="icon" id="sound-icon">音</span><span id="sound-label">音效</span>
+      </button>
+      <button class="icon-btn" id="btn-restart" type="button" title="重开本局（保留已结算总分）" aria-label="重开本局">
+        <span class="icon">重</span><span>重开</span>
+      </button>
+      <button class="icon-btn" id="btn-home-game" type="button" title="结束当前对局并回到主页" aria-label="结束对局回到主页">
+        <span class="icon">归</span><span>主页</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <section class="table-zone" aria-label="牌桌">
+      <div class="table-frame">
+        <div class="table-felt">
+          <div class="table-pattern" aria-hidden="true">
+            <div class="pattern-ring ring-1"></div>
+            <div class="pattern-ring ring-2"></div>
+            <div class="pattern-center">義</div>
+            <div class="corner-mark cm-tl">江</div>
+            <div class="corner-mark cm-tr">湖</div>
+            <div class="corner-mark cm-bl">風</div>
+            <div class="corner-mark cm-br">雲</div>
+          </div>
+
+          <div class="seat seat-left" id="seat-1" data-seat="1">
+            <div class="seat-main">
+              <div class="avatar-wrap">
+                <div class="avatar avatar-blue" id="avatar-1">青</div>
+                <span class="role-badge" id="role-1">待定</span>
+                <span class="turn-tag" id="turn-tag-1">出牌</span>
+              </div>
+              <div class="seat-info">
+                <div class="seat-name"><span id="name-1">青衫客</span><span class="ai-mark">AI</span></div>
+                <div class="seat-title" id="title-1">听风楼主</div>
+                <div class="seat-score"><b id="score-1">0</b><span>分</span></div>
+              </div>
+            </div>
+            <div class="back-fan" id="backs-1" aria-hidden="true"></div>
+            <div class="count-pill"><b id="count-1">17</b><span>张</span></div>
+            <div class="think-bubble" id="think-1"><i></i><i></i><i></i><span>沉思中</span></div>
+            <div class="speech" id="bubble-1"></div>
+            <div class="seat-skill" id="seat-skill-1" aria-hidden="true">
+              <span class="seat-skill-ink"></span>
+              <small>施展绝技</small>
+              <b class="seat-skill-title">四两拨千斤</b>
+              <i class="seat-skill-sub">以巧破力</i>
+            </div>
+          </div>
+
+          <div class="seat seat-right" id="seat-2" data-seat="2">
+            <div class="seat-main">
+              <div class="avatar-wrap">
+                <div class="avatar avatar-white" id="avatar-2">白</div>
+                <span class="role-badge" id="role-2">待定</span>
+                <span class="turn-tag" id="turn-tag-2">出牌</span>
+              </div>
+              <div class="seat-info">
+                <div class="seat-name"><span id="name-2">白衣客</span><span class="ai-mark">AI</span></div>
+                <div class="seat-title" id="title-2">踏雪游侠</div>
+                <div class="seat-score"><b id="score-2">0</b><span>分</span></div>
+              </div>
+            </div>
+            <div class="back-fan" id="backs-2" aria-hidden="true"></div>
+            <div class="count-pill"><b id="count-2">17</b><span>张</span></div>
+            <div class="think-bubble" id="think-2"><i></i><i></i><i></i><span>沉思中</span></div>
+            <div class="speech" id="bubble-2"></div>
+            <div class="seat-skill" id="seat-skill-2" aria-hidden="true">
+              <span class="seat-skill-ink"></span>
+              <small>施展绝技</small>
+              <b class="seat-skill-title">四两拨千斤</b>
+              <i class="seat-skill-sub">以巧破力</i>
+            </div>
+          </div>
+
+          <div class="table-center">
+            <div class="round-banner" id="round-banner" role="status" aria-live="polite">
+              <span class="banner-ornament"></span>
+              <span class="turn-dot" id="turn-dot" aria-hidden="true"></span>
+              <span id="turn-label">入席</span>
+              <span class="banner-ornament"></span>
+            </div>
+
+            <div class="bottom-area" id="bottom-area">
+              <div class="bottom-label">底牌</div>
+              <div class="bottom-cards" id="bottom-cards"></div>
+            </div>
+
+            <div class="play-area" id="play-area">
+              <div class="play-caption" id="play-caption"></div>
+              <div class="played-cards" id="played-cards"></div>
+              <div class="combo-chip" id="combo-chip"></div>
+            </div>
+
+            <div class="trick-note" id="trick-note"></div>
+          </div>
+
+          <div class="turn-clock" id="turn-clock" aria-live="polite">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="clock-track" cx="50" cy="50" r="43"></circle>
+              <circle class="clock-progress" id="clock-progress" cx="50" cy="50" r="43"></circle>
+            </svg>
+            <div class="clock-inner">
+              <b id="clock-num">60</b>
+              <span>秒</span>
+            </div>
+            <div class="clock-label" id="clock-label">出牌倒计时</div>
+          </div>
+
+          <div class="reaction-card" id="reaction-card" hidden>
+            <div class="reaction-a">A</div>
+            <div class="reaction-copy">
+              <small>A 现江湖</small>
+              <h3>九九归一</h3>
+              <p id="reaction-text">弃两张九，收走此 A，立得牌权</p>
+            </div>
+            <button class="reaction-btn" id="btn-jiujiu" type="button">
+              抢 · 九九归一 <kbd>9</kbd>
+            </button>
+            <div class="reaction-timer"><i id="reaction-fill"></i></div>
+          </div>
+
+          <div class="bid-panel" id="bid-panel" hidden>
+            <div class="bid-title"><span>叫分</span> 定地主</div>
+            <div class="bid-status" id="bid-status">等待叫分</div>
+            <div class="bid-actions" id="bid-actions">
+              <button type="button" data-bid="0">不叫</button>
+              <button type="button" data-bid="1">1 分</button>
+              <button type="button" data-bid="2">2 分</button>
+              <button type="button" data-bid="3">3 分</button>
+            </div>
+            <div class="bid-wait" id="bid-wait" hidden><i></i><i></i><i></i><span>侠客正在思量</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bottom-dock">
+      <div class="self-profile">
+        <div class="avatar-wrap">
+          <div class="avatar avatar-human" id="avatar-0">我</div>
+          <span class="role-badge" id="role-0">待定</span>
+          <span class="turn-tag" id="turn-tag-0">你的回合</span>
+        </div>
+        <div class="self-copy">
+          <div class="self-name">你 <span class="self-mark">本尊</span></div>
+          <div class="self-title">无名侠客</div>
+          <div class="self-score"><b id="score-0">0</b><span>分</span></div>
+        </div>
+        <div class="self-count"><b id="count-0">17</b><span>张</span></div>
+      </div>
+
+      <div class="hand-wrap" id="hand-wrap">
+        <div class="hand-meta">
+          <div class="hand-tip" id="hand-tip">点选手牌，凑成牌型</div>
+        </div>
+        <div class="hand" id="hand" aria-label="你的手牌"></div>
+        <button id="btn-sort-round" class="sort-round" type="button" title="理牌" aria-label="理牌">理</button>
+      </div>
+
+      <div class="action-pad">
+        <div class="skill-grid" id="skill-grid">
+          <button class="skill-btn skill-siliang" data-skill="siliang" type="button" title="四两拨千斤：4+2 压单张/对子；44+22 镇山炸">
+            <span class="skill-glyph">四</span>
+            <span class="skill-copy"><b>四两拨千斤</b><i>4+2 / 44+22</i></span>
+            <span class="skill-lamp"></span>
+          </button>
+          <button class="skill-btn skill-sanren" data-skill="sanren" type="button" title="三人行必有我师：有牌权时弃 JQK，抽一人一张牌，再还一张">
+            <span class="skill-glyph">三</span>
+            <span class="skill-copy"><b>三人行</b><i>J Q K · 换牌</i></span>
+            <span class="skill-lamp"></span>
+          </button>
+          <button class="skill-btn skill-jiujiu" data-skill="jiujiu" type="button" title="九九归一：场上出现 A 时，弃两张 9 抢走 A 并获牌权">
+            <span class="skill-glyph">九</span>
+            <span class="skill-copy"><b>九九归一</b><i>A 现 · 抢牌权</i></span>
+            <span class="skill-lamp"></span>
+          </button>
+          <button class="skill-btn skill-guowu" data-skill="guowuguan" type="button" title="过五关斩六将：有牌权时弃 5566，全场弃至多两张，点数最高者得牌权">
+            <span class="skill-glyph">五</span>
+            <span class="skill-copy"><b>过五关</b><i>55 66 · 斩将</i></span>
+            <span class="skill-lamp"></span>
+          </button>
+        </div>
+        <div class="control-row" id="control-row">
+          <button class="btn btn-ghost" id="btn-pass" type="button" disabled>不出</button>
+          <button class="btn btn-ghost" id="btn-hint" type="button" disabled>提示</button>
+          <button class="btn btn-primary" id="btn-play" type="button" disabled>出牌</button>
+        </div>
+        <div class="return-bar" id="return-bar" hidden>
+          <div class="choice-copy"><b>三人行 · 还礼</b><span id="return-text">选择一张手牌归还</span></div>
+          <button class="btn btn-primary" id="btn-return" type="button" disabled>归还此牌</button>
+        </div>
+        <div class="guowu-bar" id="guowu-bar" hidden>
+          <div class="choice-copy"><b>过五关 · 弃牌</b><span>选择至多两张，点数越高越易夺权</span></div>
+          <div class="choice-points">点数 <b id="guowu-points">0</b><span class="choice-timer" id="guowu-timer">20s</span></div>
+          <button class="btn btn-ghost" id="btn-guowu-confirm" type="button">确认弃牌</button>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <aside class="log-drawer" id="log-drawer" aria-label="战报">
+    <div class="drawer-head">
+      <div><small>江湖</small><h2>战报</h2></div>
+      <button type="button" class="drawer-close" id="btn-log-close" aria-label="关闭">×</button>
+    </div>
+    <div class="drawer-body" id="log-list"></div>
+  </aside>
+  <div class="drawer-scrim" id="drawer-scrim" hidden></div>
+
+  <div class="toast-layer" id="toast-layer" aria-live="polite"></div>
+  <div class="fly-layer" id="fly-layer" aria-hidden="true"></div>
+  <div class="arrow-layer" id="arrow-layer" aria-hidden="true"></div>
+  <div class="turn-arrow" id="turn-arrow" aria-hidden="true"></div>
+  <div class="reveal-layer" id="reveal-layer" aria-hidden="true"></div>
+
+  <div class="skill-cinematic" id="skill-cinematic" hidden aria-hidden="true">
+    <div class="ink-splash"></div>
+    <div class="ink-particles" id="ink-particles"></div>
+    <div class="cinematic-inner">
+      <div class="cinematic-kicker" id="cinematic-kicker">无名侠客 · 施展绝技</div>
+      <div class="cinematic-title" id="cinematic-title">四两拨千斤</div>
+      <div class="cinematic-sub" id="cinematic-sub">以巧破力 · 借力打力</div>
+      <div class="cinematic-seal">技</div>
+    </div>
+  </div>
+
+  <div class="modal-layer" id="target-modal" hidden>
+    <div class="modal target-modal">
+      <div class="modal-kicker">三人行必有我师</div>
+      <h2>择一人为师</h2>
+      <p class="modal-desc">弃置 J、Q、K，洗乱一位侠客的手牌，抽取一张，再从自己手中还一张。</p>
+      <div class="target-grid" id="target-grid"></div>
+      <button class="modal-cancel text-btn" id="btn-target-cancel" type="button">作罢</button>
+    </div>
+  </div>
+
+  <div class="modal-layer sanren-draw-layer" id="sanren-draw-modal" hidden>
+    <div class="sanren-draw-stage">
+      <div class="modal-kicker">三人行必有我师</div>
+      <h2>抽一张</h2>
+      <p class="sanren-draw-desc" id="sanren-draw-desc">对方手牌已洗乱。点一张背面牌，再确认抽取。</p>
+      <div class="sanren-draw-fan" id="sanren-draw-grid"></div>
+      <div class="sanren-draw-foot">
+        <span class="sanren-draw-tip" id="sanren-draw-tip">尚未选牌</span>
+        <div class="sanren-draw-actions">
+          <button class="btn btn-ghost" id="btn-sanren-draw-cancel" type="button">作罢</button>
+          <button class="btn btn-primary" id="btn-sanren-draw" type="button" disabled>抽此牌</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-layer" id="guowu-result-modal" hidden>
+    <div class="modal guowu-result-modal">
+      <div class="modal-kicker">过五关 · 斩六将</div>
+      <h2>战果</h2>
+      <div class="guowu-results" id="guowu-results"></div>
+      <div class="guowu-winner" id="guowu-winner"></div>
+      <button class="btn btn-primary" id="btn-guowu-continue" type="button">继续</button>
+    </div>
+  </div>
+
+  <div class="modal-layer" id="confirm-modal" hidden>
+    <div class="modal confirm-modal">
+      <div class="modal-kicker" id="confirm-kicker">牌局操作</div>
+      <h2 id="confirm-title">重开本局</h2>
+      <p class="modal-desc" id="confirm-desc">当前牌局将作废，立即重新发牌；已结算的总分保留。</p>
+      <div class="confirm-actions">
+        <button class="btn btn-ghost" id="btn-confirm-cancel" type="button">取消</button>
+        <button class="btn btn-primary" id="btn-confirm-ok" type="button">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-layer" id="rules-modal" hidden>
+    <div class="modal rules-modal">
+      <button class="modal-close" id="btn-rules-close" type="button" aria-label="关闭规则">×</button>
+      <div class="modal-kicker">江湖规矩</div>
+      <h2>技能斗地主</h2>
+      <div class="rules-scroll">
+        <section>
+          <h3>一、基础牌局</h3>
+          <p>一副 54 张牌，三人各 17 张，余 3 张为底牌。叫分 1 / 2 / 3，分高者为地主，获得底牌；三家皆不叫则重新发牌。</p>
+          <p>地主先出。之后轮流压牌或不出；连续两家不出，最后出牌者重新领出。先出完手牌的一方获胜。</p>
+          <div class="rule-grid">
+            <span>单张</span><span>对子</span><span>三张</span><span>三带一 / 三带二</span>
+            <span>顺子（≥5）</span><span>连对（≥3 对）</span><span>飞机（可带单/对）</span><span>四带二 / 四带两对</span>
+            <span>炸弹（四张同点）</span><span>王炸（大小王）</span>
+          </div>
+          <p class="rule-note">顺子、连对、飞机的主体不含 2 与大小王。炸弹压普通牌型，王炸最大。只有同牌型、同张数才能比较大小。</p>
+        </section>
+        <section>
+          <h3>二、四门绝技</h3>
+          <div class="rule-skill">
+            <div class="rule-skill-mark">四</div>
+            <div><h4>四两拨千斤</h4><p>一张 4 + 一张 2 同时出，可压过任意单张或对子（单张大小王、王炸除外）。两张 4 + 两张 2 同时出，视为镇山炸：除王炸外最大的炸弹，可压所有普通炸弹。</p><p class="rule-tip">4+2 打出后本身是一手特殊牌，只有炸弹、镇山炸或王炸能继续压它。</p><p class="rule-tip">A+2 点数不同，不能组成对子；能跨点数压对子的组合只有 4+2。</p></div>
+          </div>
+          <div class="rule-skill">
+            <div class="rule-skill-mark">三</div>
+            <div><h4>三人行必有我师</h4><p>轮到你领出（有牌权）时，若手中有 J、Q、K，可各弃一张；选择一位对手，将其手牌洗乱后随机抽一张，再从自己手中选一张还给对方。之后你仍需正常出牌或不出。</p><p class="rule-tip">必须在你拥有牌权、准备首出时使用。至少还要留一张可归还的牌（手牌不少于 4 张）才能施展。可使用多次，只要再次凑齐 JQK。</p></div>
+          </div>
+          <div class="rule-skill">
+            <div class="rule-skill-mark">九</div>
+            <div><h4>九九归一</h4><p>场上出现任何含 A 的牌型时，若你手中至少有两张 9，可抢先按下按钮：弃两张 9，从桌上取走一张 A 放入手牌，并立刻获得牌权（牌局重新领出）。</p><p class="rule-tip">AI 也会抢，窗口为 4 秒。若 A 是制胜的最后一手，牌局立即结束，不再触发抢牌。</p></div>
+          </div>
+          <div class="rule-skill">
+            <div class="rule-skill-mark">五</div>
+            <div><h4>过五关斩六将</h4><p>轮到你领出（有牌权）时，若有 55 与 66，可弃置这四张。随后每位玩家（包括你）从手牌中选至多两张弃掉；弃牌点数之和最高者立刻获得牌权。</p><p>点数：3–10 为面值，J=11，Q=12，K=13，A=14，2=15，小王 50，大王 100。</p><p class="rule-tip">必须在你拥有牌权、准备首出时使用。并列最高时，触发技能者优先；否则按出牌顺序，触发者下家优先。任何令手牌清空的效果会立即结束牌局。</p></div>
+          </div>
+        </section>
+        <section>
+          <h3>三、计时与计分</h3>
+          <p>每次轮到你出牌有 60 秒。超时自动不出；若你是首出，则自动打出最小单张。技能选择有 20 秒，A 抢牌窗口 4 秒。</p>
+          <p>底分为叫分。每出一个炸弹 / 王炸 / 镇山炸，倍数 ×2；春天或反春天再 ×2。地主胜：地主 +2×底分×倍数，农民各扣 1×；农民胜则相反。</p>
+          <p class="rule-note">AI 出牌思考时间在 1–5 秒内随机；两名 AI 水平相近，会互相配合、保留炸弹并主动使用技能。</p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="start-screen" id="start-screen">
+    <div class="start-mist"></div>
+    <div class="hero">
+      <div class="hero-topline"><span></span>单机 · 三人 · 四门绝技<span></span></div>
+      <div class="hero-title-wrap">
+        <div class="hero-vertical">江湖</div>
+        <h1 class="hero-title">技能斗地主</h1>
+        <div class="hero-seal">入局</div>
+      </div>
+      <p class="hero-sub">四两拨千斤 · 三人行必有我师 · 九九归一 · 过五关斩六将</p>
+      <div class="hero-skills">
+        <div class="hero-skill"><b>四</b><span>以 4 与 2 借力打力<br>双四双二镇山压顶</span></div>
+        <div class="hero-skill"><b>三</b><span>弃 JQK，洗牌抽牌<br>择一人为我师</span></div>
+        <div class="hero-skill"><b>九</b><span>逢 A 抢九归一<br>弃双九夺牌权</span></div>
+        <div class="hero-skill"><b>五</b><span>弃 5566，全场斩将<br>点数最高者坐庄</span></div>
+      </div>
+      <button class="start-btn" id="btn-start" type="button"><span>入 局</span><i>开始单机牌局</i></button>
+      <div class="hero-stats">
+        <span>战绩 <b id="stat-wins">0</b> 胜 · <b id="stat-losses">0</b> 负</span>
+        <span class="dot">·</span>
+        <span>60 秒出牌</span>
+        <span class="dot">·</span>
+        <button class="text-btn" id="btn-rules-start" type="button">先看规矩</button>
+      </div>
+    </div>
+    <div class="start-footer">纯本地单机 · 无需联网 · 两名侠客 AI</div>
+  </div>
+
+  <div class="gameover-screen" id="gameover-screen" hidden>
+    <div class="gameover-ink"></div>
+    <div class="gameover-card">
+      <div class="gameover-kicker" id="gameover-kicker">本局终了</div>
+      <div class="gameover-emblem" id="gameover-emblem">胜</div>
+      <h2 id="gameover-title">你赢了</h2>
+      <p id="gameover-sub">地主胜 · 春天 · 倍数 ×4</p>
+      <div class="settlement" id="settlement"></div>
+      <div class="gameover-actions">
+        <button class="btn btn-ghost" id="btn-home" type="button">回到主页</button>
+        <button class="btn btn-primary" id="btn-again" type="button">再战一局</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/rules.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
