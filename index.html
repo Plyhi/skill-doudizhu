@@ -238,6 +238,35 @@ button:disabled { cursor: default; }
 .hud-tooltip .hud-tip-name { color: #e84f42; }
 .hud-tooltip .hud-tip-line { display: block; }
 .hud-cell[data-hud-tip] { cursor: help; }
+.royal-crowns {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 5;
+  pointer-events: none;
+}
+.royal-crowns-left { right: calc(100% + 4px); align-items: flex-end; }
+.royal-crowns-right { left: calc(100% + 4px); align-items: flex-start; }
+.royal-crowns[hidden] { display: none; }
+.royal-crown {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 15px;
+  line-height: 1;
+}
+.royal-crown .rc-glyph {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 15px;
+  line-height: 1;
+}
+.royal-crown.silver .rc-glyph { color: #d9e3e8; text-shadow: 0 0 7px rgba(204, 226, 238, .55); }
+.royal-crown.copper .rc-glyph { color: #b8734d; text-shadow: 0 0 7px rgba(205, 126, 78, .55); }
+.royal-crown.gold .rc-glyph { color: #f2c86e; text-shadow: 0 0 8px rgba(246, 198, 92, .7); }
 .hud-divider { width: 1px; height: 22px; background: linear-gradient(180deg, transparent, rgba(212,176,106,.35), transparent); }
 .top-actions { display: flex; align-items: center; gap: 4px; min-width: 220px; justify-content: flex-end; }
 .icon-btn {
@@ -4613,6 +4642,7 @@ body { font-size: 17px; }
             <div class="seat-main">
               <div class="avatar-wrap">
                 <div class="avatar avatar-blue" id="avatar-1">青</div>
+                <div class="royal-crowns royal-crowns-left" id="royal-crowns-1" hidden></div>
                 <span class="role-badge" id="role-1">待定</span>
                 <span class="turn-tag" id="turn-tag-1">出牌</span>
               </div>
@@ -4642,6 +4672,7 @@ body { font-size: 17px; }
             <div class="seat-main">
               <div class="avatar-wrap">
                 <div class="avatar avatar-white" id="avatar-2">白</div>
+                <div class="royal-crowns royal-crowns-right" id="royal-crowns-2" hidden></div>
                 <span class="role-badge" id="role-2">待定</span>
                 <span class="turn-tag" id="turn-tag-2">出牌</span>
               </div>
@@ -4752,6 +4783,7 @@ body { font-size: 17px; }
         </div>
         <div class="avatar-wrap">
           <div class="avatar avatar-human" id="avatar-0">我</div>
+          <div class="royal-crowns royal-crowns-left" id="royal-crowns-0" hidden></div>
           <span class="role-badge" id="role-0">待定</span>
           <span class="turn-tag" id="turn-tag-0">你的回合</span>
         </div>
@@ -4972,7 +5004,7 @@ body { font-size: 17px; }
           </div>
           <div class="rule-skill">
             <div class="rule-skill-mark">双</div>
-            <div><h4>双璧锁关</h4><p>农民配合响应技，每局限 1 次。地主下家打出普通对子且未获胜后，地主上家若手中有同点数的一对，可弃置并公开这对牌，跳过地主的出牌机会。</p><p>地主下家立即继续出更大的对子；没有则过牌。之后由地主上家自由出牌。当前牌面仍以地主下家刚出的对子为比较基准，弃置的同点对子只是发动成本。</p><p class="rule-tip">只响应普通对子；连对、三带对、飞机带对不触发；弃置对子不触发九九归一；地主无此技能。</p></div>
+            <div><h4>双璧锁关</h4><p>农民配合响应技，每局限 1 次。地主下家打出普通对子且未获胜后，地主上家若手中有同点数的一对，可弃置并公开这对牌，跳过地主的出牌机会。</p><p>地主下家立即继续出更大的对子；没有则过牌。之后由地主上家自由出牌。当前牌面仍以地主下家刚出的对子为比较基准，弃置的同点对子只是发动成本。</p><p class="rule-tip">只响应普通对子；连对、三带对、飞机带对不触发；弃置对子不触发九九归一；地主无此技能。地主上家恰好只剩两张同点对子时也可发动，弃置后手牌清空并立即获胜。</p></div>
           </div>
           <div class="rule-skill">
             <div class="rule-skill-mark">拼</div>
@@ -4983,16 +5015,22 @@ body { font-size: 17px; }
           <h3>三、额外花色与江湖令</h3>
           <p>每局开始时随机一种额外花色，相邻两局不会相同；同一局流局重发时保留原花色。该花色牌打出后立刻进入待结算，每张 +2 基础分；获得牌权时随待结算一起结算给获得牌权者，每张只计一次。</p>
           <p>每局从比武、双持、长征、王储四种江湖令中抽取一种，三局互不重复。</p>
-          <p><b>比武令</b>：每次技能成功发动，发动者 +0.10 倍率；双璧锁关时两个农民各 +0.10。</p>
+          <p><b>比武令</b>：每次技能成功发动，发动者 +5 基础分、+0.30 倍率；双璧锁关时两个农民各 +5 基础分、+0.30 倍率。</p>
           <p><b>双持令</b>：打出对子立刻 +3 基础分；以对子获得牌权立刻 +0.50 倍率。九九归一、对 7 也按对子计算；全部即时结算，不进入待结算。</p>
           <p><b>长征令</b>：每轮从第 1 次出牌开始计数。第 n 次出牌者立刻获得 2n 基础分（+2、+4、+6、+8…）；每次出牌同时向待结算池累积 +0.10 倍率。有人获得牌权时，获得牌权者拿走本轮累计的 n×0.10 倍率，随后本轮出牌次数与倍率归零，下一轮重新从第 1 次计算。</p>
-          <p><b>王储令</b>：打出大王 +10 基础分、小王 +5 基础分；并可能把手牌中的红桃 K/J（大王）或黑桃 K/J（小王）变为王。</p>
+          <p><b>王储令</b>：开局人人有王，宫廷继位登基，小王可以称帝，末王有最大奖励。</p>
+          <p><b>王储令 · 牌型</b>：王只能单出，或一张大王加一张小王组成王炸；不能组成同王对子、三张、四张炸弹，也不能作为三带一、四带二、飞机等带牌。单张大王压小王，同种王不能互压；王炸高于镇山炸和普通炸弹，王炸之间不能互压。</p>
+          <p><b>王储令 · 补王</b>：地主拿到底牌后、首次出牌前，先记录原始大小王归属。若双王原在同一人手中，另外两人各补一张小王；若分属两人，第三人补一张小王。补王只执行一次，加入手牌而非替换，不改变额外花色和特殊牌。</p>
+          <p><b>王储令 · 单王与继承</b>：单出大王 +10 基础分、单出小王 +6 基础分，均无额外倍率。首次打出大王额外 +5 基础分；首次小王额外 +3 基础分。单王只从出王者本人手牌继承：大王依次找红桃K、方片K、红桃J、方片J、红桃Q、方片Q；小王依次找黑桃K、梅花K、黑桃J、梅花J、黑桃Q、梅花Q；只变第一张。王炸 +16 基础分，不叠加两次单王奖励，也不触发任何继承；王炸使全体当前倍率×2。</p>
+          <p><b>王储令 · 独王登基</b>：当三家手牌合计只有一张小王且没有大王时，该小王立即变为大王。只统计手牌，桌面和弃牌不计；不发出牌、首王、末王、比武奖励，也不授予牌权。</p>
+          <p><b>王储令 · 末王与剩王</b>：只有最后一张大王被打出，或王炸打出，且没有触发继承、三家手中都已没有王时，才结算末大王，立即 +20 基础分；不存在末小王。终局按手牌中剩余王逐张扣分：大王每张 -6，小王每张 -4。所有正向奖励加完后统一扣罚，最后基础分不低于 0。</p>
+          <p><b>王储令 · 王冠</b>：银色王冠表示首个打出大王，铜色王冠表示首个打出小王，金色王冠表示末大王；王冠纵列显示在对应头像旁。</p>
         </section>
         <section>
           <h3>四、计时与计分</h3>
           <p>每次轮到你出牌有 60 秒。超时自动不出；若你是首出，则自动打出最小单张。A 抢牌窗口 4 秒；辕门与九九归一同时可选时，辕门窗口 5 秒、抢 A 总窗口 7 秒。过五关选弃超时，会自动选中点数最小的至多两张。</p>
           <p>每次入局进行三局。每局基础分从 0 开始，地主倍率 1.00、农民 1.20；叫分加到地主基础分，地主开局获得自由出牌权 +5，出牌 +1，重获牌权 +5。胜方基础分地主 +30、农民各 +20，本局得分 = 基础分 × 倍率，三局累计最高者胜。</p>
-          <p>每局随机标记 4 张淡蓝分牌（+5 基础分）和 2 张淡红倍率牌（+0.10 倍率）。它们打出后立刻进入待结算；获得牌权者每张只结算一次。额外花色牌也进入同一待结算池。</p>
+          <p>每局随机标记 4 张淡蓝分牌（+5 基础分）和 2 张淡红倍率牌（+0.10 倍率）。它们打出后立刻进入待结算；获得牌权者每张只结算一次。额外花色牌也进入同一待结算池。若牌局因清空手牌直接结束，尚未结算的池全部交给实际清空手牌者，不额外发放牌权奖励。</p>
           <p>普通炸弹、王炸使全体当前倍率 ×2，镇山炸 ×2.5；低阶四两只给使用者 +0.20 倍率。</p>
           <p class="rule-note">基础分、倍率每局重置，三局总分累计，不出现负分。AI 出牌思考时间在 1–5 秒内随机；两名 AI 水平相近，会互相配合、保留炸弹并主动使用技能。</p>
         </section>
@@ -5127,6 +5165,55 @@ body { font-size: 17px; }
 
 <div class="hud-tooltip" id="hud-tooltip" hidden></div>
 
+<script>
+/*! 江湖·技能斗地主 · 平衡参数（首轮测试值，集中维护） */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.DDZConfig = factory();
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+
+  return {
+    decrees: {
+      duel: {
+        base: 5,
+        mult: 0.30,
+        doubleBase: 5,
+        doubleMult: 0.30
+      },
+      double: {
+        pairBase: 3,
+        pairLeadMult: 0.50,
+        jiujiuBase: 3,
+        jiujiuMult: 0.50
+      },
+      long: {
+        basePerPlay: 2,
+        multPerPlay: 0.10
+      },
+      royal: {
+        singleBigBase: 10,
+        singleBigMult: 0,
+        singleSmallBase: 6,
+        singleSmallMult: 0,
+        rocketBase: 16,
+        rocketMult: 0,
+        firstBigBase: 5,
+        firstBigMult: 0,
+        firstSmallBase: 3,
+        firstSmallMult: 0,
+        lastBigBase: 20,
+        lastSmallBase: 0,
+        remainBigPenalty: 6,
+        remainSmallPenalty: 4,
+        inheritBigOrder: ['HK', 'DK', 'HJ', 'DJ', 'HQ', 'DQ'],
+        inheritSmallOrder: ['SK', 'CK', 'SJ', 'CJ', 'SQ', 'CQ']
+      }
+    }
+  };
+});
+
+</script>
 <script>
 /*!
  * 江湖技能斗地主 · 牌型规则
@@ -5472,6 +5559,16 @@ body { font-size: 17px; }
       candidate.key > previous.key;
   }
 
+  // 王储令专属牌型限制：王只能单出，或一大一小组成王炸。
+  function isRoyalComboLegal(cards, combo) {
+    if (!combo) return false;
+    var jokers = (cards || []).filter(function (c) { return c.joker || c.rank >= 16; });
+    if (!jokers.length) return true;
+    if (combo.type === 'single' && (cards || []).length === 1) return true;
+    if (combo.type === 'rocket' && (cards || []).length === 2) return true;
+    return false;
+  }
+
   function findRankCard(cards, rank) {
     return cards.find(function (c) { return c.rank === rank; }) || null;
   }
@@ -5485,7 +5582,8 @@ body { font-size: 17px; }
    * 从手牌中挑出普通牌型的所有候选。用于提示和 AI。
    * 返回数组：{ cards, combo }
    */
-  function enumerateMoves(hand) {
+  function enumerateMoves(hand, options) {
+    var opts = options || {};
     var moves = [];
     var seen = new Set();
     var groups = groupCards(hand);
@@ -5498,6 +5596,7 @@ body { font-size: 17px; }
       if (seen.has(key)) return;
       var combo = detectCombo(cards);
       if (!combo) return;
+      if (opts.royal && !isRoyalComboLegal(cards, combo)) return;
       seen.add(key);
       moves.push({ cards: sortCards(cards), combo: combo });
     }
@@ -5634,8 +5733,8 @@ body { font-size: 17px; }
     }
   }
 
-  function legalMoves(hand, previous) {
-    return enumerateMoves(hand).filter(function (m) {
+  function legalMoves(hand, previous, options) {
+    return enumerateMoves(hand, options).filter(function (m) {
       return canBeat(m.combo, previous);
     });
   }
@@ -5694,6 +5793,7 @@ body { font-size: 17px; }
     isConsecutive: isConsecutive,
     detectCombo: detectCombo,
     canBeat: canBeat,
+    isRoyalComboLegal: isRoyalComboLegal,
     findRankCard: findRankCard,
     removeCards: removeCards,
     enumerateMoves: enumerateMoves,
@@ -5718,9 +5818,9 @@ body { font-size: 17px; }
  * 管理发牌、叫分、出牌、六个技能、计时所需的回合状态与结算。
  */
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory(require('./rules.js'));
-  else root.DDZEngine = factory(root.DDZRules);
-})(typeof globalThis !== 'undefined' ? globalThis : this, function (R) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./rules.js'), require('./config.js'));
+  else root.DDZEngine = factory(root.DDZRules, root.DDZConfig);
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (R, C) {
   'use strict';
 
   var PLAYER_META = [
@@ -5818,7 +5918,7 @@ body { font-size: 17px; }
     if (game.decree !== 'long') return;
     var sc = scoringOf(game);
     var total = (sc.playsSinceLead[0] || 0) + (sc.playsSinceLead[1] || 0) + (sc.playsSinceLead[2] || 0);
-    var desired = Math.round(total * 0.1 * 100) / 100;
+    var desired = Math.round(total * C.decrees.long.multPerPlay * 100) / 100;
     var diff = Math.round((desired - (sc.pendingLong || 0)) * 100) / 100;
     sc.pendingLong = desired;
     if (diff) addPending(game, 0, diff, '长征令：待结算倍率调整为 +' + desired.toFixed(2), '长征令');
@@ -5882,7 +5982,7 @@ body { font-size: 17px; }
     }
     // 双持令：以对子获得牌权
     if (decree === 'double' && combo && combo.type === 'pair') {
-      addPlayerMult(game, playerId, 0.5, '双持令：以对子获得牌权，+0.50 倍率', '双持令');
+      addPlayerMult(game, playerId, C.decrees.double.pairLeadMult, '双持令：以对子获得牌权，+' + C.decrees.double.pairLeadMult.toFixed(2) + ' 倍率', '双持令');
     }
     // 长征令：本轮每次出牌已即时给分，获得牌权者拿走 n*0.10 待结算倍率
     if (decree === 'long') {
@@ -5934,48 +6034,308 @@ body { font-size: 17px; }
 
   function onSkillScored(game, playerId, kind) {
     if (game.decree !== 'duel') return;
+    var d = C.decrees.duel;
     if (kind === 'shuangbi') {
       [nextId(game.landlord), nextId(nextId(game.landlord))].forEach(function (id) {
-        if (id !== game.landlord) addPlayerMult(game, id, 0.1, '比武令：双璧锁关，' + game.players[id].name + ' +0.10 倍率', '比武令');
+        if (id === game.landlord) return;
+        addPlayerBase(game, id, d.doubleBase, '比武令：双璧锁关，' + game.players[id].name + ' +' + d.doubleBase + ' 基础分', '比武令');
+        addPlayerMult(game, id, d.doubleMult, '比武令：双璧锁关，' + game.players[id].name + ' +' + d.doubleMult.toFixed(2) + ' 倍率', '比武令');
       });
       return;
     }
-    addPlayerMult(game, playerId, 0.1, '比武令：' + game.players[playerId].name + ' 发动技能 +0.10 倍率', '比武令');
+    addPlayerBase(game, playerId, d.base, '比武令：' + game.players[playerId].name + ' 发动技能 +' + d.base + ' 基础分', '比武令');
+    addPlayerMult(game, playerId, d.mult, '比武令：' + game.players[playerId].name + ' 发动技能 +' + d.mult.toFixed(2) + ' 倍率', '比武令');
   }
 
-  function scoreRoyalJoker(game, playerId, cards) {
-    if (game.decree !== 'royal') return null;
-    var jokers = cards.filter(function (c) { return c.rank >= 16; });
-    if (!jokers.length) return null;
-    jokers.forEach(function (j) {
-      addPlayerBase(game, playerId, j.rank === 17 ? 10 : 5,
-        '王储令：打出' + (j.rank === 17 ? '大王' : '小王') + ' +' + (j.rank === 17 ? 10 : 5) + ' 基础分', '王储令');
+  function createRoyalState() {
+    return {
+      opening: null,
+      firstBig: false,
+      firstSmall: false,
+      firstBigOwner: null,
+      firstSmallOwner: null,
+      lastBig: null,
+      lastSmall: null,
+      lastBigAwarded: false,
+      ascended: false,
+      lastEvent: null,
+      eventSeq: 0,
+      addedSeq: 0,
+      final: null
+    };
+  }
+
+  function royalState(game) {
+    if (!game.royal) game.royal = createRoyalState();
+    return game.royal;
+  }
+
+  function isRoyal(game) {
+    return game.decree === 'royal';
+  }
+
+  function royalConfig() {
+    return C.decrees.royal;
+  }
+
+  function makeRoyalJoker(game, big) {
+    var rs = royalState(game);
+    rs.addedSeq += 1;
+    return {
+      id: 'ROYAL_' + (game.roundSerial || 1) + '_' + rs.addedSeq,
+      rank: big ? 17 : 16,
+      rankKey: big ? 'BJ' : 'SJ',
+      label: big ? '大王' : '小王',
+      short: big ? '大' : '小',
+      point: big ? 100 : 50,
+      suit: null,
+      suitSymbol: '',
+      suitName: '王',
+      suitOrder: 0,
+      color: big ? 'red' : 'black',
+      joker: true,
+      bigJoker: !!big,
+      royalAdded: true,
+      originalSuit: null
+    };
+  }
+
+  function royalOwnerOf(game, rank) {
+    var owner = null;
+    game.players.forEach(function (p) {
+      if (p.hand.some(function (c) { return c.rank === rank; })) {
+        if (owner == null) owner = p.id;
+        else if (owner !== p.id) owner = -1;
+      }
     });
-    var changes = [];
-    jokers.forEach(function (j) {
-      var wantSuit = j.rank === 17 ? 'H' : 'S';
-      var wantRank = j.rank === 17 ? 13 : 13;
-      var altRank = j.rank === 17 ? 11 : 11;
-      var target = null;
-      var owner = null;
-      [0, 1, 2].some(function (id) {
-        var p = game.players[id];
-        var c = p.hand.find(function (x) { return x.suit === wantSuit && x.rank === wantRank; });
-        if (!c) c = p.hand.find(function (x) { return x.suit === wantSuit && x.rank === altRank; });
-        if (c) { target = c; owner = id; return true; }
-        return false;
+    return owner;
+  }
+
+  function royalHandCounts(game) {
+    var counts = { 16: 0, 17: 0, smallCard: null };
+    game.players.forEach(function (p) {
+      p.hand.forEach(function (c) {
+        if (c.rank === 16) {
+          counts[16] += 1;
+          counts.smallCard = { owner: p.id, card: c };
+        }
+        if (c.rank === 17) counts[17] += 1;
       });
-      if (!target) return;
-      var next = pindmingCard(target, j.rank);
-      next.id = 'RY' + (++game.pmSeq);
-      var hand = game.players[owner].hand;
-      hand[hand.findIndex(function (c) { return c.id === target.id; })] = next;
-      game.players[owner].hand = R.sortCards(hand, true);
-      pushLog(game, 'score', '王储令：' + game.players[owner].name + ' 的 ' +
-        target.suitSymbol + target.label + ' 变为' + (j.rank === 17 ? '大王' : '小王'), owner);
-      changes.push({ type: 'royal', owner: owner, oldCard: target, card: next, source: j.rank });
     });
-    return changes.length ? changes : null;
+    return counts;
+  }
+
+  function royalAddToHand(game, ownerId, card) {
+    var p = game.players[ownerId];
+    p.hand = R.sortCards(p.hand.concat([card]), true);
+  }
+
+  function applyRoyalOpening(game) {
+    if (!isRoyal(game)) return null;
+    var rs = royalState(game);
+    if (rs.opening) return rs.opening;
+    var bigOwner = royalOwnerOf(game, 17);
+    var smallOwner = royalOwnerOf(game, 16);
+    rs.addedSeq = 0;
+    rs.opening = {
+      bigOwner: bigOwner == null ? null : bigOwner,
+      smallOwner: smallOwner == null ? null : smallOwner,
+      added: [],
+      text: ''
+    };
+    var added = [];
+    if (bigOwner != null && smallOwner != null) {
+      if (bigOwner === smallOwner) {
+        game.players.forEach(function (p) {
+          if (p.id !== bigOwner) {
+            var c = makeRoyalJoker(game, false);
+            royalAddToHand(game, p.id, c);
+            added.push({ owner: p.id, card: c });
+          }
+        });
+      } else {
+        var third = [0, 1, 2].find(function (id) { return id !== bigOwner && id !== smallOwner; });
+        if (third != null) {
+          var c2 = makeRoyalJoker(game, false);
+          royalAddToHand(game, third, c2);
+          added.push({ owner: third, card: c2 });
+        }
+      }
+    }
+    rs.opening.added = added;
+    var parts = [];
+    parts.push('大王：' + (bigOwner == null ? '无' : game.players[bigOwner].name));
+    parts.push('小王：' + (smallOwner == null ? '无' : game.players[smallOwner].name));
+    if (added.length) {
+      parts.push('补王：' + added.map(function (x) { return game.players[x.owner].name + '+小王'; }).join('、'));
+    } else {
+      parts.push('无需补王');
+    }
+    rs.opening.text = parts.join(' · ');
+    pushLog(game, 'royal', '王储开局：' + rs.opening.text, null);
+    return rs.opening;
+  }
+
+  function royalTransformCard(game, ownerId, card, big, reason) {
+    var oldSnapshot = Object.assign({}, card);
+    var oldSuit = card.suit;
+    var oldSuitSymbol = card.suitSymbol;
+    var oldLabel = card.originalLabel || (oldSuitSymbol + card.label);
+    card.rank = big ? 17 : 16;
+    card.rankKey = big ? 'BJ' : 'SJ';
+    card.label = big ? '大王' : '小王';
+    card.short = big ? '大' : '小';
+    card.point = big ? 100 : 50;
+    card.suit = null;
+    card.suitSymbol = '';
+    card.suitName = '王';
+    card.suitOrder = 0;
+    card.color = big ? 'red' : 'black';
+    card.joker = true;
+    card.bigJoker = !!big;
+    if (card.originalSuit === undefined) card.originalSuit = oldSuit || null;
+    if (card.originalSuitSymbol === undefined) card.originalSuitSymbol = oldSuitSymbol || '';
+    card.originalLabel = oldLabel;
+    var rs = royalState(game);
+    rs.eventSeq += 1;
+    var event = {
+      seq: rs.eventSeq,
+      type: reason || 'inherit',
+      owner: ownerId,
+      oldCard: oldSnapshot,
+      card: card,
+      source: big ? 17 : 16,
+      text: game.players[ownerId].name + ' 的 ' + oldLabel + ' 变为' + (big ? '大王' : '小王')
+    };
+    rs.lastEvent = event;
+    return event;
+  }
+
+  function inheritRoyal(game, playerId, big) {
+    if (!isRoyal(game)) return null;
+    var p = game.players[playerId];
+    if (!p || !p.hand.length) return null;
+    var order = big ? royalConfig().inheritBigOrder : royalConfig().inheritSmallOrder;
+    var target = null;
+    for (var i = 0; i < order.length; i++) {
+      var hit = p.hand.find(function (c) { return c.id === order[i]; });
+      if (hit) { target = hit; break; }
+    }
+    if (!target) return null;
+    var event = royalTransformCard(game, playerId, target, big, 'inherit');
+    p.hand = R.sortCards(p.hand, true);
+    pushLog(game, 'royal', event.text, playerId);
+    return event;
+  }
+
+  function checkRoyalAscension(game) {
+    if (!isRoyal(game) || game.phase === 'over') return null;
+    var rs = royalState(game);
+    var counts = royalHandCounts(game);
+    if (counts[17] !== 0 || counts[16] !== 1 || !counts.smallCard) return null;
+    var ownerId = counts.smallCard.owner;
+    var card = counts.smallCard.card;
+    var event = royalTransformCard(game, ownerId, card, true, 'ascend');
+    rs.ascended = true;
+    game.players[ownerId].hand = R.sortCards(game.players[ownerId].hand, true);
+    event.type = 'ascend';
+    event.text = game.players[ownerId].name + ' 的独王登基：变出大王';
+    rs.lastEvent = event;
+    pushLog(game, 'royal', event.text, ownerId);
+    return event;
+  }
+
+  function scoreRoyalPlay(game, playerId, combo, cards) {
+    if (!isRoyal(game)) return null;
+    var rs = royalState(game);
+    var rc = royalConfig();
+    var bigs = cards.filter(function (c) { return c.rank === 17; }).length;
+    var smalls = cards.filter(function (c) { return c.rank === 16; }).length;
+    if (!bigs && !smalls) return null;
+    var events = [];
+    function addFirst(big) {
+      if (big && !rs.firstBig) {
+        rs.firstBig = true;
+        rs.firstBigOwner = playerId;
+        addPlayerBase(game, playerId, rc.firstBigBase, '王储令：首次打出大王 +' + rc.firstBigBase + ' 基础分', '王储令');
+        addPlayerMult(game, playerId, rc.firstBigMult, '王储令：首次打出大王 +' + rc.firstBigMult.toFixed(2) + ' 倍率', '王储令');
+        events.push('首大王');
+      }
+      if (!big && !rs.firstSmall) {
+        rs.firstSmall = true;
+        rs.firstSmallOwner = playerId;
+        addPlayerBase(game, playerId, rc.firstSmallBase, '王储令：首次打出小王 +' + rc.firstSmallBase + ' 基础分', '王储令');
+        addPlayerMult(game, playerId, rc.firstSmallMult, '王储令：首次打出小王 +' + rc.firstSmallMult.toFixed(2) + ' 倍率', '王储令');
+        events.push('首小王');
+      }
+    }
+    if (combo.type === 'rocket') {
+      addPlayerBase(game, playerId, rc.rocketBase, '王储令：王炸 +' + rc.rocketBase + ' 基础分，不叠加单王奖励', '王储令');
+      addPlayerMult(game, playerId, rc.rocketMult, '王储令：王炸 +' + rc.rocketMult.toFixed(2) + ' 倍率，不叠加单王奖励', '王储令');
+      addFirst(true);
+      addFirst(false);
+    } else if (bigs) {
+      addPlayerBase(game, playerId, rc.singleBigBase, '王储令：单出大王 +' + rc.singleBigBase + ' 基础分', '王储令');
+      addPlayerMult(game, playerId, rc.singleBigMult, '王储令：单出大王 +' + rc.singleBigMult.toFixed(2) + ' 倍率', '王储令');
+      addFirst(true);
+    } else if (smalls) {
+      addPlayerBase(game, playerId, rc.singleSmallBase, '王储令：单出小王 +' + rc.singleSmallBase + ' 基础分', '王储令');
+      addPlayerMult(game, playerId, rc.singleSmallMult, '王储令：单出小王 +' + rc.singleSmallMult.toFixed(2) + ' 倍率', '王储令');
+      addFirst(false);
+    }
+    return events;
+  }
+
+  function settlePendingAtEnd(game, winnerId) {
+    var sc = scoringOf(game);
+    if (!sc.pendingBase && !sc.pendingMult && !(sc.pendingSources || []).length) return;
+    settlePending(game, winnerId);
+  }
+
+  function awardRoyalLast(game, playerId, combo, cards, inheritanceTriggered) {
+    if (!isRoyal(game) || game.phase === 'over') return null;
+    var rs = royalState(game);
+    if (rs.lastBigAwarded || inheritanceTriggered) return null;
+    var hasBig = (cards || []).some(function (c) { return c.rank === 17; });
+    if (!hasBig) return null;
+    var isRocket = combo && combo.type === 'rocket';
+    var isSingleBig = combo && combo.type === 'single' && cards.length === 1;
+    if (!isRocket && !isSingleBig) return null;
+    var counts = royalHandCounts(game);
+    if (counts[16] || counts[17]) return null;
+    rs.lastBigAwarded = true;
+    rs.lastBig = playerId;
+    var base = royalConfig().lastBigBase;
+    addPlayerBase(game, playerId, base, '王储令：最后一张王已打出，末大王 +' + base + ' 基础分', '王储令');
+    pushLog(game, 'royal', '王储令：' + game.players[playerId].name + ' 打出最后一张王，获得末大王 +' + base + ' 基础分', playerId);
+    return { owner: playerId, base: base };
+  }
+
+  function applyRoyalFinal(game) {
+    if (!isRoyal(game)) return null;
+    var rs = royalState(game);
+    var rc = royalConfig();
+    var result = { lastRewards: [], penalties: [], remain: {} };
+    game.players.forEach(function (p) {
+      var bigs = p.hand.filter(function (c) { return c.rank === 17; }).length;
+      var smalls = p.hand.filter(function (c) { return c.rank === 16; }).length;
+      if (bigs) {
+        var bPenalty = bigs * rc.remainBigPenalty;
+        p.base -= bPenalty;
+        result.penalties.push({ owner: p.id, type: 'big', count: bigs, base: -bPenalty });
+        pushLog(game, 'royal', '王储令：' + p.name + ' 剩 ' + bigs + ' 张大王，-' + bPenalty + ' 基础分', p.id);
+      }
+      if (smalls) {
+        var sPenalty = smalls * rc.remainSmallPenalty;
+        p.base -= sPenalty;
+        result.penalties.push({ owner: p.id, type: 'small', count: smalls, base: -sPenalty });
+        pushLog(game, 'royal', '王储令：' + p.name + ' 剩 ' + smalls + ' 张小王，-' + sPenalty + ' 基础分', p.id);
+      }
+      result.remain[p.id] = { big: bigs, small: smalls };
+    });
+    game.players.forEach(function (p) { p.base = Math.max(0, p.base); });
+    rs.final = result;
+    return result;
   }
 
   function finishRoundScoring(game, winnerId) {    var sc = scoringOf(game);
@@ -5989,6 +6349,8 @@ body { font-size: 17px; }
         if (p.id !== game.landlord) addPlayerBase(game, p.id, 20, '农民胜利：' + p.name + ' +20 基础分', '胜利');
       });
     }
+    var royalResult = applyRoyalFinal(game);
+    if (royalResult) game.royalResult = royalResult;
     game.players.forEach(function (p) {
       p.roundScore = Math.round(p.base * p.mult * 100) / 100;
       p.totalScore = Math.round((p.totalScore + p.roundScore) * 100) / 100;
@@ -6064,6 +6426,8 @@ body { font-size: 17px; }
       decree: null,
       extraSuit: null,
       specialMarks: {},
+      royal: createRoyalState(),
+      royalResult: null,
       scoring: null,      roundSerial: 0,
       firstBidder: 0
     };
@@ -6090,6 +6454,8 @@ body { font-size: 17px; }
     game.pmSeq = 0;
     game.lastPindming = null;
     game.specialMarks = {};
+    game.royal = createRoyalState();
+    game.royalResult = null;
     game.scoring = createScoringState();
     game.passes = 0;
     game.trick = 1;
@@ -6245,6 +6611,12 @@ body { font-size: 17px; }
       pushLog(game, 'score', '叫分 ' + game.bid.current + '：' + landlord.name + ' 基础分 +' + game.bid.current, landlord.id);
     }
     landlord.hand = R.sortCards(landlord.hand.concat(game.bottom), true);
+    var royalOpening = null;
+    var royalAscend = null;
+    if (isRoyal(game)) {
+      royalOpening = applyRoyalOpening(game);
+      royalAscend = checkRoyalAscension(game);
+    }
     game.phase = 'playing';
     game.turn = landlord.id;
     game.lastPlay = null;
@@ -6255,7 +6627,9 @@ body { font-size: 17px; }
     return ok({
       landlord: landlord.id,
       bottom: game.bottom.slice(),
-      baseScore: game.baseScore
+      baseScore: game.baseScore,
+      royalOpening: royalOpening,
+      royalAscend: royalAscend
     });
   }
 
@@ -6276,6 +6650,9 @@ body { font-size: 17px; }
     }
     var combo = R.detectCombo(cards);
     if (!combo) return fail('所选牌型不成立');
+    if (isRoyal(game) && !R.isRoyalComboLegal(cards, combo)) {
+      return fail('王储令：王只能单出，或一大一小组成王炸');
+    }
     if (game.lastPlay && !R.canBeat(combo, game.lastPlay.combo)) {
       return fail('这手牌压不过上家');
     }
@@ -6307,9 +6684,11 @@ body { font-size: 17px; }
     addPlayPendingCards(game, cards);
     if (game.decree === 'long') {
       var nLongPlay = (scPlay.playsSinceLead[0] || 0) + (scPlay.playsSinceLead[1] || 0) + (scPlay.playsSinceLead[2] || 0);
-      addPlayerBase(game, playerId, nLongPlay * 2, '长征令：本轮第 ' + nLongPlay + ' 次出牌，+' + (nLongPlay * 2) + ' 基础分', '长征令');
+      addPlayerBase(game, playerId, nLongPlay * C.decrees.long.basePerPlay, '长征令：本轮第 ' + nLongPlay + ' 次出牌，+' + (nLongPlay * C.decrees.long.basePerPlay) + ' 基础分', '长征令');
       updateLongPending(game);
     }
+
+    scoreRoyalPlay(game, playerId, combo, cards);
 
     if (combo.type === '42') {
       player.usedSkills.siliang += 1;
@@ -6340,11 +6719,9 @@ body { font-size: 17px; }
     }
     if (game.decree === 'double') {
       if (combo.type === 'pair') {
-        addPlayerBase(game, playerId, 3, '双持令：打出对子 +3 基础分', '双持令');
+        addPlayerBase(game, playerId, C.decrees.double.pairBase, '双持令：打出对子 +' + C.decrees.double.pairBase + ' 基础分', '双持令');
       }
     }
-    var royal = scoreRoyalJoker(game, playerId, cards);
-    if (royal) game.royalChange = royal;
 
     if (useQijin) {
       player.usedSkills.qijin += 1;
@@ -6399,6 +6776,24 @@ body { font-size: 17px; }
         });
       }
     }
+
+    var royalChanges = [];
+    var inheritanceTriggered = false;
+    var willWin = player.hand.length === 0;
+    if (isRoyal(game) && !willWin) {
+      if (combo.type !== 'rocket' && cards.length === 1 && cards[0].rank >= 16) {
+        var inherited = inheritRoyal(game, playerId, cards[0].rank === 17);
+        if (inherited) {
+          inheritanceTriggered = true;
+          royalChanges.push(inherited);
+        }
+      }
+      var ascended = checkRoyalAscension(game);
+      if (ascended) royalChanges.push(ascended);
+    }
+    if (royalChanges.length) game.royalChange = royalChanges;
+    var royalLast = awardRoyalLast(game, playerId, combo, cards, inheritanceTriggered);
+    if (royalLast) game.royalLast = royalLast;
 
     var fin = finalizePlay(game, playerId, combo, game.lastPlay.cards);
     var out = { combo: combo, qijinActivated: useQijin };
@@ -6577,7 +6972,7 @@ body { font-size: 17px; }
     if (bId === d) return null;
     var b = game.players[bId];
     if (!b || b.usedSkills.shuangbi >= 1) return null;
-    if (b.hand.length <= 2) return null;
+    if (b.hand.length < 2) return null;
     var pair = b.hand.filter(function (c) { return c.rank === combo.key && !c.joker; }).slice(0, 2);
     if (pair.length < 2) return null;
     return {
@@ -6676,10 +7071,11 @@ body { font-size: 17px; }
     onSkillScored(game, p.actor, 'geshan');
     awardLead(game, p.previous, '隔山打牛收回带牌并获得牌权', null);
     var pm = checkPindming(game, p.actor);
+    var royalAscend = checkRoyalAscension(game);
     pushLog(game, 'skill', b.name + ' 发动【隔山打牛】，弃置 ' +
       R.describeCards(bodyCards) + '；' + a.name + ' 收回 ' +
       R.describeCards(wings) + ' 并获得出牌权', p.actor);
-    return ok({ activated: true, event: game.skillResult, pindming: pm, next: a.id });
+    return ok({ activated: true, event: game.skillResult, pindming: pm, royalAscend: royalAscend, next: a.id });
   }
 
   function resolveShuangbi(game, activate) {
@@ -6696,7 +7092,7 @@ body { font-size: 17px; }
       return ok({ activated: false, next: game.turn });
     }
     var pair = b.hand.filter(function (c) { return c.rank === p.pairRank && !c.joker; }).slice(0, 2);
-    if (pair.length < 2 || b.hand.length - 2 < 1) return fail('同点数对子不足或弃置后没有手牌');
+    if (pair.length < 2) return fail('同点数对子不足');
     b.hand = R.removeCards(b.hand, pair);
     game.discard = game.discard.concat(pair);
     b.usedSkills.shuangbi += 1;
@@ -6715,6 +7111,11 @@ body { font-size: 17px; }
     var pm = checkPindming(game, p.actor);
     pushLog(game, 'skill', b.name + ' 发动【双璧锁关】，弃置 ' +
       R.describeCards(pair) + '，跳过地主，' + game.players[p.previous].name + ' 继续出对子', p.actor);
+    if (b.hand.length === 0) {
+      game.pending = null;
+      endRound(game, p.actor, 'shuangbi');
+      return ok({ activated: true, win: true, event: game.skillResult, pindming: pm });
+    }
     return ok({ activated: true, event: game.skillResult, pindming: pm, next: p.previous });
   }
 
@@ -6735,7 +7136,8 @@ body { font-size: 17px; }
       awardLead(game, p.actor, '双璧锁关地主下家让过，地主上家获得牌权', null);
       pushLog(game, 'skill', a.name + ' 没有更大的对子，双璧锁关结束，' +
         game.players[p.actor].name + ' 自由出牌', p.actor);
-      return ok({ passed: true, next: game.turn });
+      var royalAscendPass = checkRoyalAscension(game);
+      return ok({ passed: true, next: game.turn, royalAscend: royalAscendPass });
     }
     var ids = Array.from(new Set(cardIds));
     var cards = [];
@@ -6747,6 +7149,9 @@ body { font-size: 17px; }
     var combo = R.detectCombo(cards);
     if (!combo || combo.type !== 'pair' || combo.key <= p.combo.key) {
       return fail('续出必须是对子，且点数大于刚才的对子');
+    }
+    if (isRoyal(game) && !R.isRoyalComboLegal(cards, combo)) {
+      return fail('王储令：王只能单出，或一大一小组成王炸');
     }
     a.hand = R.removeCards(a.hand, cards);
     a.playCount += 1;
@@ -6766,7 +7171,7 @@ body { font-size: 17px; }
       updateLongPending(game);
     }
     if (game.decree === 'double') {
-      addPlayerBase(game, a.id, 3, '双持令：双璧续出对子 +3 基础分', '双持令');
+      addPlayerBase(game, a.id, C.decrees.double.pairBase, '双持令：双璧续出对子 +' + C.decrees.double.pairBase + ' 基础分', '双持令');
     }
     pushLog(game, 'play', a.name + ' 受双璧锁关影响，续出 ' + combo.label + ' · ' + R.describeCards(cards), a.id);
     if (a.hand.length === 0) {
@@ -6795,7 +7200,8 @@ body { font-size: 17px; }
     game.turn = p.actor;
     awardLead(game, p.actor, '双璧续出结束，牌权交还', combo);
     pushLog(game, 'skill', '双璧锁关结束，' + game.players[p.actor].name + ' 自由出牌', p.actor);
-    return ok({ next: game.turn, combo: combo });
+    var royalAscend = checkRoyalAscension(game);
+    return ok({ next: game.turn, combo: combo, royalAscend: royalAscend });
   }
 
   function pindmingTarget(n) {
@@ -6860,7 +7266,8 @@ body { font-size: 17px; }
     game.skillResult = event;
     pushLog(game, 'skill', p.name + ' 触发【拼命三郎】，3 变为 ' +
       event.card.label + '（n=' + event.n + '）', event.actor);
-    return ok({ event: event });
+    var royalAscend = checkRoyalAscension(game);
+    return ok({ event: event, royalAscend: royalAscend });
   }
 
   function canUseQijin(game, playerId) {
@@ -7012,7 +7419,8 @@ body { font-size: 17px; }
       return !!pm;
     });
     if (!pm) pm = checkPindming(game, pending.actor);
-    return ok({ results: results, actor: pending.actor, pindming: pm });
+    var royalAscend = checkRoyalAscension(game);
+    return ok({ results: results, actor: pending.actor, pindming: pm, royalAscend: royalAscend });
   }
 
   function passTurn(game, playerId) {
@@ -7050,7 +7458,7 @@ body { font-size: 17px; }
 
   function legalMovesFor(game, playerId) {
     var p = game.players[playerId];
-    return R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null);
+    return R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null, { royal: isRoyal(game) });
   }
 
   function canUseSanren(game, playerId) {
@@ -7129,7 +7537,8 @@ body { font-size: 17px; }
     game.turn = playerId;
     pushLog(game, 'skill', actor.name + ' 将 ' + card.label + ' 归还给 ' + target.name, playerId);
     var pm = checkPindming(game, playerId) || checkPindming(game, target.id);
-    return ok({ returned: card, pindming: pm });
+    var royalAscend = checkRoyalAscension(game);
+    return ok({ returned: card, pindming: pm, royalAscend: royalAscend });
   }
 
   function canUseGuowuguan(game, playerId) {
@@ -7300,12 +7709,12 @@ body { font-size: 17px; }
     game.trick += 1;
     game.turn = winner;
     game.pending = null;
-    onSkillScored(game, actor, 'guowuguan');
     awardLead(game, winner, '过五关斩六将夺得牌权', null);
     pushLog(game, 'skill', '过五关结算：' + results.map(function (r) {
       return game.players[r.player].name + ' ' + r.points + ' 点' + (r.bonus ? '（含发起 +6）' : '');
     }).join(' · ') + '，' + game.players[winner].name + ' 夺得牌权', winner);
-    return ok({ results: results, winner: winner, tie: topTied.length > 1 });
+    var royalAscend = checkRoyalAscension(game);
+    return ok({ results: results, winner: winner, tie: topTied.length > 1, royalAscend: royalAscend });
   }
 
   function resolveReaction(game, actorId, options) {
@@ -7336,8 +7745,8 @@ body { font-size: 17px; }
     actor.lastAction = '九九归一';
     actor.usedSkills.jiujiu += 1;
     if (game.decree === 'double') {
-      addPlayerBase(game, actorId, 3, '双持令：九九归一按对子结算 +3 基础分', '双持令');
-      addPlayerMult(game, actorId, 0.5, '双持令：九九归一以对子获得牌权，+0.50 倍率', '双持令');
+      addPlayerBase(game, actorId, C.decrees.double.jiujiuBase, '双持令：九九归一按对子结算 +' + C.decrees.double.jiujiuBase + ' 基础分', '双持令');
+      addPlayerMult(game, actorId, C.decrees.double.jiujiuMult, '双持令：九九归一以对子获得牌权，+' + C.decrees.double.jiujiuMult.toFixed(2) + ' 倍率', '双持令');
     }
     game.skillResult = {
       type: 'jiujiu',
@@ -7355,13 +7764,15 @@ body { font-size: 17px; }
     awardLead(game, actorId, '九九归一夺得牌权', null);
     pushLog(game, 'skill', actor.name + ' 抢下九九归一，收走 ' + aCard.label + '，弃两张 9，夺得牌权', actorId);
     var pm = checkPindming(game, actorId);
-    return ok({ triggered: true, actor: actorId, aCard: aCard, pindming: pm });
+    var royalAscend = checkRoyalAscension(game);
+    return ok({ triggered: true, actor: actorId, aCard: aCard, pindming: pm, royalAscend: royalAscend });
   }
 
   function endRound(game, winnerId, reason) {
     if (game.phase === 'over') return;
     game.phase = 'over';
     game.winner = winnerId;
+    settlePendingAtEnd(game, winnerId);
     var landlordWon = winnerId === game.landlord;
     var landlord = game.players[game.landlord];
     var farmers = game.players.filter(function (p) { return p.id !== game.landlord; });
@@ -7444,6 +7855,13 @@ body { font-size: 17px; }
     checkPindming: checkPindming,
     applyPindming: applyPindming,
     decreeName: decreeName,
+    createRoyalState: createRoyalState,
+    royalState: royalState,
+    makeRoyalJoker: makeRoyalJoker,
+    applyRoyalOpening: applyRoyalOpening,
+    checkRoyalAscension: checkRoyalAscension,
+    scoreRoyalPlay: scoreRoyalPlay,
+    onSkillScored: onSkillScored,
     finishRoundScoring: finishRoundScoring,
     comboBodyRanks: comboBodyRanks,
     comboWings: comboWings,
@@ -7790,6 +8208,23 @@ body { font-size: 17px; }
     return groups;
   }
 
+  function royalMoveBonus(game, playerId, move) {
+    if (game.decree !== 'royal' || !move || !move.cards) return 0;
+    var combo = move.combo;
+    var cards = move.cards;
+    var bigs = cards.filter(function (c) { return c.rank === 17; }).length;
+    var smalls = cards.filter(function (c) { return c.rank === 16; }).length;
+    if (!bigs && !smalls) return 0;
+    var bonus = 0;
+    if (combo.type === 'rocket') bonus += 55;
+    else {
+      bonus += 12;
+      if (bigs && !game.royal.firstBig) bonus += 9;
+      if (smalls && !game.royal.firstSmall) bonus += 7;
+    }
+    return bonus;
+  }
+
   function leadingScore(game, playerId, move, hand) {
     var combo = move.combo;
     var remaining = R.removeCards(hand, move.cards);
@@ -7839,6 +8274,7 @@ body { font-size: 17px; }
       score += remaining.length <= 8 ? 3 : -5;
     }
     if (combo.type === 'superBomb') score -= 8;
+    score += royalMoveBonus(game, playerId, move);
     return score + Math.random() * 1.2;
   }
 
@@ -7863,6 +8299,7 @@ body { font-size: 17px; }
     if (danger) score += 12;
     // 自己快走完时更愿意压
     if (remaining.length <= 4) score += 6;
+    score += royalMoveBonus(game, playerId, move);
     return score + Math.random() * 1.0;
   }
 
@@ -7872,7 +8309,7 @@ body { font-size: 17px; }
 
   function chooseNormalMove(game, playerId) {
     var p = game.players[playerId];
-    var moves = R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null);
+    var moves = R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null, { royal: game.decree === 'royal' });
     if (!moves.length) return { type: 'pass' };
 
     var winning = findWinningMove(moves, p.hand.length);
@@ -7963,7 +8400,7 @@ body { font-size: 17px; }
   function chooseAction(game, playerId) {
     var p = game.players[playerId];
     var per = persona(playerId);
-    var moves = R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null);
+    var moves = R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null, { royal: game.decree === 'royal' });
     var winning = findWinningMove(moves, p.hand.length);
     if (winning) return { type: 'play', cards: winning.cards, combo: winning.combo };
 
@@ -8051,7 +8488,7 @@ body { font-size: 17px; }
   function chooseShuangbiContinue(game, playerId, combo) {
     var p = game.players[playerId];
     if (!p) return { type: 'pass' };
-    var moves = R.legalMoves(p.hand, combo).filter(function (m) {
+    var moves = R.legalMoves(p.hand, combo, { royal: game.decree === 'royal' }).filter(function (m) {
       return m.combo.type === 'pair' && m.combo.key > combo.key;
     });
     if (!moves.length) return { type: 'pass' };
@@ -8235,6 +8672,7 @@ body { font-size: 17px; }
     thinkingId: null,
     handAnimation: false,
     drawnId: null,
+    hiddenNewCards: {},
     speech: {},
     speechTimers: {},
     seatSkillTimers: {},
@@ -8815,6 +9253,7 @@ body { font-size: 17px; }
     G.hintIndex = 0;
     G.thinkingId = null;
     G.drawnId = null;
+    G.hiddenNewCards = {};
     G.selectionGlow = null;
     G.skillSelectionTip = '';
     G.lastAwardSeq = 0;
@@ -8854,6 +9293,7 @@ body { font-size: 17px; }
       ? { roundNo: G.session.round, decree: G.session.decrees[G.session.round - 1] }
       : {};
     E.startRound(G.game, roundOpts);
+    G.lastRoyalEventSeq = 0;
     G.mode = 'bidding';
     G.dealing = true;
     renderAll();
@@ -9434,7 +9874,7 @@ body { font-size: 17px; }
     var res = E.placeBid(g, id, value);
     G.busy = false;
     setSpeech(id, value === 0 ? '不叫' : '叫 ' + value + ' 分', '');
-    renderAll();
+    if (!(res && res.landlord != null)) renderAll();
     sfx('click');
     await sleep(420);
     if (ep !== G.epoch) return;
@@ -9454,7 +9894,7 @@ body { font-size: 17px; }
       renderBidPanel();
       return;
     }
-    renderAll();
+    if (!(res && res.landlord != null)) renderAll();
     sfx('click');
     await sleep(320);
     handleBidResult(res);
@@ -9484,45 +9924,102 @@ body { font-size: 17px; }
     bottomCards.forEach(function (card) {
       var handEl = one('#hand .pcard[data-id="' + card.id + '"]');
       if (!handEl) return;
-      var rect = handEl.getBoundingClientRect();
-      nodes.push({ card: card, el: handEl, rect: rect });
-      handEl.style.visibility = 'hidden';
+      nodes.push({ card: card, el: handEl });
     });
     if (!nodes.length) return false;
-    var layer = document.createElement('div');
-    layer.className = 'landlord-deal-layer';
-    document.body.appendChild(layer);
-    var jobs = nodes.map(function (node, index) {
-      var lift = Math.max(36, node.rect.height * 0.6);
+    var jobs = nodes.map(function (node) {
+      var rect = node.el.getBoundingClientRect();
+      var lift = Math.max(42, rect.height * 0.62);
+      // 直接动画真实手牌：保持手牌 DOM 顺序，右侧牌天然盖住它。
+      node.el.style.transform = 'translateY(-' + lift + 'px)';
+      node.el.style.visibility = 'visible';
+      var anim = node.el.animate([
+        { opacity: 0, transform: 'translateY(-' + (lift + 8) + 'px)' },
+        { opacity: 1, transform: 'translateY(-' + lift + 'px)', offset: .16 },
+        { opacity: 1, transform: 'translateY(0px)' }
+      ], {
+        duration: 540,
+        easing: 'cubic-bezier(.22,.8,.24,1)',
+        fill: 'forwards'
+      });
+      return anim.finished.then(function () {
+        anim.cancel();
+        node.el.style.transform = '';
+        node.el.style.visibility = '';
+      });
+    });
+    await Promise.all(jobs);
+    return true;
+  }
+
+  async function animateRoyalSupplements(added) {
+    if (reducedMotion() || !added || !added.length) return false;
+    var layer = null;
+    var jobs = added.map(function (item) {
+      if (item.owner === 0) {
+        var handEl = one('#hand .pcard[data-id="' + item.card.id + '"]');
+        if (!handEl) return Promise.resolve();
+        var hr = handEl.getBoundingClientRect();
+        var lift = Math.max(42, hr.height * 0.62);
+        handEl.style.transform = 'translateY(-' + lift + 'px)';
+        handEl.style.visibility = 'visible';
+        var anim = handEl.animate([
+          { opacity: 0, transform: 'translateY(-' + (lift + 8) + 'px)' },
+          { opacity: 1, transform: 'translateY(-' + lift + 'px)', offset: .16 },
+          { opacity: 1, transform: 'translateY(0px)' }
+        ], {
+          duration: 540,
+          easing: 'cubic-bezier(.22,.8,.24,1)',
+          fill: 'forwards'
+        });
+        return anim.finished.then(function () {
+          anim.cancel();
+          handEl.style.transform = '';
+          handEl.style.visibility = '';
+        });
+      }
+
+      var targetEl = $('avatar-' + item.owner);
+      if (!targetEl) return Promise.resolve();
+      if (!layer) {
+        layer = document.createElement('div');
+        layer.className = 'landlord-deal-layer';
+        document.body.appendChild(layer);
+      }
+      var target = targetEl.getBoundingClientRect();
+      var w = 58;
+      var h = 80;
+      var aiLift = Math.max(42, h * 0.62);
+      var left = target.left + target.width / 2 - w / 2;
+      var top = target.top + target.height / 2 - h / 2 - aiLift;
       var clone = document.createElement('div');
       clone.className = 'landlord-deal-card';
-      clone.style.left = node.rect.left + 'px';
-      clone.style.top = (node.rect.top - lift) + 'px';
-      clone.style.width = node.rect.width + 'px';
-      clone.style.height = node.rect.height + 'px';
-      clone.innerHTML = cardMarkup(node.card, { interactive: false, noAnim: true });
+      clone.style.left = left + 'px';
+      clone.style.top = top + 'px';
+      clone.style.width = w + 'px';
+      clone.style.height = h + 'px';
+      clone.innerHTML = cardMarkup(item.card, { interactive: false, noAnim: true });
       layer.appendChild(clone);
       return clone.animate([
-        { opacity: 0, transform: 'translateY(0) scale(1.08)' },
-        { opacity: 1, transform: 'translateY(0) scale(1.08)', offset: 0.08 },
-        { opacity: 1, transform: 'translateY(' + (-lift * 0.2) + 'px) scale(1.04)', offset: 0.28 },
-        { opacity: 1, transform: 'translateY(' + (-lift * 0.2) + 'px) scale(1.04)', offset: 0.78 },
-        { opacity: 1, transform: 'translateY(' + lift + 'px) scale(1)', offset: 1 }
+        { opacity: 0, transform: 'translateY(-8px)' },
+        { opacity: 1, transform: 'translateY(0px)', offset: .16 },
+        { opacity: 1, transform: 'translateY(' + aiLift + 'px)' }
       ], {
-        duration: 1000,
-        delay: index * 35,
-        easing: 'cubic-bezier(.2,.8,.25,1)',
+        duration: 540,
+        easing: 'cubic-bezier(.22,.8,.24,1)',
         fill: 'forwards'
       }).finished;
     });
     try {
       await Promise.all(jobs);
-      await sleep(60);
     } finally {
-      layer.remove();
-      nodes.forEach(function (node) { node.el.style.visibility = ''; });
+      if (layer) layer.remove();
     }
     return true;
+  }
+
+  function revealNewCards(ids) {
+    (ids || []).forEach(function (id) { delete G.hiddenNewCards[id]; });
   }
 
   async function onLandlord(res) {
@@ -9533,15 +10030,26 @@ body { font-size: 17px; }
     G.thinkingId = null;
     G.handAnimation = false;
     clearSpeech();
+    G.hiddenNewCards = {};
+    (res.bottom || []).forEach(function (card) { G.hiddenNewCards[card.id] = true; });
+    var added = (res.royalOpening && res.royalOpening.added) || [];
+    added.forEach(function (item) { G.hiddenNewCards[item.card.id] = true; });
     renderAll();
     sfx('deal');
     var landlord = G.game.players[res.landlord];
-    toast(landlord.name + ' 成为地主 · 底牌 ' + R.describeCards(res.bottom) + ' · 底分 ' + res.baseScore, 'good');
+    toast(landlord.name + ' 成为地主 · 底分 ' + res.baseScore, 'good');
     if (res.landlord === 0) {
       await animateLandlordBottomCards(res.landlord, res.bottom);
-      await sleep(300);
     } else {
-      await sleep(1100);
+      await sleep(700);
+    }
+    revealNewCards((res.bottom || []).map(function (card) { return card.id; }));
+    renderAll();
+    toast('底牌已加入 · ' + R.describeCards(res.bottom), 'good');
+    if (added.length) {
+      await animateRoyalSupplements(added);
+      revealNewCards(added.map(function (item) { return item.card.id; }));
+      renderAll();
     }
     await showDecreeOpening();
     G.busy = false;
@@ -9560,11 +10068,15 @@ body { font-size: 17px; }
   }
 
   function decreeDescription(key) {
+    var all = (typeof window !== 'undefined' && window.DDZConfig && window.DDZConfig.decrees) || {};
+    var duel = all.duel || { base: 5, mult: 0.30, doubleBase: 5, doubleMult: 0.30 };
+    var dbl = all.double || { pairBase: 3, pairLeadMult: 0.50, jiujiuBase: 3, jiujiuMult: 0.50 };
+    var lng = all.long || { basePerPlay: 2, multPerPlay: 0.10 };
     return {
-      duel: '每次技能成功发动 +0.10 倍率；双璧锁关两个农民各 +0.10',
-      double: '打出对子立即 +3 基础分；以对子获得牌权 +0.50 倍率（99 归一、77 也算对子）',
-      long: '本轮第 1/2/3… 次出牌者分别立即 +2/+4/+6… 基础分；获得牌权者再获得本轮出牌次数 ×0.10 倍率，随后重新计数',
-      royal: '打出大王 +10、小王 +5；并可能把手牌中的红桃K/J、黑桃K/J 变为王'
+      duel: '技能成功发动：发动者 +' + duel.base + ' 基础分、+' + duel.mult.toFixed(2) + ' 倍率；双璧锁关时两个农民各 +' + duel.doubleBase + ' 基础分、+' + duel.doubleMult.toFixed(2) + ' 倍率',
+      double: '打出对子立即 +' + dbl.pairBase + ' 基础分；以对子获得牌权 +' + dbl.pairLeadMult.toFixed(2) + ' 倍率（99 归一、77 也算对子）',
+      long: '本轮第 1/2/3… 次出牌者分别立即 +' + lng.basePerPlay + '/' + (lng.basePerPlay * 2) + '/' + (lng.basePerPlay * 3) + '… 基础分；获得牌权者再获得本轮出牌次数 ×' + lng.multPerPlay.toFixed(2) + ' 倍率，随后重新计数',
+      royal: '开局人人有王，宫廷继位登基，小王可以称帝，末王有最大奖励。'
     }[key] || '';
   }
 
@@ -9785,7 +10297,7 @@ body { font-size: 17px; }
     console.warn('AI recover:', message);
     var p = g.players[id];
     if (!p) { beginTurn(); return; }
-    var moves = R.legalMoves(p.hand, g.lastPlay ? g.lastPlay.combo : null);
+    var moves = R.legalMoves(p.hand, g.lastPlay ? g.lastPlay.combo : null, { royal: g.decree === 'royal' });
     if (moves.length) {
       var move = moves[0];
       var res = E.playCards(g, id, move.cards.map(function (c) { return c.id; }));
@@ -9818,11 +10330,8 @@ body { font-size: 17px; }
     G.el.clockLabel.textContent = '出牌中';
     await animatePlayCards(actorId, cards, originRects);
     if (res.royalChange && res.royalChange.length) {
+      // 一次继位事务只播一次音效；多张牌各自有动画但不重复叠音。
       sfx('pmGlow');
-      var humanChange = res.royalChange.some(function (ch) { return ch.owner === 0; });
-      if (humanChange) {
-        await cinematic('royal', '王储令 · 化王', '', '王气入牌 · 一牌化王', 850);
-      }
       for (var ri = 0; ri < res.royalChange.length; ri++) {
         var ch = res.royalChange[ri];
         var el = ch.owner === 0 ? one('#hand .pcard[data-id="' + ch.card.id + '"]') : null;
@@ -9832,11 +10341,10 @@ body { font-size: 17px; }
           await animatePindmingCard(
             { oldCard: ch.oldCard, card: ch.card },
             hr,
-            function () { el.style.visibility = ''; }
+            function () { el.style.visibility = ''; },
+            { silent: true }
           );
         }
-        toast('王储令：' + g.players[ch.owner].name + ' 的 ' + ch.oldCard.label + ' 变为' +
-          (ch.source === 17 ? '大王' : '小王'), 'skill');
       }
     }
     if (combo.bomb) {
@@ -10060,6 +10568,15 @@ body { font-size: 17px; }
     if (ep !== G.epoch) return;
     if (res.pindming) await showPindmingEffect(res.pindming);
     G.busy = false;
+    if (res.win) {
+      if (G.tutorial && G.tutorial.skill === 'shuangbi') {
+        await sleep(350);
+        completeTutorial();
+        return;
+      }
+      await afterAction();
+      return;
+    }
     await handleShuangbiContinue();
   }
 
@@ -10250,8 +10767,13 @@ body { font-size: 17px; }
     G.busy = false;
   }
 
-  async function animatePindmingCard(event, targetRect, onSettled) {
-    if (!event || reducedMotion()) return;
+  async function animatePindmingCard(event, targetRect, onSettled, opts) {
+    opts = opts || {};
+    if (!event) return;
+    if (reducedMotion()) {
+      if (onSettled) await onSettled();
+      return;
+    }
     var layer = document.createElement('div');
     layer.className = 'pm-reveal-layer';
     layer.innerHTML = '<div class="pm-reveal-card">' +
@@ -10269,13 +10791,21 @@ body { font-size: 17px; }
       return;
     }
     try {
+      // 从手牌原位置起飞到屏幕中央；手牌本身已隐藏，动画期间不会出现双影。
+      var startTransform = 'translate(0px, 0px) scale(1)';
+      if (targetRect) {
+        var cr0 = card.getBoundingClientRect();
+        var dx0 = targetRect.left + targetRect.width / 2 - (cr0.left + cr0.width / 2);
+        var dy0 = targetRect.top + targetRect.height / 2 - (cr0.top + cr0.height / 2);
+        var scale0 = Math.min(targetRect.width / cr0.width, targetRect.height / cr0.height);
+        startTransform = 'translate(' + dx0 + 'px,' + dy0 + 'px) scale(' + scale0 + ')';
+      }
       await card.animate([
-        { opacity: 0, transform: 'scale(.78)' },
-        { opacity: 1, transform: 'scale(1)', offset: 0.55 },
-        { opacity: 1, transform: 'scale(1)', offset: 1 }
-      ], { duration: 320, easing: 'cubic-bezier(.18,.89,.32,1.22)' }).finished;
-      await sleep(220);
-      sfx('pmGlow');
+        { opacity: 1, transform: startTransform },
+        { opacity: 1, transform: 'translate(0px, 0px) scale(1)' }
+      ], { duration: 430, easing: 'cubic-bezier(.18,.89,.32,1.08)' }).finished;
+      await sleep(150);
+      if (!opts.silent) sfx('pmGlow');
       await card.animate([
         { transform: 'scale(1)', filter: 'drop-shadow(0 18px 24px rgba(0,0,0,.45))' },
         { transform: 'scale(1.2)', filter: 'drop-shadow(0 0 26px rgba(255,214,132,.95)) drop-shadow(0 0 54px rgba(226,112,96,.55))', offset: 0.48 },
@@ -10354,6 +10884,10 @@ body { font-size: 17px; }
     if (!cards.length) { toast('请先选择要出的牌', 'error'); return; }
     var combo = R.detectCombo(cards);
     if (!combo) { toast('这手牌不成牌型', 'error'); return; }
+    if (g.decree === 'royal' && !R.isRoyalComboLegal(cards, combo)) {
+      toast('王储令：王只能单出，或一大一小组成王炸', 'error');
+      return;
+    }
     if (g.lastPlay && !R.canBeat(combo, g.lastPlay.combo)) {
       toast('这手牌压不过上家', 'error');
       return;
@@ -10492,7 +11026,7 @@ body { font-size: 17px; }
       sfx('deselect');
       return;
     }
-    var moves = R.legalMoves(g.players[0].hand, g.lastPlay ? g.lastPlay.combo : null);
+    var moves = R.legalMoves(g.players[0].hand, g.lastPlay ? g.lastPlay.combo : null, { royal: g.decree === 'royal' });
     if (!moves.length) {
       G.hintActive = false;
       toast('没有能压上的牌，只能不出', '');
@@ -11061,7 +11595,6 @@ body { font-size: 17px; }
     var g = G.game;
     var pending = g.pending;
     if (!pending || pending.type !== 'sanrenReturn') { beginTurn(); return; }
-    G.mode = 'sanren-return';
     G.busy = true;
     pauseClock();
     G.el.clockLabel.textContent = '三人行 · 还礼';
@@ -11070,6 +11603,7 @@ body { font-size: 17px; }
     G.drawnId = pending.drawn.id;
 
     if (pending.actor === 0) {
+      G.mode = 'sanren-return';
       G.busy = false;
       G.selected.clear();
       renderAll();
@@ -11080,6 +11614,9 @@ body { font-size: 17px; }
       return;
     }
 
+    // 其他两人之间的三人行由 AI 自动还牌，不向玩家渲染还牌提示窗。
+    G.mode = 'skill';
+    $('return-bar').hidden = true;
     G.thinkingId = pending.actor;
     renderAll();
     await sleep(800);
@@ -12077,10 +12614,22 @@ body { font-size: 17px; }
     $('gameover-title').textContent = final
       ? (champion.id === 0 ? '你夺魁了' : champion.name + ' 夺魁')
       : (won ? '本局取胜' : '本局落败');
+    var royalText = '';
+    if (g.royalResult) {
+      var rr = g.royalResult;
+      var rp = [];
+      (rr.lastRewards || []).forEach(function (x) {
+        rp.push('末' + (x.type === 'big' ? '大王' : '小王') + ' ' + g.players[x.owner].name + '+' + x.base);
+      });
+      (rr.penalties || []).forEach(function (x) {
+        rp.push('剩' + (x.type === 'big' ? '大王' : '小王') + ' ' + g.players[x.owner].name + x.base);
+      });
+      if (rp.length) royalText = ' · 王储 ' + rp.join('，');
+    }
     $('gameover-sub').textContent = (g.decree ? E.decreeName(g.decree) + ' · ' : '') +
       '本局 ' + players.map(function (p) {
         return p.name + ' ' + p.base + '×' + p.mult.toFixed(2) + '=' + p.roundScore.toFixed(2);
-      }).join(' · ');
+      }).join(' · ') + royalText;
 
     var order = [0, 1, 2];
     $('settlement').innerHTML =
@@ -12346,9 +12895,40 @@ body { font-size: 17px; }
   // ============================================================
   // 渲染
   // ============================================================
+  function renderRoyalCrowns() {
+    var g = G.game;
+    var all = [0, 1, 2];
+    var containers = all.map(function (id) { return $('royal-crowns-' + id); });
+    if (!g) return;
+    var rs = g.royal || {};
+    var royal = g.decree === 'royal';
+    all.forEach(function (id) {
+      var el = containers[id];
+      if (!el) return;
+      if (!royal) { el.hidden = true; el.innerHTML = ''; return; }
+      var marks = [];
+      if (rs.firstBigOwner === id) marks.push({ tone: 'silver', big: true, title: '首大王' });
+      if (rs.firstSmallOwner === id) marks.push({ tone: 'copper', big: false, title: '首小王' });
+      if (rs.lastBig === id) marks.push({ tone: 'gold', big: true, title: '末大王' });
+      el.innerHTML = marks.map(function (m) {
+        return '<span class="royal-crown ' + m.tone + '" title="' + m.title + '">' +
+          '<span class="rc-glyph">♛</span></span>';
+      }).join('');
+      el.hidden = !marks.length;
+    });
+  }
+
+  function applyHiddenNewCards() {
+    var hidden = G.hiddenNewCards || {};
+    all('#hand .pcard').forEach(function (el) {
+      el.style.visibility = hidden[el.dataset.id] ? 'hidden' : '';
+    });
+  }
+
   function renderAll() {
     if (!G.game) return;
     renderHud();
+    renderRoyalCrowns();
     renderSeats();
     renderMarks();
     renderBottom();
@@ -12356,6 +12936,7 @@ body { font-size: 17px; }
     renderPendingScore();
     renderHand(G.handAnimation && !G.startVisible, true);
     G.handAnimation = false;
+    applyHiddenNewCards();
     renderControls();
     renderSkills();
     renderLog();
@@ -12900,6 +13481,7 @@ body { font-size: 17px; }
     var show = g.phase === 'playing' || g.phase === 'over';
     el.innerHTML = g.bottom.map(function (c) {
       if (!show) return '<div class="bottom-card back"></div>';
+      if (G.hiddenNewCards && G.hiddenNewCards[c.id]) return '<div class="bottom-card back"></div>';
       return bottomCardMarkup(c);
     }).join('');
   }
@@ -13063,8 +13645,13 @@ body { font-size: 17px; }
   function cardFaceImage(c) {
     var map = typeof window !== 'undefined' ? window.DDZ_CARD_IMAGES : null;
     if (!map) return '';
+    // 化王后的牌保留原 ID；必须先按当前王面取图，不能再用旧 ID 的普通牌面。
+    if (c.joker) {
+      var jokerKey = c.bigJoker ? 'JOKER_B' : 'JOKER_S';
+      return map[jokerKey] || '';
+    }
     if (map[c.id]) return map[c.id];
-    var key = c.joker ? (c.bigJoker ? 'JOKER_B' : 'JOKER_S') : (c.suit && c.rankKey ? c.suit + c.rankKey : '');
+    var key = c.suit && c.rankKey ? c.suit + c.rankKey : '';
     return key && map[key] ? map[key] : '';
   }
 
@@ -13172,6 +13759,7 @@ body { font-size: 17px; }
     var act = canHumanAct();
     var selected = selectedCards();
     var combo = selected.length ? R.detectCombo(selected) : null;
+    if (combo && g.decree === 'royal' && !R.isRoyalComboLegal(selected, combo)) combo = null;
     var beats = true;
     if (combo && g.lastPlay) beats = R.canBeat(combo, g.lastPlay.combo);
     var valid = !!(combo && beats);
@@ -13243,7 +13831,7 @@ body { font-size: 17px; }
 
   function findSiliangMove(g) {
     if (!g || g.turn !== 0 || g.phase !== 'playing' || g.pending || g.reaction) return null;
-    var moves = R.legalMoves(g.players[0].hand, g.lastPlay ? g.lastPlay.combo : null);
+    var moves = R.legalMoves(g.players[0].hand, g.lastPlay ? g.lastPlay.combo : null, { royal: g.decree === 'royal' });
     return moves.find(function (m) { return m.combo.type === '42'; }) ||
       moves.find(function (m) { return m.combo.type === 'superBomb'; }) || null;
   }
