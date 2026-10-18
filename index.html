@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0b1513">
-  <meta name="description" content="单机技能斗地主：四两拨千斤、三人行必有我师、九九归一、过五关斩六将、七进七出、辕门射戟。">
+  <meta name="description" content="单机技能斗地主：四两拨千斤、三人行必有我师、九九归一、过五关斩六将、七进七出、辕门射戟、隔山打牛、双璧锁关、拼命三郎。">
   <title>江湖 · 技能斗地主</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='5' fill='%239b342c'/%3E%3Crect x='4' y='4' width='56' height='56' rx='3' fill='none' stroke='%23e8c891' stroke-width='1.5'/%3E%3Ctext x='32' y='43' font-size='34' text-anchor='middle' fill='%23f4dfb6' font-family='KaiTi,serif'%3E江%3C/text%3E%3C/svg%3E">
   <style>
@@ -212,6 +212,32 @@ button:disabled { cursor: default; }
   line-height: 1.1;
 }
 .hud-cell span { font-size: 9px; letter-spacing: .18em; color: var(--muted); margin-top: 2px; }
+.hud-decree-cell b,
+.hud-extra-cell b { font-size: 13px; letter-spacing: .02em; }
+.hud-extra-cell b.red { color: #ef6b5e; }
+.hud-extra-cell b.black { color: #d8e2dd; }
+.hud-score-cell b { color: #8fcfff; }
+.hud-mult-cell b { color: #ff9b8e; }
+.hud-tooltip {
+  position: fixed;
+  width: 270px;
+  padding: 9px 12px 10px;
+  border-radius: 7px;
+  border: 1px solid rgba(240, 210, 141, .42);
+  background: linear-gradient(180deg, rgba(14, 31, 26, .98), rgba(5, 14, 11, .98));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .55);
+  color: #d8c9a8;
+  font-family: var(--sans);
+  font-size: 10.5px;
+  line-height: 1.6;
+  z-index: 160;
+  pointer-events: none;
+}
+.hud-tooltip[hidden] { display: none; }
+.hud-tooltip b { display: block; margin-bottom: 3px; color: #f6e4b5; font-family: var(--kai); font-size: 14px; letter-spacing: .05em; }
+.hud-tooltip .hud-tip-name { color: #e84f42; }
+.hud-tooltip .hud-tip-line { display: block; }
+.hud-cell[data-hud-tip] { cursor: help; }
 .hud-divider { width: 1px; height: 22px; background: linear-gradient(180deg, transparent, rgba(212,176,106,.35), transparent); }
 .top-actions { display: flex; align-items: center; gap: 4px; min-width: 220px; justify-content: flex-end; }
 .icon-btn {
@@ -1009,6 +1035,249 @@ button:disabled { cursor: default; }
 .self-title { margin-top: 2px; font-size: 9px; letter-spacing: .18em; color: rgba(212,196,164,.55); }
 .self-score { margin-top: 6px; font-family: var(--sans); font-size: 10px; color: var(--muted); }
 .self-score b { color: var(--gold-strong); font-family: var(--kai); font-size: 16px; font-weight: 600; margin-right: 2px; }
+.score-counter {
+  position: absolute;
+  left: 50%;
+  top: -74px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 12px 6px;
+  border-radius: 9px;
+  border: 1px solid rgba(240, 210, 141, .4);
+  background: linear-gradient(180deg, rgba(16, 35, 29, .94), rgba(7, 17, 14, .92));
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .35), inset 0 0 12px rgba(240, 210, 141, .06);
+  z-index: 14;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.self-counter {
+  left: 6px;
+  top: -78px;
+  transform: translateY(-47px) scale(1.25);
+  transform-origin: left bottom;
+  align-items: flex-start;
+}
+.seat .score-counter {
+  align-items: flex-start;
+  text-align: left;
+}
+.counter-line {
+  position: relative;
+  display: flex; align-items: baseline; justify-content: flex-start; gap: 5px;
+  font-family: var(--sans); color: var(--muted);
+}
+.counter-line em { font-style: normal; font-size: 9px; letter-spacing: .08em; }
+.counter-num {
+  display: inline-block;
+  color: #ffe6a8;
+  font-family: var(--kai);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transform-origin: 50% 50%;
+  min-width: 1em;
+  text-align: left;
+  text-shadow: 0 0 10px rgba(255, 204, 110, .35);
+}
+.counter-mult .counter-num { color: #9fe0dc; text-shadow: 0 0 10px rgba(105, 220, 210, .28); }
+.counter-delta {
+  position: absolute;
+  left: calc(100% + 4px);
+  top: 50%;
+  display: none;
+  transform: translateY(-50%);
+  color: #ffd86e;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  text-shadow: 0 0 8px rgba(255, 200, 80, .55);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+}
+.counter-delta.show {
+  display: inline-block;
+  animation: counterDeltaIn .22s cubic-bezier(.2,.9,.3,1);
+}
+.counter-mult .counter-delta { color: #8ff0e8; text-shadow: 0 0 8px rgba(90, 225, 215, .5); }
+@keyframes counterDeltaIn {
+  from { opacity: 0; transform: translateY(-50%) scale(.8); }
+  to { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+.roll-digit {
+  display: inline-block;
+  height: 1em;
+  width: .62em;
+  overflow: hidden;
+  vertical-align: top;
+  text-align: center;
+}
+.roll-strip { display: block; will-change: transform; }
+.roll-strip i { display: block; height: 1em; line-height: 1; font-style: normal; }
+.roll-dot { display: inline-block; width: .3em; text-align: center; }
+.pending-score {
+  position: absolute; left: 50%; bottom: 56px; transform: translateX(-50%);
+  display: flex; align-items: center; justify-content: center; gap: 22px;
+  min-width: 340px;
+  padding: 6px 22px 7px; border-radius: 9px;
+  border: 1px solid rgba(240, 210, 141, .4);
+  background: linear-gradient(180deg, rgba(16, 35, 29, .94), rgba(7, 17, 14, .92));
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .35), inset 0 0 12px rgba(240, 210, 141, .06);
+  font-family: var(--sans); font-size: 10px; color: var(--muted);
+  z-index: 12; pointer-events: auto; cursor: help;
+  white-space: nowrap;
+}
+.pending-score[hidden] { display: none; }
+.pending-score .pending-title { color: #d4b06a; letter-spacing: .08em; font-size: 9px; }
+.pending-line { position: relative; display: flex; align-items: baseline; gap: 4px; pointer-events: auto; cursor: help; }
+.pending-line em { font-style: normal; font-size: 9px; color: var(--muted); letter-spacing: .05em; }
+.pending-num {
+  display: inline-block; min-width: 1em;
+  color: #ffe6a8; font-family: var(--kai); font-size: 21px; font-weight: 600;
+  line-height: 1; font-variant-numeric: tabular-nums;
+  transform-origin: 50% 50%; text-shadow: 0 0 10px rgba(255, 204, 110, .35);
+}
+.pending-mult-line .pending-num { color: #9fe0dc; text-shadow: 0 0 10px rgba(105, 220, 210, .28); }
+.pending-line .counter-delta { font-size: 11px; }
+.pending-score .counter-delta {
+  left: 50%;
+  top: -2px;
+  transform: translate(-50%, -100%);
+}
+.pending-score .counter-delta.show {
+  animation: pendingDeltaIn .22s cubic-bezier(.2,.9,.3,1);
+}
+@keyframes pendingDeltaIn {
+  from { opacity: 0; transform: translate(-50%, -100%) scale(.8); }
+  to { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+}
+.pending-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: 104px;
+  transform: translateX(-50%);
+  width: min(430px, calc(var(--ui-vw) * 70 / 100));
+  padding: 9px 13px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(240, 210, 141, .45);
+  background: linear-gradient(180deg, rgba(13, 30, 25, .98), rgba(5, 14, 11, .98));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .55);
+  color: #d8c9a8;
+  font-family: var(--sans);
+  font-size: 10px;
+  line-height: 1.55;
+  text-align: left;
+  z-index: 70;
+  pointer-events: none;
+}
+.pending-tooltip[hidden] { display: none; }
+.pending-tooltip b { color: #f6e4b5; font-family: var(--kai); font-size: 13px; letter-spacing: .06em; }
+.pending-tooltip .pt-group { margin-top: 5px; }
+.pending-tooltip .pt-group-title { color: #d4b06a; font-weight: 700; margin-right: 4px; }
+.pending-tooltip .pt-base { color: #ffe0a0; }
+.pending-tooltip .pt-mult { color: #9fe0dc; }
+.pending-tooltip .pt-empty { color: #8ea398; }
+.score-migrate-layer { position: fixed; inset: 0; z-index: 205; pointer-events: none; }
+.landlord-deal-layer { position: fixed; inset: 0; z-index: 190; pointer-events: none; }
+.landlord-deal-card {
+  position: fixed;
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .48));
+}
+.landlord-deal-card .pcard { width: 100%; height: 100%; }
+.score-migrate-chip {
+  position: absolute; transform: translate(-50%,-50%);
+  padding: 6px 13px; border-radius: 999px;
+  background: linear-gradient(180deg, rgba(62, 46, 24, .96), rgba(24, 20, 14, .96));
+  border: 1px solid rgba(246, 216, 146, .75);
+  color: #ffe6a8; font-family: var(--kai); font-size: 14px;
+  text-shadow: 0 0 10px rgba(255, 208, 110, .8);
+  box-shadow: 0 0 18px rgba(255, 196, 80, .4);
+  white-space: nowrap;
+}
+.pcard.score-card {
+  box-shadow: 0 0 18px rgba(92, 178, 255, .5);
+}
+.pcard.multi-card {
+  box-shadow: 0 0 18px rgba(255, 92, 80, .52);
+}
+.pcard.score-card:hover,
+.pcard.multi-card:hover,
+.pcard.score-card.selected,
+.pcard.multi-card.selected { z-index: 6; }
+.pcard.score-card::after,
+.pcard.multi-card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .28);
+  background: none;
+}
+.bottom-card.bottom-score-card { box-shadow: 0 0 0 2px rgba(122, 200, 255, .9), 0 0 18px rgba(92, 178, 255, .5); }
+.bottom-card.bottom-multi-card { box-shadow: 0 0 0 2px rgba(255, 128, 118, .92), 0 0 18px rgba(255, 92, 80, .52); }
+.bottom-card.bottom-score-card::after,
+.bottom-card.bottom-multi-card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .28);
+  background: none;
+}
+.special-tint {
+  position: absolute;
+  display: block;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 1;
+}
+.special-ring {
+  position: absolute;
+  display: block;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+.special-ring.score-ring { box-shadow: inset 0 0 0 2px rgba(122, 200, 255, .96); }
+.special-ring.multi-ring { box-shadow: inset 0 0 0 2px rgba(255, 128, 118, .96); }
+.pcard .card-face,
+.bottom-card .card-face { z-index: 1; }
+.pcard .corner-top,
+.pcard .card-art,
+.pcard .joker-crown,
+.bottom-card .bc-rank,
+.bottom-card .bc-suit,
+.bottom-card .bc-art { z-index: 3; }
+.pcard.selected .special-tint,
+.pcard:hover .special-tint,
+.pcard:focus-visible .special-tint { opacity: 1; }
+.special-tint.score-tint {
+  background: linear-gradient(90deg,
+    rgba(48, 139, 244, .68) 0%,
+    rgba(48, 139, 244, 0) 33.333%,
+    rgba(48, 139, 244, 0) 66.667%,
+    rgba(48, 139, 244, .68) 100%);
+}
+.special-tint.multi-tint {
+  background: linear-gradient(90deg,
+    rgba(238, 65, 58, .66) 0%,
+    rgba(238, 65, 58, 0) 33.333%,
+    rgba(238, 65, 58, 0) 66.667%,
+    rgba(238, 65, 58, .66) 100%);
+}
+.pcard.royal-glow { animation: royalGlow 1.2s ease-in-out 2; }
+@keyframes royalGlow {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(240,210,141,.4), 0 0 8px rgba(240,210,141,.25); }
+  50% { box-shadow: 0 0 0 3px rgba(255,226,155,1), 0 0 30px rgba(255,196,80,.95); transform: translateY(-8px) scale(1.08); }
+}
 .self-count {
   position: absolute; right: 4px; bottom: 8px;
   display: flex; align-items: baseline; gap: 2px;
@@ -1291,6 +1560,31 @@ button:disabled { cursor: default; }
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
 }
+.skill-slot {
+  position: relative;
+  min-width: 0;
+  height: 48px;
+  border: 1px dashed rgba(212, 176, 106, .28);
+  border-radius: 4px;
+  background: rgba(4, 15, 12, .28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .02);
+}
+.skill-slot:not(.filled)::after {
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(212, 176, 106, .22);
+  box-shadow: 0 0 0 1px rgba(212, 176, 106, .08);
+}
+.skill-slot.filled {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+.skill-slot .skill-btn { width: 100%; height: 100%; }
 .skill-btn {
   position: relative;
   min-width: 0;
@@ -1316,6 +1610,9 @@ button:disabled { cursor: default; }
 .skill-btn.skill-guowu { --glow-rgb: 239, 179, 111; }
 .skill-btn.skill-qijin { --glow-rgb: 240, 152, 92; }
 .skill-btn.skill-yuanmen { --glow-rgb: 158, 198, 168; }
+.skill-btn.skill-geshan { --glow-rgb: 226, 166, 88; }
+.skill-btn.skill-shuangbi { --glow-rgb: 126, 190, 188; }
+.skill-btn.skill-pindming { --glow-rgb: 226, 112, 96; }
 .skill-btn.armed {
   border-color: rgba(255, 232, 172, .95);
   box-shadow:
@@ -1408,6 +1705,9 @@ button:disabled { cursor: default; }
 .skill-btn.skill-guowu .skill-glyph { color: #f2c58d; border-color: rgba(226,164,91,.5); }
 .skill-btn.skill-qijin .skill-glyph { color: #ffd0a5; border-color: rgba(240,152,92,.55); }
 .skill-btn.skill-yuanmen .skill-glyph { color: #c8e8d6; border-color: rgba(158,198,168,.55); }
+.skill-btn.skill-geshan .skill-glyph { color: #f0c88c; border-color: rgba(226,166,88,.55); }
+.skill-btn.skill-shuangbi .skill-glyph { color: #c2eceb; border-color: rgba(126,190,188,.55); }
+.skill-btn.skill-pindming .skill-glyph { color: #ffc1b5; border-color: rgba(226,112,96,.55); }
 .skill-copy { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .skill-copy b {
   font-family: var(--kai);
@@ -1439,6 +1739,34 @@ button:disabled { cursor: default; }
 .skill-btn.available .skill-lamp { background: rgb(var(--glow-rgb)); box-shadow: 0 0 9px rgba(var(--glow-rgb), .9); }
 .skill-btn.reaction-ready .skill-lamp { background: #ff8070; box-shadow: 0 0 10px rgba(255,128,112,.9); }
 .control-row { display: flex; gap: 7px; }
+.skill-response-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 30px;
+  padding: 4px 8px;
+  border: 1px solid rgba(226, 166, 88, .5);
+  border-radius: 5px;
+  background: linear-gradient(180deg, rgba(57, 39, 18, .92), rgba(20, 14, 8, .94));
+  box-shadow: 0 0 14px rgba(226, 166, 88, .18);
+}
+.skill-response-bar span {
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: .04em;
+  color: #f3ddb0;
+}
+.skill-response-skip {
+  flex: none;
+  padding: 3px 9px;
+  border: 1px solid rgba(212, 176, 106, .4);
+  border-radius: 4px;
+  font-size: 10px;
+  color: rgba(241, 226, 197, .8);
+  background: rgba(0, 0, 0, .18);
+}
+.skill-response-skip:hover { border-color: rgba(241, 214, 158, .8); color: #fff4d7; }
 .btn {
   position: relative;
   height: 42px;
@@ -1802,6 +2130,45 @@ button:disabled { cursor: default; }
   max-width: calc(var(--ui-vw) * 96 / 100);
 }
 .cinematic-title.short { font-size: clamp(68px, calc(var(--ui-vw) * 11 / 100), 142px); }
+.extra-rule-badge {
+  position: absolute;
+  top: 31%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 5px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(240, 210, 141, .36);
+  background: rgba(8, 22, 18, .88);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 9px;
+  letter-spacing: .06em;
+  z-index: 9;
+  pointer-events: none;
+  white-space: nowrap;
+  animation: extraRuleIn .35s cubic-bezier(.2,.9,.3,1);
+}.extra-rule-badge[hidden] { display: none; }
+.extra-rule-badge b { font-family: var(--kai); font-size: 16px; font-weight: 700; }
+.extra-rule-badge b.red { color: #f06a5e; text-shadow: 0 0 12px rgba(230, 70, 56, .4); }
+.extra-rule-badge b.black { color: #d8e2dd; }
+.extra-rule-badge em { font-style: normal; color: #d4b06a; }
+@keyframes extraRuleIn {
+  from { opacity: 0; transform: translate(-50%, 6px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+.cinematic-title .decree-name {
+  display: inline-block;
+  color: #e84f42;
+  font-size: 1.35em;
+  line-height: .9;
+  text-shadow:
+    0 0 1px rgba(255, 226, 214, .8),
+    0 3px 0 rgba(0, 0, 0, .38),
+    0 0 26px rgba(228, 66, 52, .55);
+}
 .cinematic-sub {
   margin-top: 10px;
   font-family: var(--kai);
@@ -1833,6 +2200,9 @@ button:disabled { cursor: default; }
 .skill-cinematic[data-skill="guowuguan"] { --accent: #efb36f; }
 .skill-cinematic[data-skill="qijin"] { --accent: #f0a15e; }
 .skill-cinematic[data-skill="yuanmen"] { --accent: #9ec6b0; }
+.skill-cinematic[data-skill="geshan"] { --accent: #e2a658; }
+.skill-cinematic[data-skill="shuangbi"] { --accent: #7ebebc; }
+.skill-cinematic[data-skill="pindming"] { --accent: #e27060; }
 
 /* ============ 抽屉 / 战报 ============ */
 .drawer-scrim {
@@ -2034,7 +2404,13 @@ button:disabled { cursor: default; }
 .turn-arrow.show {
   opacity: 1;
   transform: translate(-50%, -100%) scale(1);
-  animation: turnArrowPulse 1.1s ease-in-out infinite alternate;
+  animation:
+    turnArrowPulse 1.1s ease-in-out infinite alternate,
+    turnArrowBob 1s ease-in-out infinite;
+}
+@keyframes turnArrowBob {
+  0%, 100% { transform: translate(-50%, -100%) scale(1); }
+  50% { transform: translate(-50%, calc(-100% - 5px)) scale(1); }
 }
 @keyframes turnArrowPulse {
   from {
@@ -2047,6 +2423,13 @@ button:disabled { cursor: default; }
       drop-shadow(0 0 8px rgba(255, 228, 135, 1))
       drop-shadow(0 0 22px rgba(255, 190, 43, .85));
   }
+}
+.turn-arrow.shuangbi-lock {
+  background: linear-gradient(180deg, #ffe0d4 0%, #ff6b59 38%, #b3261d 100%);
+  filter:
+    drop-shadow(0 0 8px rgba(255, 92, 72, .95))
+    drop-shadow(0 0 22px rgba(220, 44, 30, .7)) !important;
+  animation: none !important;
 }
 .reveal-layer {
   position: fixed;
@@ -2108,6 +2491,70 @@ button:disabled { cursor: default; }
   color: rgba(241, 213, 155, .72);
   font-family: var(--kai);
   font-size: 14px;
+}
+.pm-reveal-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  perspective: 900px;
+}
+.pm-reveal-card {
+  width: 120px;
+  height: 169px;
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .45));
+}
+.pm-reveal-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.pm-reveal-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.pm-reveal-front .pcard {
+  width: 120px;
+  height: 169px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px rgba(240, 210, 141, .72), 0 0 28px rgba(240, 210, 141, .32);
+}
+.pm-reveal-back {
+  transform: rotateY(180deg);
+  width: 120px;
+  height: 169px;
+  border-radius: 8px;
+}
+.pm-reveal-back::after {
+  content: "江";
+  font-size: 26px;
+}
+.shuangbi-pair-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 212;
+  pointer-events: none;
+  overflow: hidden;
+}
+.shuangbi-pair-card {
+  position: fixed;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 16px 22px rgba(0, 0, 0, .5));
+}
+.shuangbi-pair-card .pcard {
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+  box-shadow: 0 0 0 1px rgba(240, 210, 141, .55), 0 0 22px rgba(126, 190, 188, .28);
 }
 .arrow-path {
   fill: none;
@@ -2466,7 +2913,7 @@ button:disabled { cursor: default; }
   justify-content: center;
   align-items: center;
   overflow-y: auto;
-  padding: 30px 20px;
+  padding: 18px 20px;
   background:
     radial-gradient(ellipse at 50% 34%, rgba(29, 71, 58, .5), transparent 46%),
     linear-gradient(180deg, rgba(4, 10, 9, .96), rgba(4, 10, 9, .985));
@@ -2904,6 +3351,7 @@ button:disabled { cursor: default; }
   .self-name { font-size: 16px; }
   .self-title { display: none; }
   .skill-grid { gap: 5px; }
+  .skill-slot { height: 42px; }
   .skill-btn { height: 42px; padding: 3px 5px; gap: 5px; }
   .skill-glyph { width: 25px; height: 25px; font-size: 14px; }
   .skill-copy i { display: none; }
@@ -3053,6 +3501,7 @@ button:disabled { cursor: default; }
 
   .action-pad { flex: none; gap: 4px; padding: 0; }
   .skill-grid { grid-template-columns: repeat(3, 1fr); gap: 3px; }
+  .skill-slot { height: 37px; }
   .skill-btn { height: 37px; padding: 2px 3px; gap: 3px; justify-content: center; }
   .skill-glyph { width: 20px; height: 20px; font-size: 11px; }
   .skill-copy b { font-size: 8px; letter-spacing: 0; }
@@ -3279,8 +3728,9 @@ body { font-size: 17px; }
 .gwr-points b { font-size: 21px; }
 .guowu-winner { font-size: 16px; }
 .hero-sub { font-size: 14px; }
-.hero-skill span { font-size: 11px; }
-.hero-skill { min-height: 104px; }
+.hero-skill span { font-size: 10px; }
+.hero-skill { min-height: 80px; padding: 8px 6px; }
+.hero-skills { gap: 8px; margin-top: 20px; }
 .hero-stats { font-size: 11.5px; }
 .start-btn i { font-size: 9.5px; }
 .start-footer { font-size: 10px; }
@@ -3408,10 +3858,7 @@ body { font-size: 17px; }
   .control-row {
     position: absolute;
     z-index: 36;
-    left: calc(
-      var(--dock-pad-x) + 150px + var(--dock-gap) +
-      (100% - var(--dock-pad-x) * 2 - 150px - var(--action-w) - var(--dock-gap) * 2) / 2 - 22px
-    );
+    left: 50%;
     right: auto;
     transform: translateX(-50%);
     bottom: calc(100% + 8px);
@@ -4069,7 +4516,21 @@ body { font-size: 17px; }
   .setting-copy span { font-size: 9px; }
   .setting-value { font-size: 20px; }
   .settings-actions .btn { height: 38px; }
+  .score-counter { top: -60px; padding: 4px 8px 5px; }
+  .counter-num { font-size: 18px; }
+  .counter-line em { font-size: 8px; }
+  .self-counter { top: -64px; left: 2px; transform: translateY(-40px) scale(1.25); }
+  .pending-score {
+    min-width: 0;
+    width: calc(100% - 24px);
+    gap: 10px;
+    padding: 5px 10px 6px;
+  }
+  .pending-score .pending-title { font-size: 8px; }
+  .pending-num { font-size: 18px; }
+  .pending-tooltip { width: calc(100% - 42px); bottom: 92px; }
 }
+
 
 .setting-switch[aria-checked="false"] span { color: #705b3d; }
 
@@ -4097,15 +4558,19 @@ body { font-size: 17px; }
       <div class="brand-seal" aria-hidden="true"><span>江</span><span>湖</span></div>
       <div class="brand-copy">
         <h1>技能斗地主</h1>
-        <p>一桌风云 · 六门绝技</p>
+        <p>一桌风云 · 九门绝技</p>
       </div>
     </div>
     <div class="hud" aria-label="牌局信息">
-      <div class="hud-cell"><b id="hud-round">—</b><span>牌局</span></div>
+      <div class="hud-cell hud-round-cell"><b id="hud-round">—</b><span>牌局</span></div>
       <div class="hud-divider"></div>
-      <div class="hud-cell"><b id="hud-base">—</b><span>底分</span></div>
+      <div class="hud-cell hud-decree-cell" data-hud-tip="decree"><b id="hud-decree">—</b><span>本局令</span></div>
       <div class="hud-divider"></div>
-      <div class="hud-cell"><b id="hud-mult">×1</b><span>倍数</span></div>
+      <div class="hud-cell hud-extra-cell" data-hud-tip="extra"><b id="hud-extra">—</b><span>额外花色</span></div>
+      <div class="hud-divider"></div>
+      <div class="hud-cell hud-score-cell" data-hud-tip="score"><b id="hud-score-cards">4</b><span>分数牌</span></div>
+      <div class="hud-divider"></div>
+      <div class="hud-cell hud-mult-cell" data-hud-tip="mult"><b id="hud-mult-cards">2</b><span>倍率牌</span></div>
     </div>
     <div class="top-actions">
       <button class="icon-btn" id="btn-log" type="button" title="战报">
@@ -4141,6 +4606,10 @@ body { font-size: 17px; }
           </div>
 
           <div class="seat seat-left" id="seat-1" data-seat="1">
+            <div class="score-counter" id="counter-1">
+              <span class="counter-line counter-base"><em>基础</em><b class="counter-num" id="base-1">0</b><span class="counter-delta" id="base-delta-1"></span></span>
+              <span class="counter-line counter-mult"><em>倍率</em><b class="counter-num" id="mult-1">1.00</b><span class="counter-delta" id="mult-delta-1"></span></span>
+            </div>
             <div class="seat-main">
               <div class="avatar-wrap">
                 <div class="avatar avatar-blue" id="avatar-1">青</div>
@@ -4166,6 +4635,10 @@ body { font-size: 17px; }
           </div>
 
           <div class="seat seat-right" id="seat-2" data-seat="2">
+            <div class="score-counter" id="counter-2">
+              <span class="counter-line counter-base"><em>基础</em><b class="counter-num" id="base-2">0</b><span class="counter-delta" id="base-delta-2"></span></span>
+              <span class="counter-line counter-mult"><em>倍率</em><b class="counter-num" id="mult-2">1.00</b><span class="counter-delta" id="mult-delta-2"></span></span>
+            </div>
             <div class="seat-main">
               <div class="avatar-wrap">
                 <div class="avatar avatar-white" id="avatar-2">白</div>
@@ -4210,7 +4683,13 @@ body { font-size: 17px; }
             </div>
 
             <div class="trick-note" id="trick-note"></div>
+            <div class="pending-score" id="pending-score">
+              <span class="pending-title">本轮待结算</span>
+              <span class="pending-line pending-base-line"><em>基础</em><b class="pending-num" id="pending-base">0</b><span class="counter-delta" id="pending-base-delta"></span></span>
+              <span class="pending-line pending-mult-line"><em>倍率</em><b class="pending-num" id="pending-mult">0.00</b><span class="counter-delta" id="pending-mult-delta"></span></span>
+            </div>
           </div>
+          <div class="pending-tooltip" id="pending-tooltip" hidden></div>
 
           <div class="turn-clock" id="turn-clock" aria-live="polite">
             <svg viewBox="0 0 100 100" aria-hidden="true">
@@ -4267,6 +4746,10 @@ body { font-size: 17px; }
 
     <footer class="bottom-dock">
       <div class="self-profile">
+        <div class="score-counter self-counter" id="counter-0">
+          <span class="counter-line counter-base"><em>基础</em><b class="counter-num" id="base-0">0</b><span class="counter-delta" id="base-delta-0"></span></span>
+          <span class="counter-line counter-mult"><em>倍率</em><b class="counter-num" id="mult-0">1.00</b><span class="counter-delta" id="mult-delta-0"></span></span>
+        </div>
         <div class="avatar-wrap">
           <div class="avatar avatar-human" id="avatar-0">我</div>
           <span class="role-badge" id="role-0">待定</span>
@@ -4277,7 +4760,6 @@ body { font-size: 17px; }
           <div class="self-title">无名侠客</div>
           <div class="self-score"><b id="score-0">0</b><span>分</span></div>
         </div>
-        <div class="self-count"><b id="count-0">17</b><span>张</span></div>
       </div>
 
       <div class="hand-wrap" id="hand-wrap">
@@ -4299,36 +4781,16 @@ body { font-size: 17px; }
 
       <div class="action-pad">
         <div class="skill-grid" id="skill-grid">
-          <button class="skill-btn skill-siliang" data-skill="siliang" type="button" title="四两拨千斤：4+2 压单张/对子；44+22 镇山炸">
-            <span class="skill-glyph">四</span>
-            <span class="skill-copy"><b>四两拨千斤</b><i>4+2 / 44+22</i></span>
-            <span class="skill-lamp"></span>
-          </button>
-          <button class="skill-btn skill-sanren" data-skill="sanren" type="button" title="三人行必有我师：有牌权时弃 JQK，抽一人一张牌，再还一张">
-            <span class="skill-glyph">三</span>
-            <span class="skill-copy"><b>三人行</b><i>J Q K · 换牌</i></span>
-            <span class="skill-lamp"></span>
-          </button>
-          <button class="skill-btn skill-jiujiu" data-skill="jiujiu" type="button" title="九九归一：场上出现 A 时，弃两张 9 抢走 A 并获牌权">
-            <span class="skill-glyph">九</span>
-            <span class="skill-copy"><b>九九归一</b><i>A 现 · 抢牌权</i></span>
-            <span class="skill-lamp"></span>
-          </button>
-          <button class="skill-btn skill-guowu" data-skill="guowuguan" type="button" title="过五关斩六将：有牌权时弃 5566，全场弃至多两张；发起者 +6 分，比分最高者得牌权">
-            <span class="skill-glyph">五</span>
-            <span class="skill-copy"><b>过五关</b><i>55 66 · 发起 +6</i></span>
-            <span class="skill-lamp"></span>
-          </button>
-          <button class="skill-btn skill-qijin" data-skill="qijin" type="button" title="七进七出：打出对 7 留下两道枪痕；其他玩家再打出同花色牌时，收回一张并拦下胜局">
-            <span class="skill-glyph">七</span>
-            <span class="skill-copy"><b>七进七出</b><i>对 7 · 枪出如龙</i></span>
-            <span class="skill-lamp"></span>
-          </button>
-          <button class="skill-btn skill-yuanmen" data-skill="yuanmen" type="button" title="辕门射戟：上一手含 J 时，弃一张 A，令另外两人各弃至多两张，你重获牌权">
-            <span class="skill-glyph">辕</span>
-            <span class="skill-copy"><b>辕门射戟</b><i>J 手 · 弃 A 夺权</i></span>
-            <span class="skill-lamp"></span>
-          </button>
+          <div class="skill-slot" data-slot="1"></div>
+          <div class="skill-slot" data-slot="2"></div>
+          <div class="skill-slot" data-slot="3"></div>
+          <div class="skill-slot" data-slot="4"></div>
+          <div class="skill-slot" data-slot="5"></div>
+          <div class="skill-slot" data-slot="6"></div>
+        </div>
+        <div class="skill-response-bar" id="skill-response-bar" hidden>
+          <span id="skill-response-copy"></span>
+          <button class="skill-response-skip" id="btn-skill-response-skip" type="button">略过</button>
         </div>
         <div class="control-row" id="control-row">
           <button class="btn btn-ghost" id="btn-pass" type="button" disabled>不出</button>
@@ -4479,7 +4941,7 @@ body { font-size: 17px; }
           <p class="rule-note">顺子、连对、飞机的主体不含 2 与大小王。炸弹压普通牌型，王炸最大。只有同牌型、同张数才能比较大小。</p>
         </section>
         <section>
-          <h3>二、六门绝技</h3>
+          <h3>二、九门绝技</h3>
           <div class="rule-skill">
             <div class="rule-skill-mark">四</div>
             <div><h4>四两拨千斤</h4><p>一张 4 + 一张 2 同时出，可压过任意单张或对子（单张大小王、王炸除外）。两张 4 + 两张 2 同时出，视为镇山炸：除王炸外最大的炸弹，可压所有普通炸弹。</p><p class="rule-tip">4+2 打出后本身是一手特殊牌，只有炸弹、镇山炸或王炸能继续压它。</p><p class="rule-tip">A+2 点数不同，不能组成对子；能跨点数压对子的组合只有 4+2。</p></div>
@@ -4504,16 +4966,29 @@ body { font-size: 17px; }
             <div class="rule-skill-mark">辕</div>
             <div><h4>辕门射戟</h4><p>每局限一次。轮到你出牌，且上一手有效牌中至少含一张 J 时，可弃置自己一张 A 发动：另外两人按座位顺序，各从手牌中弃置至多两张（公开），每人至少保留一张；若某人只有一张手牌，则不弃。</p><p>结算后你立即获得自由出牌权，开始新一轮领出。弃 A 后若自己手牌为 0，则不能发动；技能弃置的 A 不触发九九归一。</p><p class="rule-tip">若辕门射戟与九九归一的时机同时满足，屏幕会同时显示两个窗口，只能选择其中一个使用。辕门射戟的 A 是弃置，不是出牌，因此不会触发九九归一。</p></div>
           </div>
+          <div class="rule-skill">
+            <div class="rule-skill-mark">隔</div>
+            <div><h4>隔山打牛</h4><p>响应技，每局限 2 次。上家打出三带一 / 三带一对 / 两连飞机带单 / 带对，完成比较且未获胜后，你是他的下家，手中有与主体三张同点数的余牌，即可弃置并公开这些余牌。</p><p>上家从弃牌区收回本手全部带牌，立即获得自由出牌权；主体三张 / 飞机留在弃牌区。弃后至少留 1 张手牌，带牌含大小王不触发。</p><p class="rule-tip">只响应下家，同一手牌最多一次；弃置与收回的牌都不触发九九归一。</p></div>
+          </div>
+          <div class="rule-skill">
+            <div class="rule-skill-mark">双</div>
+            <div><h4>双璧锁关</h4><p>农民配合响应技，每局限 1 次。地主下家打出普通对子且未获胜后，地主上家若手中有同点数的一对，可弃置并公开这对牌，跳过地主的出牌机会。</p><p>地主下家立即继续出更大的对子；没有则过牌。之后由地主上家自由出牌。当前牌面仍以地主下家刚出的对子为比较基准，弃置的同点对子只是发动成本。</p><p class="rule-tip">只响应普通对子；连对、三带对、飞机带对不触发；弃置对子不触发九九归一；地主无此技能。</p></div>
+          </div>
+          <div class="rule-skill">
+            <div class="rule-skill-mark">拼</div>
+            <div><h4>拼命三郎</h4><p>被动技，每局限 1 次。任意时刻手牌数变为 1 且这张牌点数为 3 时，立即自动触发：将这张 3 变为 17 - n 点数的牌，花色保留；变为大小王时无花色。</p><p>n = 本局你本人使用四两拨千斤 + 王炸 + 飞机 + 普通炸弹的次数。n=0 大王、1 小王、2 为 2、3 为 A，依次递减，n≥14 仍为 3。触发瞬间计算一次，之后不再重算。</p><p class="rule-tip">变出的牌仍需正常打出；变 A 不立即触发九九归一，变王不触发火枪手、不能单独组成王炸；技能变牌本身不触发其他技能。</p></div>
+          </div>
         </section>
         <section>
           <h3>三、计时与计分</h3>
-          <p>每次轮到你出牌有 60 秒。超时自动不出；若你是首出，则自动打出最小单张。技能选择有 20 秒，A 抢牌窗口 4 秒；辕门与九九归一同时可选时，辕门窗口 5 秒、抢 A 总窗口 7 秒。过五关选弃超时，会自动选中点数最小的至多两张。</p>
-          <p>底分为叫分。每出一个炸弹 / 王炸 / 镇山炸，倍数 ×2；春天或反春天再 ×2。地主胜：地主 +2×底分×倍数，农民各扣 1×；农民胜则相反。</p>
+          <p>每次轮到你出牌有 60 秒。超时自动不出；若你是首出，则自动打出最小单张。A 抢牌窗口 4 秒；辕门与九九归一同时可选时，辕门窗口 5 秒、抢 A 总窗口 7 秒。过五关选弃超时，会自动选中点数最小的至多两张。</p>
+          <p>每次入局进行三局，三局江湖令互不重复。每局基础分从 0 开始，地主倍率 1.00、农民 1.20；叫分加到地主基础分，出牌 +1，获得自由出牌权 +5。胜方基础分地主 +30、农民各 +20，本局得分 = 基础分 × 倍率，三局累计最高者胜。</p>
+          <p>每局随机标记 4 张淡蓝分牌（+5 基础分）和 2 张淡红倍率牌（+0.10 倍率）；被压后进入桌面待结算，获得牌权者结算且每张只结算一次。普通炸弹 / 王炸全体倍率 ×2，镇山炸 ×2.5；低阶四两只给使用者 +0.20。</p>
           <p class="rule-note">AI 出牌思考时间在 1–5 秒内随机；两名 AI 水平相近，会互相配合、保留炸弹并主动使用技能。</p>
         </section>
         <section>
           <h3>四、技能教学与表情</h3>
-          <p>首页六个技能方块都可以点开：先看技能说明，再点最下方的「进入教学」，进入固定牌局。教学关的等待操作不限时；四两拨千斤分 1/2、2/2 两段，其余技能完成一次释放后自动回到技能说明界面。</p>
+          <p>首页九个技能方块都可以点开：先看技能说明，再点最下方的「进入教学」，进入固定牌局。教学关的等待操作不限时；四两拨千斤分 1/2、2/2 两段，拼命三郎分 1/2、2/2 两段，其余技能完成一次释放后自动回到技能说明界面。</p>
           <p>对局中，手牌右下角「理」旁边的「表」按钮可呼出江湖表情窗；按钮与理牌键同字体、同尺寸，点选即可发送。两名 AI 也会根据手牌、压牌、过牌和临近胜负的局势，在操作前发送炫耀、失落、无语、愤怒、振作、开心或思考。</p>
           <p>右上角「设置」或首页「设置」可打开设置面板：音效开关已收入其中；「界面尺寸」滑块可整体缩放 UI、汉字、表情与按键。桌面最高 120%，较窄屏幕会自动收紧上限，并重新收拢手牌、牌桌与按钮间距，避免互相遮挡。</p>
         </section>
@@ -4591,13 +5066,13 @@ body { font-size: 17px; }
   <div class="start-screen" id="start-screen">
     <div class="start-mist"></div>
     <div class="hero">
-      <div class="hero-topline"><span></span>单机 · 三人 · 六门绝技<span></span></div>
+      <div class="hero-topline"><span></span>单机 · 三人 · 九门绝技<span></span></div>
       <div class="hero-title-wrap">
         <div class="hero-vertical">江湖</div>
         <h1 class="hero-title">技能斗地主</h1>
         <div class="hero-seal">入局</div>
       </div>
-      <p class="hero-sub">四两拨千斤 · 三人行必有我师 · 九九归一 · 过五关斩六将 · 七进七出 · 辕门射戟</p>
+      <p class="hero-sub">九门绝技 · 点技能方块查看说明与固定教学</p>
       <div class="hero-skills" id="hero-skills" aria-label="点击查看技能说明与教学">
         <button class="hero-skill" type="button" data-skill="siliang"><b>四</b><span>以 4 与 2 借力打力<br>双四双二镇山压顶</span></button>
         <button class="hero-skill" type="button" data-skill="sanren"><b>三</b><span>弃 JQK，洗牌抽牌<br>择一人为我师</span></button>
@@ -4605,6 +5080,9 @@ body { font-size: 17px; }
         <button class="hero-skill" type="button" data-skill="guowuguan"><b>五</b><span>弃 5566，全场斩将<br>发起 +6 分，平分比花色</span></button>
         <button class="hero-skill" type="button" data-skill="qijin"><b>七</b><span>对 7 留枪痕<br>同花回马，枪出如龙</span></button>
         <button class="hero-skill" type="button" data-skill="yuanmen"><b>辕</b><span>逢 J 弃 A 开辕门<br>令两家弃牌，重夺牌权</span></button>
+        <button class="hero-skill" type="button" data-skill="geshan"><b>隔</b><span>下家弃余牌<br>隔山收回带牌</span></button>
+        <button class="hero-skill" type="button" data-skill="shuangbi"><b>双</b><span>农民弃同点对<br>锁地主，逼下家续对</span></button>
+        <button class="hero-skill" type="button" data-skill="pindming"><b>拼</b><span>孤张 3 化龙<br>按本局用牌变点</span></button>
       </div>
       <p class="hero-skill-hint">点击技能方块 · 查看说明与固定教学</p>
       <button class="start-btn" id="btn-start" type="button"><span>入 局</span><i>开始单机牌局</i></button>
@@ -4636,6 +5114,8 @@ body { font-size: 17px; }
     </div>
   </div>
 </div>
+
+<div class="hud-tooltip" id="hud-tooltip" hidden></div>
 
 <script>
 /*!
@@ -5241,6 +5721,281 @@ body { font-size: 17px; }
 
   function nextId(id) { return (id + 1) % 3; }
 
+  function createScoringState() {
+    return {
+      pendingBase: 0,
+      pendingMult: 0,
+      pendingSpecials: [],
+      pendingColor: [],
+      pendingSources: [],
+      pendingLong: 0,
+      longStarted: false,
+      beatenCards: [],
+      playsSinceLead: { 0: 0, 1: 0, 2: 0 },
+      passStreak: 0,
+      firstLead: true,
+      roundFinished: false
+    };
+  }
+
+  function scoringOf(game) {
+    if (!game.scoring) game.scoring = createScoringState();
+    return game.scoring;
+  }
+
+  function addPlayerBase(game, id, amount, reason, source) {
+    if (!amount) return;
+    var p = game.players[id];
+    var before = p.base;
+    p.base = Math.max(0, p.base + amount);
+    if (p.base > before && source) {
+      p.lastBaseSource = source;
+      p.baseSources.push(source);
+    }
+    if (reason) pushLog(game, 'score', reason, id);
+  }
+
+  function addPlayerMult(game, id, delta, reason, source) {
+    if (!delta) return;
+    var p = game.players[id];
+    var floor = p.role === 'farmer' ? 1.2 : 1;
+    var before = p.mult;
+    p.mult = Math.max(floor, p.mult + delta);
+    if (p.mult > before && source) {
+      p.lastMultSource = source;
+      p.multSources.push(source);
+    }
+    if (reason) pushLog(game, 'score', reason, id);
+  }
+
+  function addPending(game, base, mult, reason, source, cards) {
+    var sc = scoringOf(game);
+    if (base) sc.pendingSources.push({ kind: 'base', amount: base, source: source || '待结算', cards: cards || [] });
+    if (mult) sc.pendingSources.push({ kind: 'mult', amount: mult, source: source || '待结算', cards: cards || [] });
+    sc.pendingBase += base || 0;
+    sc.pendingMult += mult || 0;
+    if (reason) pushLog(game, 'score', reason, null);
+  }
+
+  function markSpecialPending(game, cards) {
+    var sc = scoringOf(game);
+    cards.forEach(function (c) {
+      var mark = game.specialMarks[c.id];
+      if (!mark || mark.settled || mark.pending) return;
+      mark.pending = true;
+      sc.pendingSpecials.push(c.id);
+      if (mark.type === 'score') addPending(game, 5, 0, '分牌进入待结算 · ' + c.label + ' +5 基础分', '分数牌', [c]);
+      else addPending(game, 0, 0.1, '倍率牌进入待结算 · ' + c.label + ' +0.10 倍率', '倍率牌', [c]);
+    });
+  }
+
+  function addPlayPendingCards(game, cards) {
+    var sc = scoringOf(game);
+    markSpecialPending(game, cards || []);
+    var colorSuit = game.extraSuit;
+    if (!colorSuit) return;
+    (cards || []).forEach(function (c) {
+      if (c.suit === colorSuit && !c._decreeCounted && !c._decreePending) {
+        c._decreePending = true;
+        sc.pendingColor.push(c);
+        addPending(game, 2, 0, '额外规则 · ' + suitName(colorSuit) + '：' + c.suitSymbol + c.label + ' 打出，待结算 +2 基础分', suitName(colorSuit) + '牌', [c]);
+      }
+    });
+  }
+
+  function updateLongPending(game, playerId) {
+    if (game.decree !== 'long') return;
+    var sc = scoringOf(game);
+    var total = (sc.playsSinceLead[0] || 0) + (sc.playsSinceLead[1] || 0) + (sc.playsSinceLead[2] || 0);
+    var n = total - (sc.playsSinceLead[playerId] || 0);
+    var desired = Math.round(n * 0.1 * 100) / 100;
+    var diff = Math.round((desired - (sc.pendingLong || 0)) * 100) / 100;
+    sc.pendingLong = desired;
+    if (diff) addPending(game, 0, diff, '长征令：待结算倍率调整为 +' + desired.toFixed(2), '长征令');
+  }
+
+  function markBeaten(game, cards) {
+    var sc = scoringOf(game);
+    (cards || []).forEach(function (c) {
+      sc.beatenCards.push(c);
+    });
+  }
+
+  function settlePending(game, leaderId) {
+    var sc = scoringOf(game);
+    var baseSources = {};
+    var multSources = {};
+    sc.pendingSources.forEach(function (s) {
+      if (s.kind === 'base' && s.amount > 0) baseSources[s.source] = true;
+      if (s.kind === 'mult' && s.amount > 0) multSources[s.source] = true;
+    });
+    var baseSourceText = Object.keys(baseSources).join('、') || '待结算';
+    var multSourceText = Object.keys(multSources).join('、') || '待结算';
+    if (sc.pendingBase) addPlayerBase(game, leaderId, sc.pendingBase,
+      game.players[leaderId].name + ' 结算桌面待结算基础分 +' + sc.pendingBase, baseSourceText);
+    if (sc.pendingMult) addPlayerMult(game, leaderId, sc.pendingMult,
+      game.players[leaderId].name + ' 结算桌面待结算倍率 +' + sc.pendingMult.toFixed(2), multSourceText);
+    sc.pendingSpecials.forEach(function (id) {
+      var mark = game.specialMarks[id];
+      if (mark) {
+        pushLog(game, 'score', (mark.type === 'score' ? '分牌结算：+5 基础分' : '倍率牌结算：+0.10 倍率') +
+          ' · ' + game.players[leaderId].name, leaderId);
+        mark.settled = true;
+        mark.pending = false;
+      }
+    });
+    sc.pendingColor.forEach(function (c) {
+      c._decreeCounted = true;
+      c._decreePending = false;
+    });
+    sc.pendingSpecials = [];
+    sc.pendingColor = [];
+    sc.pendingSources = [];
+    sc.pendingLong = 0;
+    sc.pendingBase = 0;
+    sc.pendingMult = 0;
+  }
+
+  function awardLead(game, playerId, reason, combo) {
+    var sc = scoringOf(game);
+    addPlayerBase(game, playerId, 5, game.players[playerId].name + ' 获得自由出牌权 +5 基础分', '获得牌权');
+    var decree = game.decree;
+    // 额外规则：随机花色的被压牌
+    if (game.extraSuit) {
+      var counted = sc.pendingColor.filter(function (c) {
+        return c.suit === game.extraSuit && !c._decreeCounted;
+      });
+      if (counted.length) {
+        pushLog(game, 'score', '额外规则 · ' + suitName(game.extraSuit) + '：获得牌权，前序 ' + counted.length + ' 张，+' + counted.length * 2 + '基础分', playerId);
+      }
+    }
+    // 双持令：以对子获得牌权
+    if (decree === 'double' && combo && combo.type === 'pair') {
+      addPlayerMult(game, playerId, 0.5, '双持令：以对子获得牌权，+0.50 倍率', '双持令');
+    }
+    // 长征令
+    if (decree === 'long' && !sc.firstLead) {
+      updateLongPending(game, playerId);
+      var nLong = 0;
+      [0, 1, 2].forEach(function (id) {
+        if (id !== playerId) {
+          var cLong = sc.playsSinceLead[id] || 0;
+          nLong += cLong;
+          if (cLong) addPlayerBase(game, id, cLong * 2, '长征令：' + game.players[id].name + ' 上一轮出牌 ' + cLong + ' 人次，+' + cLong * 2 + '基础分', '长征令');
+        }
+      });
+      if (nLong) pushLog(game, 'score', '长征令：' + game.players[playerId].name + ' 获得牌权，其他玩家出牌 ' + nLong + ' 人次，+' + (nLong * 0.1).toFixed(2) + '倍率', playerId);
+    }
+    // 均衡令
+    if (decree === 'balance') {
+      game.players.forEach(function (p) {
+        var suits = {};
+        p.hand.forEach(function (c) { if (c.suit) suits[c.suit] = true; });
+        var n = Object.keys(suits).length;
+        if (n) addPlayerBase(game, p.id, n * 2, '均衡令：' + p.name + ' 剩 ' + n + ' 种花色，+' + n * 2 + '基础分', '均衡令');
+      });
+    }
+    var transferBase = sc.pendingBase;
+    var transferMult = sc.pendingMult;
+    settlePending(game, playerId);
+    if (transferBase || transferMult) {
+      sc.awardSeq = (sc.awardSeq || 0) + 1;
+      sc.lastAward = {
+        seq: sc.awardSeq,
+        playerId: playerId,
+        base: transferBase,
+        mult: transferMult
+      };
+    }
+    sc.beatenCards = [];
+    sc.playsSinceLead = { 0: 0, 1: 0, 2: 0 };
+    sc.passStreak = 0;
+    sc.firstLead = false;
+    if (reason) pushLog(game, 'score', game.players[playerId].name + ' ' + reason, playerId);
+  }
+
+  function decreeName(key) {
+    return {
+      hearts: '红桃令', spades: '黑桃令', clubs: '梅花令', diamonds: '方片令',
+      duel: '比武令', double: '双持令', long: '长征令', balance: '均衡令',
+      charge: '蓄力令', royal: '王储令'
+    }[key] || '江湖令';
+  }
+
+  function suitName(suit) {
+    return { H: '红桃', S: '黑桃', C: '梅花', D: '方片' }[suit] || '';
+  }
+
+  function onSkillScored(game, playerId, kind) {
+    if (game.decree !== 'duel') return;
+    if (kind === 'shuangbi') {
+      [nextId(game.landlord), nextId(nextId(game.landlord))].forEach(function (id) {
+        if (id !== game.landlord) addPlayerMult(game, id, 0.1, '比武令：双璧锁关，' + game.players[id].name + ' +0.10 倍率', '比武令');
+      });
+      return;
+    }
+    addPlayerMult(game, playerId, 0.1, '比武令：' + game.players[playerId].name + ' 发动技能 +0.10 倍率', '比武令');
+  }
+
+  function scoreRoyalJoker(game, playerId, cards) {
+    if (game.decree !== 'royal') return null;
+    var jokers = cards.filter(function (c) { return c.rank >= 16; });
+    if (!jokers.length) return null;
+    jokers.forEach(function (j) {
+      addPlayerBase(game, playerId, j.rank === 17 ? 10 : 5,
+        '王储令：打出' + (j.rank === 17 ? '大王' : '小王') + ' +' + (j.rank === 17 ? 10 : 5) + ' 基础分', '王储令');
+    });
+    var changes = [];
+    jokers.forEach(function (j) {
+      var wantSuit = j.rank === 17 ? 'H' : 'S';
+      var wantRank = j.rank === 17 ? 13 : 13;
+      var altRank = j.rank === 17 ? 11 : 11;
+      var target = null;
+      var owner = null;
+      [0, 1, 2].some(function (id) {
+        var p = game.players[id];
+        var c = p.hand.find(function (x) { return x.suit === wantSuit && x.rank === wantRank; });
+        if (!c) c = p.hand.find(function (x) { return x.suit === wantSuit && x.rank === altRank; });
+        if (c) { target = c; owner = id; return true; }
+        return false;
+      });
+      if (!target) return;
+      var next = pindmingCard(target, j.rank);
+      next.id = 'RY' + (++game.pmSeq);
+      var hand = game.players[owner].hand;
+      hand[hand.findIndex(function (c) { return c.id === target.id; })] = next;
+      game.players[owner].hand = R.sortCards(hand, true);
+      pushLog(game, 'score', '王储令：' + game.players[owner].name + ' 的 ' +
+        target.suitSymbol + target.label + ' 变为' + (j.rank === 17 ? '大王' : '小王'), owner);
+      changes.push({ type: 'royal', owner: owner, oldCard: target, card: next, source: j.rank });
+    });
+    return changes.length ? changes : null;
+  }
+
+  function finishRoundScoring(game, winnerId) {    var sc = scoringOf(game);
+    if (sc.roundFinished) return;
+    sc.roundFinished = true;
+    var landlordWon = winnerId === game.landlord;
+    if (landlordWon) {
+      addPlayerBase(game, game.landlord, 30, '地主胜利：+30 基础分', '胜利');
+    } else {
+      game.players.forEach(function (p) {
+        if (p.id !== game.landlord) addPlayerBase(game, p.id, 20, '农民胜利：' + p.name + ' +20 基础分', '胜利');
+      });
+    }
+    game.players.forEach(function (p) {
+      p.roundScore = Math.round(p.base * p.mult * 100) / 100;
+      p.totalScore = Math.round((p.totalScore + p.roundScore) * 100) / 100;
+    });
+    sc.pendingBase = 0;
+    sc.pendingMult = 0;
+    sc.pendingSpecials = [];
+    sc.beatenCards = [];
+    pushLog(game, 'score', '本局结算：' + game.players.map(function (p) {
+      return p.name + ' ' + p.base.toFixed(0) + '×' + p.mult.toFixed(2) + '=' + p.roundScore.toFixed(2);
+    }).join('；'), null);
+  }
+
   function createGame(options) {
     var opts = options || {};
     var game = {
@@ -5259,10 +6014,22 @@ body { font-size: 17px; }
           role: null,
           bid: null,
           score: 0,
+          base: 0,
+          mult: 1,
+          lastBaseSource: '',
+          lastMultSource: '',
+          baseSources: [],
+          multSources: [],
+          roundScore: 0,
+          totalScore: 0,
           roundDelta: 0,
           lastAction: null,
           playCount: 0,
-          usedSkills: { sanren: 0, jiujiu: 0, guowuguan: 0, siliang: 0, qijin: 0, yuanmen: 0 }
+          usedSkills: {
+            sanren: 0, jiujiu: 0, guowuguan: 0, siliang: 0,
+            qijin: 0, yuanmen: 0, geshan: 0, shuangbi: 0, pindming: 0,
+            rocket: 0, plane: 0, bomb: 0
+          }
         };
       }),
       bottom: [],
@@ -5285,9 +6052,16 @@ body { font-size: 17px; }
       qijinMarks: [],
       qijinEvent: null,
       qijinSeq: 0,
-      roundSerial: 0,
+      pmSeq: 0,
+      lastPindming: null,
+      roundNo: 1,
+      decree: null,
+      extraSuit: null,
+      specialMarks: {},
+      scoring: null,      roundSerial: 0,
       firstBidder: 0
     };
+    game.scoring = createScoringState();
     return game;
   }
 
@@ -5306,6 +6080,10 @@ body { font-size: 17px; }
     game.qijinMarks = [];
     game.qijinEvent = null;
     game.qijinSeq = 0;
+    game.pmSeq = 0;
+    game.lastPindming = null;
+    game.specialMarks = {};
+    game.scoring = createScoringState();
     game.passes = 0;
     game.trick = 1;
     game.bombs = 0;
@@ -5318,14 +6096,29 @@ body { font-size: 17px; }
       p.role = null;
       p.bid = null;
       p.roundDelta = 0;
+      p.base = 0;
+      p.mult = 1;
+      p.lastBaseSource = '';
+      p.lastMultSource = '';
+      p.baseSources = [];
+      p.multSources = [];
+      p.roundScore = 0;
       p.lastAction = null;
       p.playCount = 0;
-      p.usedSkills = { sanren: 0, jiujiu: 0, guowuguan: 0, siliang: 0, qijin: 0, yuanmen: 0 };
+      p.usedSkills = {
+        sanren: 0, jiujiu: 0, guowuguan: 0, siliang: 0,
+        qijin: 0, yuanmen: 0, geshan: 0, shuangbi: 0, pindming: 0,
+        rocket: 0, plane: 0, bomb: 0
+      };
     });
   }
 
-  function startRound(game) {
+  function startRound(game, options) {
+    var opts = options || {};
     resetRoundState(game);
+    game.roundNo = opts.roundNo || game.roundNo || 1;
+    game.decree = opts.decree || game.decree || null;
+    game.extraSuit = opts.extraSuit || ['H', 'S', 'C', 'D'][Math.floor(game._rng() * 4)];
     var deck = R.shuffle(R.makeDeck(), game._rng);
     // 轮流发牌，每人 17 张，余 3 张底牌
     for (var i = 0; i < 51; i++) {
@@ -5333,6 +6126,17 @@ body { font-size: 17px; }
     }
     game.bottom = deck.slice(51, 54);
     game.players.forEach(function (p) { p.hand = R.sortCards(p.hand, true); });
+
+    // 4 张分牌 + 2 张倍率牌，互不重复。
+    var marked = R.shuffle(deck, game._rng).slice(0, 6);
+    marked.forEach(function (c, idx) {
+      game.specialMarks[c.id] = {
+        type: idx < 4 ? 'score' : 'mult',
+        settled: false,
+        pending: false
+      };
+    });
+    pushLog(game, 'score', '特殊牌已标记：4 张分牌（淡蓝，每张 +5 基础分）· 2 张倍率牌（淡红，每张 +0.10 倍率）', null);
 
     game.firstBidder = Math.floor(game._rng() * 3);
     game.turn = game.firstBidder;
@@ -5342,7 +6146,9 @@ body { font-size: 17px; }
       acted: [],
       history: []
     };
-    pushLog(game, 'round', '第 ' + game.round + ' 局 · ' + game.players[game.firstBidder].name + ' 先叫分', null);
+    pushLog(game, 'round', '第 ' + game.roundNo + ' 局 · ' + game.players[game.firstBidder].name + ' 先叫分', null);
+    if (game.decree) pushLog(game, 'decree', '本局江湖令：' + decreeName(game.decree), null);
+    pushLog(game, 'decree', '本局额外规则：' + suitName(game.extraSuit) + '，前序被压每张 +2 基础分', null);
     return game;
   }
 
@@ -5400,13 +6206,24 @@ body { font-size: 17px; }
     game.baseScore = game.bid.current;
     game.players.forEach(function (p) {
       p.role = p.id === landlord.id ? 'landlord' : 'farmer';
+      p.base = 0;
+      p.mult = p.role === 'landlord' ? 1 : 1.2;
     });
+    landlord.base += game.bid.current;
+    if (game.bid.current) {
+      landlord.lastBaseSource = '叫分';
+      landlord.baseSources.push('叫分');
+    }
+    if (game.bid.current) {
+      pushLog(game, 'score', '叫分 ' + game.bid.current + '：' + landlord.name + ' 基础分 +' + game.bid.current, landlord.id);
+    }
     landlord.hand = R.sortCards(landlord.hand.concat(game.bottom), true);
     game.phase = 'playing';
     game.turn = landlord.id;
     game.lastPlay = null;
     game.passes = 0;
     game.trick = 1;
+    awardLead(game, landlord.id, '开局获得自由出牌权');
     pushLog(game, 'landlord', landlord.name + ' 成为地主，底牌 ' + R.describeCards(game.bottom) + '，底分 ' + game.baseScore, landlord.id);
     return ok({
       landlord: landlord.id,
@@ -5449,21 +6266,57 @@ body { font-size: 17px; }
     player.playCount += 1;
     player.lastAction = useQijin ? '七进七出' : combo.label;
     game.discard = game.discard.concat(cards);
+    if (game.lastPlay) markBeaten(game, game.lastPlay.cards);
     game.lastPlay = { player: playerId, cards: cards, combo: combo };
     game.passes = 0;
     game.skillResult = null;
     game.qijinEvent = null;
+    game.royalChange = null;
+
+    addPlayerBase(game, playerId, 1, '出牌：' + player.name + ' +1 基础分', '出牌');
+    var scPlay = scoringOf(game);
+    scPlay.playsSinceLead[playerId] = (scPlay.playsSinceLead[playerId] || 0) + 1;
+    scPlay.passStreak = 0;
+    addPlayPendingCards(game, cards);
+    if (game.decree === 'long') {
+      if (!scPlay.longStarted) scPlay.longStarted = true;
+      else updateLongPending(game, playerId);
+    }
 
     if (combo.type === '42') {
       player.usedSkills.siliang += 1;
+      addPlayerMult(game, playerId, 0.2, '低阶四两拨千斤：' + player.name + ' 倍率 +0.20', '四两拨千斤');
+      onSkillScored(game, playerId, 'siliang');
     }
     if (combo.type === 'superBomb') {
       player.usedSkills.siliang += 1;
+      onSkillScored(game, playerId, 'siliang');
     }
+    if (combo.type === 'rocket') player.usedSkills.rocket += 1;
+    if (combo.type === 'plane' || combo.type === 'planeSingle' || combo.type === 'planePair') {
+      player.usedSkills.plane += 1;
+    }
+    if (combo.type === 'bomb') player.usedSkills.bomb += 1;
     if (combo.type === 'bomb' || combo.type === 'rocket' || combo.type === 'superBomb') {
       game.bombs += 1;
       game.multiplier *= 2;
+      var bombMult = combo.type === 'superBomb' ? 2.5 : 2;
+      var bombName = combo.type === 'superBomb' ? '镇山炸' : combo.type === 'rocket' ? '王炸' : '普通炸弹';
+      game.players.forEach(function (p) {
+        p.mult = Math.max(p.role === 'farmer' ? 1.2 : 1, p.mult * bombMult);
+        p.lastMultSource = bombName;
+        p.multSources.push(bombName);
+      });
+      pushLog(game, 'score', (combo.type === 'superBomb' ? '镇山炸' : combo.type === 'rocket' ? '王炸' : '普通炸弹') +
+        '：全体当前倍率 ×' + bombMult, playerId);
     }
+    if (game.decree === 'double') {
+      if (combo.type === 'pair') {
+        addPlayerBase(game, playerId, 3, '双持令：打出对子 +3 基础分', '双持令');
+      }
+    }
+    var royal = scoreRoyalJoker(game, playerId, cards);
+    if (royal) game.royalChange = royal;
 
     if (useQijin) {
       player.usedSkills.qijin += 1;
@@ -5521,7 +6374,14 @@ body { font-size: 17px; }
 
     var fin = finalizePlay(game, playerId, combo, game.lastPlay.cards);
     var out = { combo: combo, qijinActivated: useQijin };
+    if (game.royalChange) out.royalChange = game.royalChange;
     Object.keys(fin).forEach(function (k) { out[k] = fin[k]; });
+    var pm = checkPindming(game, playerId);
+    if (pm) out.pindming = pm;
+    if (!fin.win && !fin.reaction) {
+      var response = maybeOpenResponse(game, playerId, combo, cards);
+      if (response) Object.keys(response).forEach(function (k) { out[k] = response[k]; });
+    }
     return ok(out);
   }
 
@@ -5564,6 +6424,7 @@ body { font-size: 17px; }
 
     game.qijinMarks = game.qijinMarks.filter(function (m) { return m.key !== pending.mark.key; });
     pending.resolved = true;
+    onSkillScored(game, pending.actor, 'qijin');
     game.qijinEvent = {
       type: 'qijin',
       owner: pending.mark.owner,
@@ -5592,6 +6453,12 @@ body { font-size: 17px; }
     var fin = finalizePlay(game, actorId, combo, game.lastPlay ? game.lastPlay.cards : []);
     var out = { combo: combo, event: game.qijinEvent };
     Object.keys(fin).forEach(function (k) { out[k] = fin[k]; });
+    var pm = checkPindming(game, actorId);
+    if (pm) out.pindming = pm;
+    if (!fin.win && !fin.reaction && game.lastPlay && game.lastPlay.cards.length === combo.len) {
+      var response = maybeOpenResponse(game, actorId, combo, game.lastPlay.cards);
+      if (response) Object.keys(response).forEach(function (k) { out[k] = response[k]; });
+    }
     return ok(out);
   }
 
@@ -5622,6 +6489,349 @@ body { font-size: 17px; }
 
     game.turn = nextId(playerId);
     return { next: game.turn };
+  }
+
+  function comboBodyRanks(combo) {
+    if (!combo) return [];
+    if (combo.type === 'tripleSingle' || combo.type === 'triplePair') return [combo.key];
+    if ((combo.type === 'planeSingle' || combo.type === 'planePair') && combo.seqLen === 2) {
+      return [combo.key - 1, combo.key];
+    }
+    return [];
+  }
+
+  function comboWings(combo, cards) {
+    if (!combo || !cards) return [];
+    if (combo.wings) return combo.wings.slice();
+    var body = new Set(comboBodyRanks(combo));
+    if (!body.size) return [];
+    return cards.filter(function (c) { return !body.has(c.rank); });
+  }
+
+  function wingsHaveJoker(combo, cards) {
+    return comboWings(combo, cards).some(function (c) { return c.joker; });
+  }
+
+  function geshanOpportunity(game, previousId, combo, cards) {
+    if (game.phase !== 'playing' || game.reaction || !combo || !cards) return null;
+    var actor = game.players[previousId];
+    if (!actor || actor.hand.length === 0) return null;
+    var bodyRanks = comboBodyRanks(combo);
+    if (!bodyRanks.length || wingsHaveJoker(combo, cards)) return null;
+    var bId = nextId(previousId);
+    var b = game.players[bId];
+    if (!b || b.usedSkills.geshan >= 2) return null;
+    if (b.hand.length <= bodyRanks.length) return null;
+    var bodyCards = bodyRanks.map(function (r) {
+      return b.hand.find(function (c) { return c.rank === r && !c.joker; }) || null;
+    });
+    if (bodyCards.some(function (c) { return !c; })) return null;
+    return {
+      actor: bId,
+      previous: previousId,
+      combo: combo,
+      cards: cards.slice(),
+      bodyRanks: bodyRanks,
+      bodyCards: bodyCards,
+      wings: comboWings(combo, cards)
+    };
+  }
+
+  function shuangbiOpportunity(game, previousId, combo) {
+    if (game.phase !== 'playing' || game.reaction || !combo || combo.type !== 'pair') return null;
+    var d = game.landlord;
+    if (d == null) return null;
+    var aId = nextId(d);
+    if (previousId !== aId) return null;
+    var a = game.players[aId];
+    if (!a || a.hand.length === 0) return null;
+    var bId = nextId(aId);
+    if (bId === d) return null;
+    var b = game.players[bId];
+    if (!b || b.usedSkills.shuangbi >= 1) return null;
+    if (b.hand.length <= 2) return null;
+    var pair = b.hand.filter(function (c) { return c.rank === combo.key && !c.joker; }).slice(0, 2);
+    if (pair.length < 2) return null;
+    return {
+      actor: bId,
+      previous: aId,
+      landlord: d,
+      combo: combo,
+      pairRank: combo.key,
+      pair: pair
+    };
+  }
+
+  function maybeOpenResponse(game, previousId, combo, cards) {
+    if (game.phase !== 'playing' || game.reaction) return null;
+    var gs = geshanOpportunity(game, previousId, combo, cards);
+    if (gs) {
+      game.pending = {
+        type: 'geshan',
+        actor: gs.actor,
+        previous: previousId,
+        combo: combo,
+        cards: gs.cards,
+        bodyRanks: gs.bodyRanks,
+        bodyCards: gs.bodyCards,
+        wings: gs.wings
+      };
+      game.turn = gs.actor;
+      pushLog(game, 'skill', game.players[gs.actor].name + ' 可发动隔山打牛', gs.actor);
+      return { geshanPending: true };
+    }
+    var sb = shuangbiOpportunity(game, previousId, combo);
+    if (sb) {
+      game.pending = {
+        type: 'shuangbi',
+        stage: 'choose',
+        actor: sb.actor,
+        previous: sb.previous,
+        landlord: sb.landlord,
+        combo: combo,
+        pairRank: sb.pairRank,
+        pair: sb.pair
+      };
+      game.turn = sb.actor;
+      pushLog(game, 'skill', game.players[sb.actor].name + ' 可发动双璧锁关', sb.actor);
+      return { shuangbiPending: true };
+    }
+    return null;
+  }
+
+  function resolveGeshan(game, activate) {
+    if (game.phase !== 'playing' || !game.pending || game.pending.type !== 'geshan') {
+      return fail('当前没有待结算的隔山打牛');
+    }
+    var p = game.pending;
+    var b = game.players[p.actor];
+    if (!activate) {
+      game.pending = null;
+      game.turn = p.actor;
+      pushLog(game, 'skill', b.name + ' 不发动隔山打牛', p.actor);
+      return ok({ activated: false, next: game.turn });
+    }
+    var bodyCards = [];
+    var used = {};
+    p.bodyRanks.forEach(function (r) {
+      var c = b.hand.find(function (x) { return x.rank === r && !x.joker && !used[x.id]; });
+      if (c) { bodyCards.push(c); used[c.id] = true; }
+    });
+    if (bodyCards.length !== p.bodyRanks.length || b.hand.length - bodyCards.length < 1) {
+      return fail('余牌不足或弃置后没有手牌');
+    }
+    b.hand = R.removeCards(b.hand, bodyCards);
+    game.discard = game.discard.concat(bodyCards);
+    b.usedSkills.geshan += 1;
+    b.lastAction = '隔山打牛';
+
+    var a = game.players[p.previous];
+    var wings = p.wings.slice();
+    wings.forEach(function (c) {
+      var i = game.discard.findIndex(function (x) { return x.id === c.id; });
+      if (i >= 0) game.discard.splice(i, 1);
+    });
+    a.hand = R.sortCards(a.hand.concat(wings), true);
+    a.lastAction = '收回带牌';
+    game.pending = null;
+    game.lastPlay = null;
+    game.passes = 0;
+    game.trick += 1;
+    game.turn = p.previous;
+    game.skillResult = {
+      type: 'geshan',
+      actor: p.actor,
+      previous: p.previous,
+      discarded: bodyCards,
+      recovered: wings
+    };
+    onSkillScored(game, p.actor, 'geshan');
+    awardLead(game, p.previous, '隔山打牛收回带牌并获得牌权', null);
+    var pm = checkPindming(game, p.actor);
+    pushLog(game, 'skill', b.name + ' 发动【隔山打牛】，弃置 ' +
+      R.describeCards(bodyCards) + '；' + a.name + ' 收回 ' +
+      R.describeCards(wings) + ' 并获得出牌权', p.actor);
+    return ok({ activated: true, event: game.skillResult, pindming: pm, next: a.id });
+  }
+
+  function resolveShuangbi(game, activate) {
+    if (game.phase !== 'playing' || !game.pending || game.pending.type !== 'shuangbi' ||
+        game.pending.stage !== 'choose') {
+      return fail('当前没有待结算的双璧锁关');
+    }
+    var p = game.pending;
+    var b = game.players[p.actor];
+    if (!activate) {
+      game.pending = null;
+      game.turn = p.actor;
+      pushLog(game, 'skill', b.name + ' 不发动双璧锁关', p.actor);
+      return ok({ activated: false, next: game.turn });
+    }
+    var pair = b.hand.filter(function (c) { return c.rank === p.pairRank && !c.joker; }).slice(0, 2);
+    if (pair.length < 2 || b.hand.length - 2 < 1) return fail('同点数对子不足或弃置后没有手牌');
+    b.hand = R.removeCards(b.hand, pair);
+    game.discard = game.discard.concat(pair);
+    b.usedSkills.shuangbi += 1;
+    b.lastAction = '双璧锁关';
+    onSkillScored(game, p.actor, 'shuangbi');
+    p.stage = 'continueA';
+    p.pair = pair;
+    game.turn = p.previous;
+    game.skillResult = {
+      type: 'shuangbi',
+      actor: p.actor,
+      previous: p.previous,
+      pair: pair,
+      pairRank: p.pairRank
+    };
+    var pm = checkPindming(game, p.actor);
+    pushLog(game, 'skill', b.name + ' 发动【双璧锁关】，弃置 ' +
+      R.describeCards(pair) + '，跳过地主，' + game.players[p.previous].name + ' 继续出对子', p.actor);
+    return ok({ activated: true, event: game.skillResult, pindming: pm, next: p.previous });
+  }
+
+  function continueShuangbi(game, cardIds) {
+    if (game.phase !== 'playing' || !game.pending || game.pending.type !== 'shuangbi' ||
+        game.pending.stage !== 'continueA') {
+      return fail('当前没有双璧锁关的续出');
+    }
+    var p = game.pending;
+    var a = game.players[p.previous];
+    if (game.turn !== a.id) return fail('还没轮到续出');
+    if (!cardIds || !cardIds.length) {
+      game.pending = null;
+      game.lastPlay = null;
+      game.passes = 0;
+      game.trick += 1;
+      game.turn = p.actor;
+      awardLead(game, p.actor, '双璧锁关地主下家让过，地主上家获得牌权', null);
+      pushLog(game, 'skill', a.name + ' 没有更大的对子，双璧锁关结束，' +
+        game.players[p.actor].name + ' 自由出牌', p.actor);
+      return ok({ passed: true, next: game.turn });
+    }
+    var ids = Array.from(new Set(cardIds));
+    var cards = [];
+    for (var i = 0; i < ids.length; i++) {
+      var c = a.hand.find(function (x) { return x.id === ids[i]; });
+      if (!c) return fail('续出的牌不在手牌中');
+      cards.push(c);
+    }
+    var combo = R.detectCombo(cards);
+    if (!combo || combo.type !== 'pair' || combo.key <= p.combo.key) {
+      return fail('续出必须是对子，且点数大于刚才的对子');
+    }
+    a.hand = R.removeCards(a.hand, cards);
+    a.playCount += 1;
+    a.lastAction = '双璧续出';
+    game.discard = game.discard.concat(cards);
+    if (game.lastPlay) markBeaten(game, game.lastPlay.cards);
+    game.lastPlay = { player: a.id, cards: cards, combo: combo };
+    game.pending = null;
+    addPlayerBase(game, a.id, 1, '双璧续出：' + a.name + ' +1 基础分', '出牌');
+    var scSb = scoringOf(game);
+    scSb.playsSinceLead[a.id] = (scSb.playsSinceLead[a.id] || 0) + 1;
+    scSb.passStreak = 0;
+    addPlayPendingCards(game, cards);
+    if (game.decree === 'long') {
+      if (!scSb.longStarted) scSb.longStarted = true;
+      else updateLongPending(game, a.id);
+    }
+    if (game.decree === 'double') {
+      addPlayerBase(game, a.id, 3, '双持令：双璧续出对子 +3 基础分', '双持令');
+    }
+    pushLog(game, 'play', a.name + ' 受双璧锁关影响，续出 ' + combo.label + ' · ' + R.describeCards(cards), a.id);
+    if (a.hand.length === 0) {
+      endRound(game, a.id, 'play');
+      return ok({ win: true, combo: combo });
+    }
+    var aCount = R.countA(cards);
+    if (aCount > 0) {
+      var candidates = game.players.filter(function (pl) {
+        return pl.hand.length > 0 && R.hasDoubleNine(pl.hand);
+      }).map(function (pl) { return pl.id; });
+      if (candidates.length) {
+        game.reaction = {
+          player: a.id,
+          cards: cards.slice(),
+          combo: combo,
+          candidates: candidates,
+          aCount: aCount
+        };
+        return ok({ reaction: true, candidates: candidates, combo: combo });
+      }
+    }
+    game.lastPlay = null;
+    game.passes = 0;
+    game.trick += 1;
+    game.turn = p.actor;
+    awardLead(game, p.actor, '双璧续出结束，牌权交还', combo);
+    pushLog(game, 'skill', '双璧锁关结束，' + game.players[p.actor].name + ' 自由出牌', p.actor);
+    return ok({ next: game.turn, combo: combo });
+  }
+
+  function pindmingTarget(n) {
+    return Math.min(17, Math.max(3, 17 - n));
+  }
+
+  function pindmingCard(oldCard, value) {
+    var labels = { 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9',
+      10: '10', 11: 'J', 12: 'Q', 13: 'K', 14: 'A', 15: '2', 16: '小王', 17: '大王' };
+    var keys = { 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9',
+      10: '10', 11: 'J', 12: 'Q', 13: 'K', 14: 'A', 15: '2', 16: 'SJ', 17: 'BJ' };
+    var joker = value >= 16;
+    return {
+      id: 'PM' + (++pindmingCard.seq),
+      rank: value,
+      rankKey: keys[value],
+      label: labels[value],
+      short: labels[value],
+      point: value >= 16 ? (value === 17 ? 100 : 50) : value,
+      suit: joker ? null : oldCard.suit,
+      suitSymbol: joker ? '☆' : oldCard.suitSymbol,
+      suitName: joker ? '王' : oldCard.suitName,
+      suitOrder: joker ? 0 : oldCard.suitOrder,
+      color: joker ? (value === 17 ? 'red' : 'black') : oldCard.color,
+      joker: joker,
+      bigJoker: value === 17
+    };
+  }
+  pindmingCard.seq = 0;
+
+  function checkPindming(game, playerId) {
+    var p = game.players[playerId];
+    if (!p || p.usedSkills.pindming > 0 || p.hand.length !== 1) return null;
+    var oldCard = p.hand[0];
+    if (!oldCard || oldCard.rank !== 3) return null;
+    var n = (p.usedSkills.siliang || 0) + (p.usedSkills.rocket || 0) +
+      (p.usedSkills.plane || 0) + (p.usedSkills.bomb || 0);
+    var value = pindmingTarget(n);
+    var next = pindmingCard(oldCard, value);
+    next.id = 'PM' + (++game.pmSeq);
+    // 先只登记触发与新牌，等动画落位后再真正替换手牌，避免动画期间牌面提前变化。
+    p.usedSkills.pindming = 1;
+    return {
+      type: 'pindming',
+      actor: playerId,
+      oldCard: oldCard,
+      card: next,
+      n: n,
+      value: value
+    };
+  }
+
+  function applyPindming(game, event) {
+    if (!event || event.type !== 'pindming') return fail('没有待落位的拼命三郎');
+    var p = game.players[event.actor];
+    if (!p) return fail('玩家不存在');
+    var index = p.hand.findIndex(function (c) { return c.id === event.oldCard.id; });
+    if (index < 0) return fail('待变牌已不在手牌中');
+    p.hand.splice(index, 1, event.card);
+    p.lastAction = '拼命三郎';
+    game.lastPindming = event;
+    game.skillResult = event;
+    pushLog(game, 'skill', p.name + ' 触发【拼命三郎】，3 变为 ' +
+      event.card.label + '（n=' + event.n + '）', event.actor);
+    return ok({ event: event });
   }
 
   function canUseQijin(game, playerId) {
@@ -5762,10 +6972,18 @@ body { font-size: 17px; }
       results: results,
       freeLead: true
     };
+    onSkillScored(game, pending.actor, 'yuanmen');
+    awardLead(game, pending.actor, '辕门射戟重获牌权', null);
     pushLog(game, 'skill', '辕门射戟结算：' + results.map(function (r) {
       return game.players[r.player].name + (r.cards.length ? ' 弃 ' + r.cards.length + ' 张' : ' 不弃');
     }).join(' · ') + '，' + game.players[pending.actor].name + ' 重获牌权', pending.actor);
-    return ok({ results: results, actor: pending.actor });
+    var pm = null;
+    results.some(function (r) {
+      pm = checkPindming(game, r.player);
+      return !!pm;
+    });
+    if (!pm) pm = checkPindming(game, pending.actor);
+    return ok({ results: results, actor: pending.actor, pindming: pm });
   }
 
   function passTurn(game, playerId) {
@@ -5777,10 +6995,18 @@ body { font-size: 17px; }
     var player = game.players[playerId];
     player.lastAction = '不出';
     game.passes += 1;
+    var scPass = scoringOf(game);
+    if (game.decree === 'charge') {
+      var gain = scPass.passStreak + 1;
+      addPlayerBase(game, playerId, gain, '蓄力令：连续过牌第 ' + gain + ' 次，+' + gain + ' 基础分', '蓄力令');
+    }
+    scPass.passStreak += 1;
     pushLog(game, 'pass', player.name + ' 不出', playerId);
 
     if (game.passes >= 2) {
       var leader = game.lastPlay.player;
+      var winningCombo = game.lastPlay.combo;
+      awardLead(game, leader, '两家不出，重获牌权', winningCombo);
       game.lastPlay = null;
       game.passes = 0;
       game.trick += 1;
@@ -5834,6 +7060,7 @@ body { font-size: 17px; }
     target.hand = R.sortCards(target.hand, true);
     actor.lastAction = '三人行必有我师';
     actor.usedSkills.sanren += 1;
+    onSkillScored(game, playerId, 'sanren');
 
     game.pending = {
       type: 'sanrenReturn',
@@ -5872,7 +7099,8 @@ body { font-size: 17px; }
     game.pending = null;
     game.turn = playerId;
     pushLog(game, 'skill', actor.name + ' 将 ' + card.label + ' 归还给 ' + target.name, playerId);
-    return ok({ returned: card });
+    var pm = checkPindming(game, playerId) || checkPindming(game, target.id);
+    return ok({ returned: card, pindming: pm });
   }
 
   function canUseGuowuguan(game, playerId) {
@@ -5891,6 +7119,7 @@ body { font-size: 17px; }
     game.discard = game.discard.concat(cards);
     actor.lastAction = '过五关斩六将';
     actor.usedSkills.guowuguan += 1;
+    onSkillScored(game, playerId, 'guowuguan');
     pushLog(game, 'skill', actor.name + ' 施展过五关斩六将，弃置 5566', playerId);
 
     if (actor.hand.length === 0) {
@@ -6042,6 +7271,8 @@ body { font-size: 17px; }
     game.trick += 1;
     game.turn = winner;
     game.pending = null;
+    onSkillScored(game, actor, 'guowuguan');
+    awardLead(game, winner, '过五关斩六将夺得牌权', null);
     pushLog(game, 'skill', '过五关结算：' + results.map(function (r) {
       return game.players[r.player].name + ' ' + r.points + ' 点' + (r.bonus ? '（含发起 +6）' : '');
     }).join(' · ') + '，' + game.players[winner].name + ' 夺得牌权', winner);
@@ -6075,6 +7306,10 @@ body { font-size: 17px; }
     game.discard = game.discard.concat(nines);
     actor.lastAction = '九九归一';
     actor.usedSkills.jiujiu += 1;
+    if (game.decree === 'double') {
+      addPlayerBase(game, actorId, 3, '双持令：九九归一按对子结算 +3 基础分', '双持令');
+      addPlayerMult(game, actorId, 0.5, '双持令：九九归一以对子获得牌权，+0.50 倍率', '双持令');
+    }
     game.skillResult = {
       type: 'jiujiu',
       actor: actorId,
@@ -6087,8 +7322,11 @@ body { font-size: 17px; }
     game.passes = 0;
     game.trick += 1;
     game.turn = actorId;
+    onSkillScored(game, actorId, 'jiujiu');
+    awardLead(game, actorId, '九九归一夺得牌权', null);
     pushLog(game, 'skill', actor.name + ' 抢下九九归一，收走 ' + aCard.label + '，弃两张 9，夺得牌权', actorId);
-    return ok({ triggered: true, actor: actorId, aCard: aCard });
+    var pm = checkPindming(game, actorId);
+    return ok({ triggered: true, actor: actorId, aCard: aCard, pindming: pm });
   }
 
   function endRound(game, winnerId, reason) {
@@ -6105,6 +7343,7 @@ body { font-size: 17px; }
       spring = landlord.playCount <= 1;
     }
     if (spring) game.multiplier *= 2;
+    finishRoundScoring(game, winnerId);
 
     var unit = game.baseScore * game.multiplier;
     var deltas = {};
@@ -6170,6 +7409,15 @@ body { font-size: 17px; }
     resolveGuowuguan: resolveGuowuguan,
     compareGuowuResults: compareGuowuResults,
     resolveReaction: resolveReaction,
+    resolveGeshan: resolveGeshan,
+    resolveShuangbi: resolveShuangbi,
+    continueShuangbi: continueShuangbi,
+    checkPindming: checkPindming,
+    applyPindming: applyPindming,
+    decreeName: decreeName,
+    finishRoundScoring: finishRoundScoring,
+    comboBodyRanks: comboBodyRanks,
+    comboWings: comboWings,
     endRound: endRound,
     pushLog: pushLog
   };
@@ -6747,6 +7995,41 @@ body { font-size: 17px; }
     return 800 + Math.floor(Math.random() * 2200);
   }
 
+  function shouldGeshan(game, pending) {
+    if (!pending || pending.type !== 'geshan') return false;
+    var a = game.players[pending.previous];
+    var b = game.players[pending.actor];
+    if (!a || !b || b.usedSkills.geshan >= 2) return false;
+    if (a.hand.length <= 6) return true;
+    var spare = 0;
+    pending.bodyRanks.forEach(function (r) {
+      spare += Math.max(0, b.hand.filter(function (c) { return c.rank === r; }).length - 1);
+    });
+    return spare >= 2;
+  }
+
+  function shouldShuangbi(game, pending) {
+    if (!pending || pending.type !== 'shuangbi') return false;
+    var d = game.players[game.landlord];
+    var a = game.players[pending.previous];
+    var b = game.players[pending.actor];
+    if (!d || !a || !b || b.usedSkills.shuangbi >= 1) return false;
+    if (d.hand.length <= 8) return true;
+    if (a.hand.length <= 10) return true;
+    return pending.pairRank >= 11 && b.hand.filter(function (c) { return c.rank === pending.pairRank; }).length === 2;
+  }
+
+  function chooseShuangbiContinue(game, playerId, combo) {
+    var p = game.players[playerId];
+    if (!p) return { type: 'pass' };
+    var moves = R.legalMoves(p.hand, combo).filter(function (m) {
+      return m.combo.type === 'pair' && m.combo.key > combo.key;
+    });
+    if (!moves.length) return { type: 'pass' };
+    moves.sort(function (x, y) { return y.combo.key - x.combo.key; });
+    return { type: 'play', cards: moves[0].cards };
+  }
+
   return {
     PERSONALITY: PERSONALITY,
     persona: persona,
@@ -6760,6 +8043,9 @@ body { font-size: 17px; }
     canQijin: canQijin,
     canYuanmen: canYuanmen,
     shouldReact: shouldReact,
+    shouldGeshan: shouldGeshan,
+    shouldShuangbi: shouldShuangbi,
+    chooseShuangbiContinue: chooseShuangbiContinue,
     thinkTime: thinkTime,
     reactionDelay: reactionDelay,
     estimateHands: estimateHands
@@ -6915,6 +8201,8 @@ body { font-size: 17px; }
     startVisible: true,
     finished: false,
     settled: false,
+    session: null,
+    dealing: false,
     thinkingId: null,
     handAnimation: false,
     drawnId: null,
@@ -6946,6 +8234,7 @@ body { font-size: 17px; }
       label: ''
     },
     reactionState: null,
+    skillWindow: null,
     choiceState: null,
     targetTimeout: null,
     returnTimeout: null,
@@ -7069,10 +8358,70 @@ body { font-size: 17px; }
       ],
       tutorial: '教学关的上一手是一张 J，你手中有一张 A。点「辕门射戟」，看两家如何被逼弃牌。',
       objective: '点「辕门射戟」弃 A，令两家弃牌。'
+    },
+    geshan: {
+      mark: '隔',
+      kicker: '响应技 · 下家截胡',
+      title: '隔山打牛',
+      sub: '下家弃同点余牌，让上家收回全部带牌并重获牌权',
+      tags: ['下家响应', '弃余牌'],
+      intro: '隔着一座山，打回上家的带牌。只有下家能应，弃掉与主体同点数的余牌，逼上家收回带牌重新领出。',
+      rules: [
+        { h: '触发条件', p: '上家打出三带一 / 三带一对 / 两连飞机带单 / 带对，完成比较且未直接获胜后，你是他的下家，且手中有与主体三张同点数的余牌。' },
+        { h: '弃置', p: '三带型弃 1 张主体点数；两连飞机弃 1 张 P 和 1 张 Q。只检测主体，不检测带牌；带牌含大小王不触发。弃后至少留 1 张手牌。' },
+        { h: '效果', p: '公开弃置余牌，上家从弃牌区收回本手全部带牌，立即获得自由出牌权；主体三张 / 飞机留在弃牌区。每局限 2 次。' },
+        { h: '限制', p: '只响应下家，同一手牌最多一次；A 已出完获胜不触发；弃置与收回的牌都不触发九九归一。' }
+      ],
+      tutorial: '教学关已摆好上家的 999+J，你手中有一张 9。点「隔山打牛」弃 9，看上家收回 J 并重新领出。',
+      objective: '点上家的三带一，发动隔山打牛。'
+    },
+    shuangbi: {
+      mark: '双',
+      kicker: '农民配合 · 锁地主',
+      title: '双璧锁关',
+      sub: '地主上家弃同点对子，跳过地主，逼地主下家续出更大的对子',
+      tags: ['农民配合', '普通对子'],
+      intro: '双璧合关，先把地主锁在门外。地主下家出对子，地主上家以同点对子为代价，逼他再出一手更大的对子。',
+      rules: [
+        { h: '触发条件', p: '地主下家打出普通对子且未直接获胜；地主上家手中恰有同点数的一对，且弃后至少留 1 张牌。' },
+        { h: '效果', p: '弃置同点对子并公开，跳过地主的出牌机会；地主下家必须立即续出一对更大的对子，不能则过牌。' },
+        { h: '之后', p: '不论续出还是过牌，最后都由地主上家获得自由出牌权。当前牌面始终以地主下家刚出的对子为比较基准。' },
+        { h: '限制', p: '每局限 1 次；只响应普通对子，连对、三带对、飞机带对不触发；地主无此技能；弃置对子不触发九九归一。' }
+      ],
+      tutorial: '教学关里你是地主上家，地主下家刚打出对 8，你手中也有一对 8。点「双璧锁关」弃对 8，看地主被跳过、下家续出。',
+      objective: '发动双璧锁关，锁住地主。'
+    },
+    pindming: {
+      mark: '拼',
+      kicker: '被动技 · 孤张化龙',
+      title: '拼命三郎',
+      sub: '手牌只剩一张 3 时自动变牌，按本局用牌次数决定新点数',
+      tags: ['自动触发', '3 化龙'],
+      intro: '牌到绝境，拼命一搏。手里只剩一张 3 时，它会按你本局已经用过的杀招，化为你最需要的那张牌。',
+      rules: [
+        { h: '触发', p: '任意时刻手牌数变为 1，且这张牌点数为 3，立即自动触发，每局限 1 次。' },
+        { h: '变牌', p: 'n = 本局你使用的四两拨千斤 + 王炸 + 飞机 + 普通炸弹次数；新点数 = 17 - n，最低 3、最高 17。触发瞬间只算一次。' },
+        { h: '映射', p: 'n=0 大王，1 小王，2→2，3→A，4→K，5→Q，6→J，7→10，8→9，9→8，10→7，11→6，12→5，13→4，n≥14 仍为 3。' },
+        { h: '限制', p: '变出的牌仍需正常打出；变 A 不立即触发九九归一，变王无花色、不触发火枪手、也不能单独组成王炸；变普通牌保留原 3 的花色。' }
+      ],
+      tutorial: '教学分两段：1/2 手握两张 3，先打出一张，留下最后一张 3，它会自动化龙；2/2 先释放四两拨千斤，再打出普通炸弹，最后打出一张 3，看 n=2 如何把孤张 3 变为 2。',
+      objective: '1/2 打一张 3 留一张；2/2 用四两和炸弹改变 n。'
     }
   };
 
   var CLOCK_CIRCUMFERENCE = 2 * Math.PI * 43;
+
+  var SKILL_UI = {
+    siliang: { glyph: '四', name: '四两拨千斤', sub: '4+2 / 44+22', cls: 'skill-siliang' },
+    sanren: { glyph: '三', name: '三人行', sub: 'J Q K · 换牌', cls: 'skill-sanren' },
+    jiujiu: { glyph: '九', name: '九九归一', sub: 'A 现 · 抢牌权', cls: 'skill-jiujiu' },
+    guowuguan: { glyph: '五', name: '过五关', sub: '55 66 · 发起 +6', cls: 'skill-guowu' },
+    qijin: { glyph: '七', name: '七进七出', sub: '对 7 · 枪出如龙', cls: 'skill-qijin' },
+    yuanmen: { glyph: '辕', name: '辕门射戟', sub: 'J 手 · 弃 A 夺权', cls: 'skill-yuanmen' },
+    geshan: { glyph: '隔', name: '隔山打牛', sub: '下家 · 弃余牌', cls: 'skill-geshan' },
+    shuangbi: { glyph: '双', name: '双璧锁关', sub: '农民 · 锁地主', cls: 'skill-shuangbi' },
+    pindming: { glyph: '拼', name: '拼命三郎', sub: '孤张 3 化龙', cls: 'skill-pindming' }
+  };
 
   function $(id) { return document.getElementById(id); }
   function one(sel, root) { return (root || document).querySelector(sel); }
@@ -7182,10 +8531,28 @@ body { font-size: 17px; }
   }
 
   function bindEvents() {
+    var pendingBox = $('pending-score');
+    if (pendingBox) {
+      pendingBox.addEventListener('mouseenter', function () {
+        showPendingTooltip();
+      });
+      pendingBox.addEventListener('mouseleave', function () {
+        hidePendingTooltip();
+      });
+    }
+    all('.hud-cell[data-hud-tip]').forEach(function (cell) {
+      cell.addEventListener('mouseenter', function () { showHudTooltip(cell); });
+      cell.addEventListener('mouseleave', hideHudTooltip);
+    });
     $('btn-start').addEventListener('click', startSession);
     $('btn-again').addEventListener('click', function () {
       $('gameover-screen').hidden = true;
-      startRoundFlow();
+      if (G.session && !G.session.final) {
+        G.session.round = Math.min(3, G.session.round + 1);
+        startRoundFlow();
+      } else {
+        startSession();
+      }
     });
     $('btn-home').addEventListener('click', function () {
       $('gameover-screen').hidden = true;
@@ -7297,6 +8664,13 @@ body { font-size: 17px; }
       if (!btn) return;
       onSkillButton(btn.getAttribute('data-skill'));
     });
+    $('btn-skill-response-skip').addEventListener('click', function () {
+      if (G.skillWindow && G.skillWindow.resolve) {
+        var resolve = G.skillWindow.resolve;
+        G.skillWindow.resolve = null;
+        resolve('skip');
+      }
+    });
 
     $('btn-jiujiu').addEventListener('click', function () {
       if (G.reactionState && G.reactionState.humanEligible) G.reactionState.finish(0);
@@ -7344,6 +8718,15 @@ body { font-size: 17px; }
   // ============================================================
   // 首页 / 新局
   // ============================================================
+  function shuffleCopy(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
   function startSession() {
     unlockAudio();
     clearGameTimeouts();
@@ -7379,8 +8762,13 @@ body { font-size: 17px; }
     G.yuanmenResolve = null;
     closeLog(true);
     G.game = E.createGame({ rng: Math.random });
+    G.session = {
+      round: 1,
+      decrees: shuffleCopy(['duel', 'double', 'long', 'royal']).slice(0, 3),
+      history: [],
+      final: false
+    };
     startRoundFlow();
-    sfx('deal');
     toast('新局开桌 · 请叫分', 'good');
   }
 
@@ -7400,6 +8788,8 @@ body { font-size: 17px; }
     G.drawnId = null;
     G.selectionGlow = null;
     G.skillSelectionTip = '';
+    G.lastAwardSeq = 0;
+    G.statViews = {};
     G.speech = {};
     G.handAnimation = true;
     G.overlayOpen = null;
@@ -7431,11 +8821,21 @@ body { font-size: 17px; }
     $('drawer-scrim').hidden = true;
     closeLog(true);
     $('turn-clock').classList.remove('hidden');
-    E.startRound(G.game);
+    var roundOpts = G.session
+      ? { roundNo: G.session.round, decree: G.session.decrees[G.session.round - 1] }
+      : {};
+    E.startRound(G.game, roundOpts);
     G.mode = 'bidding';
+    G.dealing = true;
     renderAll();
-    $('bid-panel').hidden = false;
-    startBidTurn();
+    $('bid-panel').hidden = true;
+    sfx('deal');
+    var dealEpoch = G.epoch;
+    setTimeout(function () {
+      if (dealEpoch !== G.epoch || !G.game || G.startVisible) return;
+      G.dealing = false;
+      startBidTurn();
+    }, 1150);
   }
 
   function showHome() {
@@ -7525,7 +8925,11 @@ body { font-size: 17px; }
       p.roundDelta = 0;
       p.lastAction = null;
       p.playCount = 0;
-      p.usedSkills = { sanren: 0, jiujiu: 0, guowuguan: 0, siliang: 0, qijin: 0, yuanmen: 0 };
+      p.usedSkills = {
+        sanren: 0, jiujiu: 0, guowuguan: 0, siliang: 0,
+        qijin: 0, yuanmen: 0, geshan: 0, shuangbi: 0, pindming: 0,
+        rocket: 0, plane: 0, bomb: 0
+      };
     });
 
     var hands = {};
@@ -7564,6 +8968,28 @@ body { font-size: 17px; }
       hands[1] = ['S3', 'H4', 'C5', 'D6', 'S7', 'H8', 'C9', 'D9'];
       hands[2] = ['C3', 'D4', 'S5', 'H6', 'C7', 'D8', 'S8', 'H10'];
       last = { player: 2, ids: ['DJ'] };
+    } else if (skill === 'geshan') {
+      g.landlord = 2;
+      hands[0] = ['D9', 'S3', 'H4', 'C5', 'D6', 'S7'];
+      hands[1] = ['S4', 'H5', 'C7', 'D8', 'S10', 'H10'];
+      hands[2] = ['S8', 'H8', 'C8', 'SJ', 'HQ', 'CK'];
+      last = { player: 2, ids: ['S9', 'H9', 'C9', 'D2'] };
+    } else if (skill === 'shuangbi') {
+      g.landlord = 1;
+      hands[0] = ['S8', 'H8', 'S3', 'H4', 'C5', 'D6', 'S9'];
+      hands[1] = ['S4', 'H5', 'C6', 'D7', 'S10', 'H10', 'CJ', 'DJ'];
+      hands[2] = ['S3', 'H4', 'C6', 'D7', 'SQ', 'HK'];
+      last = { player: 2, ids: ['S8', 'H8'] };
+    } else if (skill === 'pindming') {
+      if (stage === 2) {
+        hands[0] = ['S4', 'H2', 'S9', 'H9', 'C9', 'D9', 'S3', 'H3'];
+        hands[1] = ['S5', 'H6', 'C7', 'D8', 'S10', 'H10'];
+        hands[2] = ['C4', 'D5', 'S6', 'H7', 'C8', 'D10'];
+      } else {
+        hands[0] = ['S3', 'H3'];
+        hands[1] = ['S4', 'H5', 'C6', 'D7', 'S9', 'H10'];
+        hands[2] = ['C3', 'D4', 'S5', 'H6', 'C7', 'D8'];
+      }
     }
 
     [0, 1, 2].forEach(function (id) {
@@ -7575,6 +9001,33 @@ body { font-size: 17px; }
       g.lastPlay = { player: last.player, cards: lastCards, combo: combo };
       g.discard = lastCards.slice();
       g.players[last.player].lastAction = combo.label;
+    }
+    g.players.forEach(function (p) { p.role = p.id === g.landlord ? 'landlord' : 'farmer'; });
+    if (skill === 'geshan' && g.lastPlay) {
+      var bodyRank = g.lastPlay.combo.key;
+      var bodyCard = g.players[0].hand.find(function (c) { return c.rank === bodyRank; });
+      g.pending = {
+        type: 'geshan',
+        actor: 0,
+        previous: 2,
+        combo: g.lastPlay.combo,
+        cards: g.lastPlay.cards.slice(),
+        bodyRanks: [bodyRank],
+        bodyCards: bodyCard ? [bodyCard] : [],
+        wings: g.lastPlay.cards.filter(function (c) { return c.rank !== bodyRank; })
+      };
+    }
+    if (skill === 'shuangbi' && g.lastPlay) {
+      g.pending = {
+        type: 'shuangbi',
+        stage: 'choose',
+        actor: 0,
+        previous: 2,
+        landlord: 1,
+        combo: g.lastPlay.combo,
+        pairRank: g.lastPlay.combo.key,
+        pair: g.players[0].hand.filter(function (c) { return c.rank === g.lastPlay.combo.key; }).slice(0, 2)
+      };
     }
     if (skill === 'jiujiu' && g.lastPlay) {
       g.reaction = {
@@ -7595,7 +9048,11 @@ body { font-size: 17px; }
     $('tutorial-title').textContent = maxStage > 1 ? t.title + ' · ' + t.stage + '/' + maxStage : t.title;
     $('tutorial-objective').textContent = (t.skill === 'siliang' && t.stage === 2)
       ? '用 2244 压过 AAAA，再看王炸如何克制镇山炸。'
-      : (t.objective || '完成一次技能释放');
+      : (t.skill === 'pindming' && t.stage === 2)
+        ? '先出四两（n=1），再出炸弹（n=2），最后打一张 3，看孤张变 2。'
+        : (t.skill === 'pindming' && t.stage === 1)
+          ? '先打出一张 3，留下最后一张 3，它会自动变牌化龙。'
+          : (t.objective || '完成一次技能释放');
   }
 
   function loadTutorialStage(stage) {
@@ -7626,6 +9083,7 @@ body { font-size: 17px; }
     G.tutorialFinaleResolve = null;
     G.tutorialRocketDemo = false;
     G.tutorialQijinDemo = false;
+    G.pmDemo = { siliang: false, bomb: false };
     G.handAnimation = true;
     closeStickerTray();
     closeLog(true);
@@ -7645,11 +9103,15 @@ body { font-size: 17px; }
     $('return-bar').hidden = true;
     $('guowu-bar').hidden = true;
     $('yuanmen-bar').hidden = true;
+    hideResponseBar();
     $('tutorial-hud').hidden = false;
     one('#app').classList.add('tutorial-active');
     updateTutorialHud();
     renderAll();
-    if (t.skill === 'jiujiu') {
+    if (t.skill === 'geshan' || t.skill === 'shuangbi') {
+      showTutorialClock();
+      handleSkillResponseWindow();
+    } else if (t.skill === 'jiujiu') {
       showTutorialClock();
       handleReaction();
     } else {
@@ -7662,7 +9124,7 @@ body { font-size: 17px; }
     if (!guide) return;
     closeSkillGuide(true);
     unlockAudio();
-    var maxStage = skill === 'siliang' ? 2 : 1;
+    var maxStage = skill === 'siliang' || skill === 'pindming' ? 2 : 1;
     G.tutorial = {
       skill: skill,
       title: guide.title,
@@ -7674,7 +9136,7 @@ body { font-size: 17px; }
     G.tutorialFinaleResolve = null;
     loadTutorialStage(1);
     sfx('deal');
-    toast(maxStage > 1 ? '教学开始 · 1/2 四两拨千斤' : '教学开始 · 跟随提示完成一次技能释放', 'skill');
+    toast(maxStage > 1 ? '教学开始 · 1/2 ' + (skill === 'pindming' ? '拼命三郎' : '四两拨千斤') : '教学开始 · 跟随提示完成一次技能释放', 'skill');
   }
 
   function completeTutorial() {
@@ -7869,6 +9331,7 @@ body { font-size: 17px; }
   function startBidTurn() {
     var g = G.game;
     if (!g || g.phase !== 'bidding') return;
+    if (G.dealing) return;
     G.mode = 'bidding';
     G.busy = false;
     $('bid-panel').hidden = false;
@@ -7986,21 +9449,94 @@ body { font-size: 17px; }
     startBidTurn();
   }
 
+  async function animateLandlordBottomCards(landlordId, bottomCards) {
+    if (landlordId !== 0 || reducedMotion() || !bottomCards || !bottomCards.length) return false;
+    var nodes = [];
+    bottomCards.forEach(function (card) {
+      var handEl = one('#hand .pcard[data-id="' + card.id + '"]');
+      if (!handEl) return;
+      var rect = handEl.getBoundingClientRect();
+      nodes.push({ card: card, el: handEl, rect: rect });
+      handEl.style.visibility = 'hidden';
+    });
+    if (!nodes.length) return false;
+    var layer = document.createElement('div');
+    layer.className = 'landlord-deal-layer';
+    document.body.appendChild(layer);
+    var jobs = nodes.map(function (node, index) {
+      var lift = Math.max(36, node.rect.height * 0.6);
+      var clone = document.createElement('div');
+      clone.className = 'landlord-deal-card';
+      clone.style.left = node.rect.left + 'px';
+      clone.style.top = (node.rect.top - lift) + 'px';
+      clone.style.width = node.rect.width + 'px';
+      clone.style.height = node.rect.height + 'px';
+      clone.innerHTML = cardMarkup(node.card, { interactive: false, noAnim: true });
+      layer.appendChild(clone);
+      return clone.animate([
+        { opacity: 0, transform: 'translateY(0) scale(1.08)' },
+        { opacity: 1, transform: 'translateY(0) scale(1.08)', offset: 0.08 },
+        { opacity: 1, transform: 'translateY(' + (-lift * 0.2) + 'px) scale(1.04)', offset: 0.28 },
+        { opacity: 1, transform: 'translateY(' + (-lift * 0.2) + 'px) scale(1.04)', offset: 0.78 },
+        { opacity: 1, transform: 'translateY(' + lift + 'px) scale(1)', offset: 1 }
+      ], {
+        duration: 1000,
+        delay: index * 35,
+        easing: 'cubic-bezier(.2,.8,.25,1)',
+        fill: 'forwards'
+      }).finished;
+    });
+    try {
+      await Promise.all(jobs);
+      await sleep(60);
+    } finally {
+      layer.remove();
+      nodes.forEach(function (node) { node.el.style.visibility = ''; });
+    }
+    return true;
+  }
+
   async function onLandlord(res) {
     pauseClock();
     $('bid-panel').hidden = true;
     G.mode = 'landlord';
     G.busy = true;
     G.thinkingId = null;
-    G.handAnimation = true;
+    G.handAnimation = false;
     clearSpeech();
     renderAll();
     sfx('deal');
     var landlord = G.game.players[res.landlord];
     toast(landlord.name + ' 成为地主 · 底牌 ' + R.describeCards(res.bottom) + ' · 底分 ' + res.baseScore, 'good');
-    await sleep(1300);
+    if (res.landlord === 0) {
+      await animateLandlordBottomCards(res.landlord, res.bottom);
+      await sleep(300);
+    } else {
+      await sleep(1100);
+    }
+    await showDecreeOpening();
     G.busy = false;
     beginTurn();
+  }
+
+  async function showDecreeOpening() {
+    var g = G.game;
+    if (!g || !g.decree) return;
+    var name = E.decreeName(g.decree);
+    var desc = decreeDescription(g.decree);
+    sfx('decree');
+    await cinematic('decree', '本局江湖令：' + name, '', desc, 1900,
+      '本局江湖令：<span class="decree-name">' + name + '</span>');
+    toast('分牌淡蓝 +5 基础分 · 倍率牌淡红 +0.10 倍率', 'good');
+  }
+
+  function decreeDescription(key) {
+    return {
+      duel: '每次技能成功发动 +0.10 倍率；双璧锁关两个农民各 +0.10',
+      double: '打出对子立即 +3 基础分；以对子获得牌权 +0.50 倍率（99 归一、77 也算对子）',
+      long: '重获牌权时，其他玩家上一轮每人次 +2 基础分；获得者按出牌人次 +0.10×n 倍率',
+      royal: '打出大王 +10、小王 +5；并可能把手牌中的红桃K/J、黑桃K/J 变为王'
+    }[key] || '';
   }
 
   // ============================================================
@@ -8008,6 +9544,7 @@ body { font-size: 17px; }
   // ============================================================
   function beginTurn() {
     clearAITimer();
+    hideResponseBar();
     var g = G.game;
     if (!g) return;
     pruneGhosts();
@@ -8020,6 +9557,11 @@ body { font-size: 17px; }
       else if (g.pending.type === 'guowuguan') handleGuowuChoices();
       else if (g.pending.type === 'qijin') handleQijinPending();
       else if (g.pending.type === 'yuanmen') resumeYuanmenPending();
+      else if (g.pending.type === 'geshan') handleSkillResponseWindow();
+      else if (g.pending.type === 'shuangbi') {
+        if (g.pending.stage === 'continueA') handleShuangbiContinue();
+        else handleSkillResponseWindow();
+      }
       return;
     }
     G.mode = 'playing';
@@ -8246,6 +9788,28 @@ body { font-size: 17px; }
     if (res.qijinActivated) setQijinMarksConcealed(actorId, true);
     G.el.clockLabel.textContent = '出牌中';
     await animatePlayCards(actorId, cards, originRects);
+    if (res.royalChange && res.royalChange.length) {
+      sfx('pmGlow');
+      var humanChange = res.royalChange.some(function (ch) { return ch.owner === 0; });
+      if (humanChange) {
+        await cinematic('royal', '王储令 · 化王', '', '王气入牌 · 一牌化王', 850);
+      }
+      for (var ri = 0; ri < res.royalChange.length; ri++) {
+        var ch = res.royalChange[ri];
+        var el = ch.owner === 0 ? one('#hand .pcard[data-id="' + ch.card.id + '"]') : null;
+        if (el) {
+          var hr = el.getBoundingClientRect();
+          el.style.visibility = 'hidden';
+          await animatePindmingCard(
+            { oldCard: ch.oldCard, card: ch.card },
+            hr,
+            function () { el.style.visibility = ''; }
+          );
+        }
+        toast('王储令：' + g.players[ch.owner].name + ' 的 ' + ch.oldCard.label + ' 变为' +
+          (ch.source === 17 ? '大王' : '小王'), 'skill');
+      }
+    }
     if (combo.bomb) {
       sfx('bomb');
       shakeTable();
@@ -8266,6 +9830,51 @@ body { font-size: 17px; }
     }
     if (res.qijinPending) {
       await handleQijinEvent(res.qijin);
+      return;
+    }
+    if (res.pindming) {
+      await showPindmingEffect(res.pindming);
+    }
+    if (G.tutorial && G.tutorial.skill === 'pindming' && G.tutorial.stage === 2) {
+      var pmDemo = G.pmDemo || (G.pmDemo = { siliang: false, bomb: false });
+      if (combo.type === '42' && !pmDemo.siliang) {
+        pmDemo.siliang = true;
+        g.lastPlay = null;
+        g.passes = 0;
+        g.trick += 1;
+        g.turn = 0;
+        G.busy = false;
+        G.mode = 'playing';
+        beginTurn();
+        toast('四两拨千斤已计入 n=1 · 请打出四张同点炸弹', 'skill');
+        return;
+      }
+      if (combo.type === 'bomb' && pmDemo.siliang && !pmDemo.bomb) {
+        pmDemo.bomb = true;
+        g.lastPlay = null;
+        g.passes = 0;
+        g.trick += 1;
+        g.turn = 0;
+        G.busy = false;
+        G.mode = 'playing';
+        beginTurn();
+        toast('普通炸弹已计入 n=2 · 请打出一张 3，留下最后一张 3', 'skill');
+        return;
+      }
+      if (combo.type === 'single' && pmDemo.bomb && res.pindming) {
+        await sleep(500);
+        G.busy = false;
+        completeTutorial();
+        return;
+      }
+    }
+    if (G.tutorial && G.tutorial.skill === 'pindming' && G.tutorial.stage === 1 && res.pindming) {
+      G.busy = false;
+      toast('1/2 完成 · 孤张 3 已化龙，进入 2/2', 'skill');
+      await sleep(900);
+      if (!G.tutorial) return;
+      loadTutorialStage(2);
+      toast('2/2 · 先出四两，再出炸弹，最后打一张 3', 'skill');
       return;
     }
     if (G.tutorial && G.tutorialRocketDemo && actorId === 1) {
@@ -8305,7 +9914,386 @@ body { font-size: 17px; }
     if (g.pending && g.pending.type === 'guowuguan') { await handleGuowuChoices(); return; }
     if (g.pending && g.pending.type === 'qijin') { await handleQijinPending(); return; }
     if (g.pending && g.pending.type === 'yuanmen') { await resumeYuanmenPending(); return; }
+    if (g.pending && (g.pending.type === 'geshan' || g.pending.type === 'shuangbi')) {
+      if (g.pending.type === 'shuangbi' && g.pending.stage === 'continueA') {
+        await handleShuangbiContinue();
+      } else {
+        await handleSkillResponseWindow();
+      }
+      return;
+    }
     beginTurn();
+  }
+
+  async function handleSkillResponseWindow() {
+    var g = G.game;
+    var pending = g && g.pending;
+    if (!pending || (pending.type !== 'geshan' && pending.type !== 'shuangbi')) return;
+    if (pending.type === 'shuangbi' && pending.stage !== 'choose') {
+      await handleShuangbiContinue();
+      return;
+    }
+    var ep = G.epoch;
+    G.mode = 'skill';
+    G.busy = true;
+    hideResponseBar();
+    G.selected.clear();
+    G.selectionGlow = null;
+    G.skillSelectionTip = '';
+    pauseClock();
+    clearAITimer();
+    renderAll();
+    var use = false;
+    if (pending.actor === 0) {
+      G.busy = false;
+      showResponseBar(pending.type === 'geshan'
+        ? '隔山打牛 · 点击发光技能弃余牌，或略过'
+        : '双璧锁关 · 点击发光技能弃同点对，或略过');
+      renderSkills();
+      var choice = await new Promise(function (resolve) {
+        G.skillWindow = { type: pending.type, resolve: resolve };
+      });
+      G.skillWindow = null;
+      hideResponseBar();
+      if (ep !== G.epoch || !G.game) return;
+      use = choice === 'use';
+    } else {
+      G.thinkingId = pending.actor;
+      setSpeech(pending.actor, '思量…', '');
+      renderSeats();
+      await sleep(1000 + Math.floor(Math.random() * 1000));
+      if (ep !== G.epoch || !G.game) return;
+      use = pending.type === 'geshan'
+        ? AI.shouldGeshan(g, pending)
+        : AI.shouldShuangbi(g, pending);
+    }
+    if (ep !== G.epoch || !G.game) return;
+    var bodyCards = pending.type === 'geshan' ? pending.bodyCards.slice() : pending.pair.slice();
+    var fromRects = captureCardRects(pending.actor, bodyCards);
+    var res = pending.type === 'geshan'
+      ? E.resolveGeshan(g, use)
+      : E.resolveShuangbi(g, use);
+    if (!res.ok) {
+      console.warn('响应技结算失败:', res.error);
+      G.busy = false;
+      hideResponseBar();
+      beginTurn();
+      return;
+    }
+    renderAll();
+    if (!use) {
+      G.busy = false;
+      sfx('pass');
+      beginTurn();
+      return;
+    }
+    G.busy = true;
+    if (pending.type === 'geshan') {
+      sfx('geshan');
+      await showSkillEffect(pending.actor, 'geshan', '隔山打牛', '隔山借力 · 带牌回手', pending.actor === 0 ? 1350 : 1100);
+      if (ep !== G.epoch) return;
+      await animateSkillCards(bodyCards, fromRects, discardRects(bodyCards.length), {
+        duration: 520,
+        fadeOut: true,
+        arc: 18,
+        fallbackFrom: playerFanRect(pending.actor),
+        fallbackPlayer: pending.actor
+      });
+      var wings = pending.wings.slice();
+      if (wings.length) {
+        await animateSkillCards(wings, null, [playerFanRect(pending.previous)], {
+          duration: 600,
+          arc: 28,
+          fallbackFrom: playAreaRect(),
+          fallbackPlayer: pending.previous
+        });
+      }
+      toastLook('隔山打牛 · ' + g.players[pending.previous].name + ' 收回 ' +
+        R.describeCards(wings), 'skill');
+      if (res.pindming) await showPindmingEffect(res.pindming);
+      G.busy = false;
+      if (G.tutorial && G.tutorial.skill === 'geshan') {
+        await sleep(500);
+        completeTutorial();
+        return;
+      }
+      beginTurn();
+      return;
+    }
+    sfx('shuangbi');
+    var pairShow = animateShuangbiPair(pending.pair, fromRects, pending.actor);
+    await Promise.all([
+      showSkillEffect(pending.actor, 'shuangbi', '双璧锁关', '双璧合关 · 地主让路', pending.actor === 0 ? 1350 : 1100),
+      pairShow
+    ]);
+    if (ep !== G.epoch) return;
+    await animateShuangbiArrow(g, pending);
+    if (ep !== G.epoch) return;
+    if (res.pindming) await showPindmingEffect(res.pindming);
+    G.busy = false;
+    await handleShuangbiContinue();
+  }
+
+  async function handleShuangbiContinue() {
+    var g = G.game;
+    var pending = g && g.pending;
+    if (!pending || pending.type !== 'shuangbi' || pending.stage !== 'continueA') return;
+    var ep = G.epoch;
+    var aId = pending.previous;
+    if (aId === 0) {
+      G.mode = 'playing';
+      G.busy = false;
+      G.selected.clear();
+      startClock(60, '双璧续出');
+      showResponseBar('双璧锁关 · 请续出更大的对子；不能出则点「不出」');
+      renderAll();
+      renderSkills();
+      return;
+    }
+    G.busy = true;
+    G.thinkingId = aId;
+    hideResponseBar();
+    renderAll();
+    await sleep(900 + Math.floor(Math.random() * 700));
+    if (ep !== G.epoch || !G.game) return;
+    var action = AI.chooseShuangbiContinue(g, aId, pending.combo);
+    var res = action.type === 'play'
+      ? E.continueShuangbi(g, action.cards.map(function (c) { return c.id; }))
+      : E.continueShuangbi(g, []);
+    if (!res.ok) {
+      G.busy = false;
+      beginTurn();
+      return;
+    }
+    renderAll();
+    if (action.type === 'play') {
+      toast('双璧续出 · ' + g.players[aId].name + ' 继续出对子', 'skill');
+      await sleep(500);
+    } else {
+      toast('双璧锁关 · ' + g.players[aId].name + ' 没有更大对子，过牌', 'skill');
+      await sleep(300);
+    }
+    if (ep !== G.epoch) return;
+    G.busy = false;
+    if (G.tutorial && G.tutorial.skill === 'shuangbi') {
+      await sleep(450);
+      completeTutorial();
+      return;
+    }
+    if (g.phase === 'over') { finishGame(); return; }
+    if (g.reaction) { await handleReaction(); return; }
+    beginTurn();
+  }
+
+  async function animateShuangbiPair(pair, fromRects, actor) {
+    if (!pair || pair.length < 2 || reducedMotion()) return;
+    var app = $('app');
+    if (!app) return;
+    var layer = document.createElement('div');
+    layer.className = 'shuangbi-pair-layer';
+    app.appendChild(layer);
+    var fallback = playerFanRect(actor);
+    var targetW = Math.min(112, appWidth() * 0.26);
+    var targetH = targetW * 1.42;
+    var gap = Math.max(8, targetW * 0.1);
+    var total = targetW * 2 + gap;
+    var targetY = appHeight() * 0.6 - targetH / 2;
+    var targetX = appWidth() / 2 - total / 2;
+    var nodes = pair.map(function (card, i) {
+      var from = fromRects && fromRects[card.id];
+      if (!from) {
+        from = {
+          x: fallback.x + (i - 0.5) * 22,
+          y: fallback.y,
+          w: 74,
+          h: 104
+        };
+      }
+      var el = document.createElement('div');
+      el.className = 'shuangbi-pair-card';
+      el.style.left = from.x + 'px';
+      el.style.top = from.y + 'px';
+      el.style.width = targetW + 'px';
+      el.style.height = targetH + 'px';
+      el.style.transformOrigin = '0 0';
+      el.style.transform = 'scale(' + (from.w / targetW) + ')';
+      el.innerHTML = cardMarkup(card, { interactive: false, noAnim: true });
+      layer.appendChild(el);
+      return { el: el, from: from, tx: targetX + i * (targetW + gap), ty: targetY };
+    });
+    await Promise.all(nodes.map(function (node, i) {
+      return node.el.animate([
+        { transform: 'translate(0px, 0px) scale(' + (node.from.w / targetW) + ')', opacity: 0 },
+        { opacity: 1, offset: 0.12 },
+        { transform: 'translate(' + (node.tx - node.from.x) + 'px,' + (node.ty - node.from.y) + 'px) scale(1)', opacity: 1 }
+      ], {
+        duration: 560,
+        delay: i * 50,
+        easing: 'cubic-bezier(.18,.85,.24,1)',
+        fill: 'forwards'
+      }).finished;
+    }));
+    await sleep(620);
+    await Promise.all(nodes.map(function (node) {
+      return node.el.animate([
+        { opacity: 1 },
+        { opacity: 0 }
+      ], { duration: 220, fill: 'forwards' }).finished;
+    }));
+    layer.remove();
+  }
+
+  async function animateShuangbiArrow(g, pending) {
+    var arrow = $('turn-arrow');
+    if (!arrow) return;
+    var landlord = pending.landlord;
+    var played = pending.previous;
+    // 先把指示箭头落到刚出牌的地主下家头上，不做额外滑动。
+    arrow.style.transition = 'none';
+    positionTurnArrow(played);
+    void arrow.offsetWidth;
+    arrow.style.transition = '';
+    await sleep(120);
+    // 先移到技能释放者（地主上家）头上
+    positionTurnArrow(pending.actor);
+    await sleep(640);
+    // 再移到地主头上
+    positionTurnArrow(landlord);
+    await sleep(640);
+    // 锁链声 + 箭头变红、闪烁放大一次
+    sfx('chain');
+    arrow.classList.add('shuangbi-lock');
+    await arrow.animate([
+      { transform: 'translate(-50%,-100%) scale(1)', opacity: 1 },
+      { transform: 'translate(-50%,-100%) scale(1.65)', opacity: .82, offset: 0.28 },
+      { transform: 'translate(-50%,-100%) scale(.92)', opacity: 1, offset: 0.62 },
+      { transform: 'translate(-50%,-100%) scale(1.08)', opacity: 1, offset: 0.82 },
+      { transform: 'translate(-50%,-100%) scale(1)', opacity: 1 }
+    ], { duration: 620, easing: 'ease-out' }).finished;
+    arrow.classList.remove('shuangbi-lock');
+    // 再移回地主下家，继续双璧后续流程
+    positionTurnArrow(played);
+    await sleep(640);
+  }
+
+  function showResponseBar(text) {
+    var bar = $('skill-response-bar');
+    if (!bar) return;
+    $('skill-response-copy').textContent = text;
+    bar.hidden = false;
+  }
+
+  function hideResponseBar() {
+    var bar = $('skill-response-bar');
+    if (bar) bar.hidden = true;
+  }
+
+  async function showPindmingEffect(event) {
+    if (!event) return;
+    G.busy = true;
+    renderAll();
+    var handEl = event.actor === 0
+      ? one('#hand .pcard[data-id="' + event.oldCard.id + '"]')
+      : null;
+    var handRect = handEl ? handEl.getBoundingClientRect() : null;
+    if (handEl) handEl.style.visibility = 'hidden';
+    var applied = false;
+    var applyResult = function () {
+      if (applied) return;
+      var res = E.applyPindming(G.game, event);
+      if (!res.ok) {
+        console.warn('拼命三郎变牌失败:', res.error);
+        if (handEl) handEl.style.visibility = '';
+        return;
+      }
+      applied = true;
+      renderAll();
+      var newEl = event.actor === 0
+        ? one('#hand .pcard[data-id="' + event.card.id + '"]')
+        : null;
+      if (newEl) newEl.style.visibility = '';
+    };
+    sfx('pindming');
+    await showSkillEffect(event.actor, 'pindming', '拼命三郎', '孤张化龙 · 绝境求生', 850);
+    await animatePindmingCard(event, handRect, applyResult);
+    if (!applied) applyResult();
+    toastLook('拼命三郎 · 3 变为 ' + event.card.label + '（n=' + event.n + '）', 'skill');
+    G.busy = false;
+  }
+
+  async function animatePindmingCard(event, targetRect, onSettled) {
+    if (!event || reducedMotion()) return;
+    var layer = document.createElement('div');
+    layer.className = 'pm-reveal-layer';
+    layer.innerHTML = '<div class="pm-reveal-card">' +
+      '<div class="pm-reveal-inner">' +
+      '<div class="pm-reveal-face pm-reveal-front">' + cardMarkup(event.oldCard, { interactive: false, noAnim: true }) + '</div>' +
+      '<div class="reveal-back pm-reveal-face pm-reveal-back"></div>' +
+      '</div></div>';
+    document.body.appendChild(layer);
+    var card = one('.pm-reveal-card', layer);
+    var inner = one('.pm-reveal-inner', layer);
+    var front = one('.pm-reveal-front', layer);
+    if (!card || !inner || !front) {
+      layer.remove();
+      if (onSettled) await onSettled();
+      return;
+    }
+    try {
+      await card.animate([
+        { opacity: 0, transform: 'scale(.78)' },
+        { opacity: 1, transform: 'scale(1)', offset: 0.55 },
+        { opacity: 1, transform: 'scale(1)', offset: 1 }
+      ], { duration: 320, easing: 'cubic-bezier(.18,.89,.32,1.22)' }).finished;
+      await sleep(220);
+      sfx('pmGlow');
+      await card.animate([
+        { transform: 'scale(1)', filter: 'drop-shadow(0 18px 24px rgba(0,0,0,.45))' },
+        { transform: 'scale(1.2)', filter: 'drop-shadow(0 0 26px rgba(255,214,132,.95)) drop-shadow(0 0 54px rgba(226,112,96,.55))', offset: 0.48 },
+        { transform: 'scale(1.08)', filter: 'drop-shadow(0 0 16px rgba(255,214,132,.7))', offset: 0.75 },
+        { transform: 'scale(1)', filter: 'drop-shadow(0 18px 24px rgba(0,0,0,.45))' }
+      ], { duration: 760, easing: 'cubic-bezier(.2,.8,.2,1)' }).finished;
+      // 翻到背面；用 forwards 保持 180°，避免动画结束后牌面回弹露出正面
+      await inner.animate([
+        { transform: 'rotateY(0deg)' },
+        { transform: 'rotateY(180deg)' }
+      ], { duration: 430, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' }).finished;
+      inner.style.transform = 'rotateY(180deg)';
+      front.innerHTML = cardMarkup(event.card, { interactive: false, noAnim: true });
+      await sleep(180);
+      // 换牌后翻回正面；继续用 forwards 保持最终 360°（视觉上为 0°）
+      await inner.animate([
+        { transform: 'rotateY(180deg)' },
+        { transform: 'rotateY(360deg)' }
+      ], { duration: 430, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' }).finished;
+      inner.style.transform = 'rotateY(360deg)';
+
+      // 结果牌翻回正面后，滑回原来那张手牌的位置。
+      if (targetRect) {
+        var cr = card.getBoundingClientRect();
+        var dx = targetRect.left + targetRect.width / 2 - (cr.left + cr.width / 2);
+        var dy = targetRect.top + targetRect.height / 2 - (cr.top + cr.height / 2);
+        var scale = Math.min(targetRect.width / cr.width, targetRect.height / cr.height);
+        await card.animate([
+          { transform: 'translate(0px, 0px) scale(1)' },
+          { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')' }
+        ], {
+          duration: 480,
+          easing: 'cubic-bezier(.2,.8,.2,1)',
+          fill: 'forwards'
+        }).finished;
+      }
+      // 动画落位后再替换真实手牌并取消隐形。
+      if (onSettled) await onSettled();
+      await sleep(40);
+    } catch (e) {
+      if (onSettled) await onSettled();
+    }
+    layer.remove();
+  }
+
+  function toastLook(text, type) {
+    toast(text, type || '');
   }
 
   // ============================================================
@@ -8313,6 +10301,13 @@ body { font-size: 17px; }
   // ============================================================
   function canHumanAct() {
     var g = G.game;
+    if (!g) return false;
+    var continuation = g.pending && g.pending.type === 'shuangbi' &&
+      g.pending.stage === 'continueA' && g.pending.previous === 0 && g.turn === 0;
+    if (continuation) {
+      return g.phase === 'playing' && G.mode === 'playing' && !G.busy &&
+        !G.overlayOpen && !G.startVisible;
+    }
     return !!(g && g.phase === 'playing' && g.turn === 0 && !g.pending && !g.reaction &&
       G.mode === 'playing' && !G.busy && !G.overlayOpen && !G.startVisible);
   }
@@ -8323,7 +10318,7 @@ body { font-size: 17px; }
     return g.players[0].hand.filter(function (c) { return G.selected.has(c.id); });
   }
 
-  function humanPlay() {
+  async function humanPlay() {
     var g = G.game;
     if (!canHumanAct()) return;
     var cards = selectedCards();
@@ -8343,10 +10338,51 @@ body { font-size: 17px; }
         toast('教学关：请先点「七进七出」，再点「出牌」', 'error');
         return;
       }
-      if (G.tutorial.skill !== 'siliang' && G.tutorial.skill !== 'qijin') {
+      if (G.tutorial.skill === 'pindming' && G.tutorial.stage === 1) {
+        if (!(combo.type === 'single' && cards.length === 1 && cards[0].rank === 3)) {
+          toast('教学关：先打出一张 3，留下最后一张 3', 'error');
+          return;
+        }
+      }
+      if (G.tutorial.skill === 'pindming' && G.tutorial.stage === 2) {
+        var pmDemo = G.pmDemo || { siliang: false, bomb: false };
+        var pmAllowed = (combo.type === '42' && !pmDemo.siliang) ||
+          (combo.type === 'bomb' && pmDemo.siliang && !pmDemo.bomb) ||
+          (combo.type === 'single' && pmDemo.bomb && cards.length === 1 && cards[0].rank === 3);
+        if (!pmAllowed) {
+          toast(pmDemo.siliang
+            ? (pmDemo.bomb ? '教学关：最后请打出一张 3' : '教学关：请打出四张同点炸弹')
+            : '教学关：请先点「四两拨千斤」打出 4+2', 'error');
+          return;
+        }
+      }
+      if (G.tutorial.skill !== 'siliang' && G.tutorial.skill !== 'qijin' &&
+          G.tutorial.skill !== 'pindming') {
         toast('教学关：请按左上角提示先释放技能', '');
         return;
       }
+    }
+    if (g.pending && g.pending.type === 'shuangbi' && g.pending.stage === 'continueA') {
+      G.busy = true;
+      pauseClock();
+      hideResponseBar();
+      var contRes = E.continueShuangbi(g, cards.map(function (c) { return c.id; }));
+      if (!contRes.ok) {
+        G.busy = false;
+        toast(contRes.error, 'error');
+        resumeClock();
+        renderControls();
+        return;
+      }
+      G.selected.clear();
+      renderAll();
+      toast('双璧续出 · ' + R.describeCards(cards), 'skill');
+      await sleep(420);
+      G.busy = false;
+      if (g.phase === 'over') { finishGame(); return; }
+      if (g.reaction) { await handleReaction(); return; }
+      beginTurn();
+      return;
     }
     G.busy = true;
     pauseClock();
@@ -8376,6 +10412,20 @@ body { font-size: 17px; }
   async function humanPass() {
     var g = G.game;
     if (!canHumanAct()) return;
+    if (g.pending && g.pending.type === 'shuangbi' && g.pending.stage === 'continueA') {
+      G.busy = true;
+      pauseClock();
+      hideResponseBar();
+      var cont = E.continueShuangbi(g, []);
+      G.busy = false;
+      if (!cont.ok) { toast(cont.error, 'error'); renderControls(); return; }
+      renderAll();
+      toast('双璧锁关 · 你没有更大对子，过牌', '');
+      sfx('pass');
+      await sleep(260);
+      beginTurn();
+      return;
+    }
     if (G.tutorial) { toast('教学关：请完成一次技能释放', ''); return; }
     if (!g.lastPlay) { toast('你是首出，不能不出', 'error'); return; }
     G.qijinArmed = null;
@@ -8641,7 +10691,18 @@ body { font-size: 17px; }
   function onSkillButton(skill) {
     var g = G.game;
     if (!g) return;
-    if (G.tutorial && G.tutorial.skill !== skill) {
+    if (skill === 'geshan' || skill === 'shuangbi') {
+      if (G.skillWindow && G.skillWindow.type === skill) {
+        var resolve = G.skillWindow.resolve;
+        G.skillWindow.resolve = null;
+        resolve('use');
+      } else {
+        toast('当前没有 ' + (skill === 'geshan' ? '隔山打牛' : '双璧锁关') + ' 的响应窗口', '');
+      }
+      return;
+    }
+    if (G.tutorial && G.tutorial.skill !== skill &&
+        !(G.tutorial.skill === 'pindming' && skill === 'siliang')) {
       toast('教学关专注一门绝技，先完成当前目标', '');
       return;
     }
@@ -9027,6 +11088,7 @@ body { font-size: 17px; }
         { duration: 200, easing: 'cubic-bezier(.2,.8,.2,1)' });
     }
     G.busy = false;
+    if (res.pindming) await showPindmingEffect(res.pindming);
     if (pending.target === 0) {
       toast(actor.name + ' 抽走你一张牌，归还了 ' + card.label, '');
     } else {
@@ -9077,6 +11139,7 @@ body { font-size: 17px; }
     });
     toast('归还 ' + card.label + ' 给 ' + g.players[pending.target].name, 'good');
     G.busy = false;
+    if (res.pindming) await showPindmingEffect(res.pindming);
     if (G.tutorial) { completeTutorial(); return; }
     beginTurn();
   }
@@ -9446,6 +11509,7 @@ body { font-size: 17px; }
 
     var fin = E.finishQijin(g);
     if (!fin.ok) console.warn('七进七出收尾失败:', fin.error);
+    if (fin.pindming) await showPindmingEffect(fin.pindming);
     G.qijinRunning = false;
     G.busy = false;
     G.mode = 'playing';
@@ -9626,6 +11690,7 @@ body { font-size: 17px; }
     toast(actor.name + ' 辕门射戟 · ' + detail + '；' + actor.name + ' 重获牌权', 'skill');
     G.busy = false;
     G.mode = 'playing';
+    if (resolved.pindming) await showPindmingEffect(resolved.pindming);
     if (G.tutorial) { completeTutorial(); return; }
     if (g.phase === 'over') { finishGame(); return; }
     beginTurn();
@@ -9702,6 +11767,7 @@ body { font-size: 17px; }
     var res = E.resolveYuanmen(g, choices);
     if (!res.ok) res = E.resolveYuanmen(g, {});
     renderAll();
+    if (res.pindming) await showPindmingEffect(res.pindming);
     G.busy = false;
     beginTurn();
   }
@@ -9895,6 +11961,7 @@ body { font-size: 17px; }
         if (aGhost) await sleep(800);
         else await sleep(220);
         removeCardGhost(aGhost);
+        if (res.pindming) await showPindmingEffect(res.pindming);
         if (G.epoch !== ep) return;
       } else if (!useYuanmen) {
         toast('无人抢牌，牌局继续', '');
@@ -9925,6 +11992,7 @@ body { font-size: 17px; }
     clearAITimer();
     stopClock();
     clearGhosts();
+    hideResponseBar();
     G.busy = false;
     G.thinkingId = null;
     G.mode = 'over';
@@ -9951,29 +12019,74 @@ body { font-size: 17px; }
     }
     sfx(won ? 'win' : 'lose');
 
+    var players = g.players.slice();
+    var roundNo = g.roundNo || 1;
+    if (G.session) {
+      if (!G.session.history[roundNo - 1]) {
+        G.session.history[roundNo - 1] = {
+          round: roundNo,
+          decree: g.decree,
+          scores: players.map(function (p) { return p.roundScore; }),
+          bases: players.map(function (p) { return p.base; }),
+          mults: players.map(function (p) { return p.mult; })
+        };
+      }
+      G.session.final = roundNo >= 3;
+    }
+    var ranked = players.slice().sort(function (a, b) {
+      if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+      if (b.roundScore !== a.roundScore) return b.roundScore - a.roundScore;
+      if (b.base !== a.base) return b.base - a.base;
+      return Math.random() - 0.5;
+    });
+    var champion = ranked[0];
+    var final = !!(G.session && G.session.final);
     var emblem = $('gameover-emblem');
-    emblem.textContent = won ? '胜' : '负';
-    emblem.className = 'gameover-emblem' + (won ? '' : ' lose');
-    $('gameover-kicker').textContent = won ? '此局已定 · 江湖留名' : '胜负乃兵家常事';
-    $('gameover-title').textContent = won ? '你赢了' : '你输了';
-    var springText = g.settlement.spring ? (g.settlement.landlordWon ? ' · 春天' : ' · 反春天') : '';
-    $('gameover-sub').textContent = g.settlement.title + springText +
-      ' · 底分 ' + g.settlement.baseScore + ' · 倍数 ×' + g.settlement.multiplier;
+    emblem.textContent = final ? (champion.id === 0 ? '魁' : '终') : (won ? '胜' : '负');
+    emblem.className = 'gameover-emblem' + (final ? '' : won ? '' : ' lose');
+    $('gameover-kicker').textContent = final ? '三局江湖 · 总分定魁首' : '第 ' + roundNo + ' / 3 局 · 江湖记分';
+    $('gameover-title').textContent = final
+      ? (champion.id === 0 ? '你夺魁了' : champion.name + ' 夺魁')
+      : (won ? '本局取胜' : '本局落败');
+    $('gameover-sub').textContent = (g.decree ? E.decreeName(g.decree) + ' · ' : '') +
+      '本局 ' + players.map(function (p) {
+        return p.name + ' ' + p.base + '×' + p.mult.toFixed(2) + '=' + p.roundScore.toFixed(2);
+      }).join(' · ');
 
     var order = [0, 1, 2];
     $('settlement').innerHTML =
-      '<div class="settlement-row head"><div class="sr-name">侠客</div><div class="sr-delta">本局</div><div class="sr-total">总分</div></div>' +
+      '<div class="settlement-row head"><div class="sr-name">侠客</div><div class="sr-delta">本局得分</div><div class="sr-total">三局总分</div></div>' +
       order.map(function (id) {
         var p = g.players[id];
-        var delta = g.settlement.deltas[id] || 0;
         return '<div class="settlement-row">' +
-          '<div class="sr-name"><b>' + p.name + '</b><span class="sr-role">' + roleText(p) + '</span></div>' +
-          '<div class="sr-delta ' + (delta >= 0 ? 'plus' : 'minus') + '">' + (delta >= 0 ? '+' : '') + delta + '</div>' +
-          '<div class="sr-total">' + p.score + '</div>' +
+          '<div class="sr-name"><b>' + p.name + '</b><span class="sr-role">' + roleText(p) +
+          ' · 基础 ' + p.base + ' · 倍率 ' + p.mult.toFixed(2) + '</span></div>' +
+          '<div class="sr-delta plus" data-count="' + p.roundScore + '">+' + p.roundScore.toFixed(2) + '</div>' +
+          '<div class="sr-total" data-count="' + p.totalScore + '">' + p.totalScore.toFixed(2) + '</div>' +
           '</div>';
       }).join('');
-
+    animateScoreCounts();
+    $('btn-again').textContent = final ? '再来三局' : '下一局';
     $('gameover-screen').hidden = false;
+    if (final) sfx('win'); 
+  }
+
+  function animateScoreCounts() {
+    var nodes = Array.prototype.slice.call(document.querySelectorAll('#settlement [data-count]'));
+    nodes.forEach(function (el) {
+      var target = Number(el.getAttribute('data-count'));
+      var plus = el.classList.contains('sr-delta');
+      var start = performance.now();
+      function step(now) {
+        var k = Math.min(1, (now - start) / 650);
+        var eased = 1 - Math.pow(1 - k, 3);
+        var val = target * eased;
+        el.textContent = (plus ? '+' : '') + val.toFixed(2);
+        if (k < 1) requestAnimationFrame(step);
+        else el.textContent = (plus ? '+' : '') + target.toFixed(2);
+      }
+      requestAnimationFrame(step);
+    });
   }
 
   // ============================================================
@@ -10211,6 +12324,7 @@ body { font-size: 17px; }
     renderMarks();
     renderBottom();
     renderTableCenter();
+    renderPendingScore();
     renderHand(G.handAnimation && !G.startVisible, true);
     G.handAnimation = false;
     renderControls();
@@ -10222,10 +12336,20 @@ body { font-size: 17px; }
 
   function renderHud() {
     var g = G.game;
-    $('hud-round').textContent = g.round ? String(g.round).padStart(2, '0') : '—';
-    $('hud-base').textContent = g.phase === 'playing' || g.phase === 'over' ? String(g.baseScore) : '—';
-    $('hud-mult').textContent = '×' + g.multiplier;
-    $('hud-mult').style.color = g.multiplier > 1 ? '#f0c98a' : '';
+    $('hud-round').textContent = g.roundNo ? String(g.roundNo).padStart(2, '0') : (g.round ? String(g.round).padStart(2, '0') : '—');
+    $('hud-decree').textContent = g.decree ? E.decreeName(g.decree) : '—';
+    var suitMap = {
+      H: ['♥ 红桃', 'red'],
+      S: ['♠ 黑桃', 'black'],
+      C: ['♣ 梅花', 'black'],
+      D: ['♦ 方片', 'red']
+    };
+    var si = suitMap[g.extraSuit] || ['—', ''];
+    $('hud-extra').textContent = si[0];
+    $('hud-extra').className = si[1];
+    var marks = Object.keys(g.specialMarks || {}).map(function (id) { return g.specialMarks[id].type; });
+    $('hud-score-cards').textContent = String(marks.filter(function (t) { return t === 'score'; }).length || 4);
+    $('hud-mult-cards').textContent = String(marks.filter(function (t) { return t === 'mult'; }).length || 2);
   }
 
   function roleText(p) {
@@ -10258,21 +12382,420 @@ body { font-size: 17px; }
     arrow.classList.add('show');
   }
 
+  function consumeSourceList(arr) {
+    if (!arr || !arr.length) return '';
+    var seen = {};
+    var out = [];
+    arr.splice(0).forEach(function (s) {
+      if (!s || seen[s]) return;
+      seen[s] = true;
+      out.push(s);
+    });
+    return out.join('、');
+  }
+
+  function renderRoundStats(id, p) {
+    var baseEl = $('base-' + id), multEl = $('mult-' + id);
+    if (!baseEl || !multEl) return;
+    if (!G.statViews) G.statViews = {};
+    var view = G.statViews[id];
+    if (!view) {
+      view = G.statViews[id] = {
+        targetBase: p.base || 0,
+        targetMult: p.mult || 1,
+        chain: Promise.resolve()
+      };
+      baseEl.textContent = String(p.base || 0);
+      multEl.textContent = Number(p.mult || 1).toFixed(2);
+      clearCounterDeltas(id);
+      return;
+    }
+    if (view.targetBase !== (p.base || 0)) {
+      var fromBase = view.targetBase;
+      view.targetBase = p.base || 0;
+      var baseSource = consumeSourceList(p.baseSources) || p.lastBaseSource || '';
+      view.chain = view.chain.then(function () {
+        return rollCounter(id, 'base', fromBase, p.base || 0, baseSource);
+      });
+    }
+    if (view.targetMult !== (p.mult || 1)) {
+      var fromMult = view.targetMult;
+      view.targetMult = p.mult || 1;
+      var multSource = consumeSourceList(p.multSources) || p.lastMultSource || '';
+      view.chain = view.chain.then(function () {
+        return rollCounter(id, 'mult', fromMult, p.mult || 1, multSource);
+      });
+    }
+  }
+
+  function rollCounter(id, kind, from, to, source) {
+    var el = $(kind + '-' + id);
+    if (!el) return Promise.resolve();
+    var deltaEl = $(kind + '-delta-' + id);
+    var decimals = kind === 'mult' ? 2 : 0;
+    var delta = to - from;
+    if (deltaEl) {
+      deltaEl.classList.remove('show');
+      deltaEl.textContent = '';
+      if (delta > 0.00001) {
+        deltaEl.textContent = '+' + (decimals ? delta.toFixed(decimals) : String(Math.round(delta))) +
+          (source ? '（' + source + '）' : '');
+        deltaEl.classList.add('show');
+      }
+    }
+    var fromText = decimals ? Number(from).toFixed(decimals) : String(Math.round(from));
+    var toText = decimals ? Number(to).toFixed(decimals) : String(Math.round(to));
+    var len = Math.max(fromText.length, toText.length);
+    fromText = fromText.padStart(len, '0');
+    toText = toText.padStart(len, '0');
+    var html = '';
+    for (var i = 0; i < len; i++) {
+      var fc = fromText.charAt(i), tc = toText.charAt(i);
+      if (fc === '.' || tc === '.') {
+        html += '<span class="roll-dot">.</span>';
+      } else {
+        html += '<span class="roll-digit" data-old="' + fc + '" data-new="' + tc + '">' +
+          '<span class="roll-strip">' +
+          '01234567890123456789'.split('').map(function (d) { return '<i>' + d + '</i>'; }).join('') +
+          '</span></span>';
+      }
+    }
+    el.innerHTML = html;
+    el.setAttribute('aria-label', toText);
+    var digits = Array.prototype.slice.call(el.querySelectorAll('.roll-digit'));
+    var animations = [];
+    digits.forEach(function (d, index) {
+      var oldD = Number(d.getAttribute('data-old'));
+      var newD = Number(d.getAttribute('data-new'));
+      var strip = one('.roll-strip', d);
+      var targetIndex = newD < oldD ? newD + 10 : newD;
+      strip.style.transform = 'translateY(-' + oldD + 'em)';
+      if (newD === oldD) return;
+      var rightOffset = (len - 1) - index;
+      animations.push(strip.animate([
+        { transform: 'translateY(-' + oldD + 'em)' },
+        { transform: 'translateY(-' + targetIndex + 'em)' }
+      ], {
+        duration: 520,
+        delay: rightOffset * 55,
+        easing: 'cubic-bezier(.18,.7,.25,1)',
+        fill: 'forwards'
+      }).finished.then(function () {
+        strip.style.transform = 'translateY(-' + newD + 'em)';
+      }));
+    });
+    var scale = el.animate([
+      { transform: 'scale(2)', offset: 0 },
+      { transform: 'scale(2)', offset: 0.5 },
+      { transform: 'scale(1)', offset: 1 }
+    ], { duration: 900, easing: 'cubic-bezier(.2,.8,.2,1)' }).finished;
+    return Promise.all(animations.concat([scale])).then(function () {
+      el.textContent = toText;
+      if (deltaEl) {
+        deltaEl.classList.remove('show');
+        deltaEl.textContent = '';
+      }
+    });
+  }
+
+  function clearCounterDeltas(id) {
+    ['base', 'mult'].forEach(function (kind) {
+      var d = $(kind + '-delta-' + id);
+      if (d) { d.classList.remove('show'); d.textContent = ''; }
+    });
+  }
+
+  function resetStatViews() {
+    G.statViews = {};
+    G.pendingView = null;
+    G.pendingGen = (G.pendingGen || 0) + 1;
+    [0, 1, 2].forEach(clearCounterDeltas);
+    var pb = $('pending-base'), pm = $('pending-mult');
+    if (pb) pb.textContent = '0';
+    if (pm) pm.textContent = '0.00';
+  }
+
+  function renderPendingScore() {
+    var box = $('pending-score');
+    if (!box) return;
+    var sc = G.game && G.game.scoring;
+    var base = sc ? sc.pendingBase : 0;
+    var mult = sc ? sc.pendingMult : 0;
+    box.hidden = false;
+    if (!G.pendingView) {
+      G.pendingView = {
+        targetBase: base,
+        targetMult: mult,
+        chain: Promise.resolve()
+      };
+      $('pending-base').textContent = String(base);
+      $('pending-mult').textContent = Number(mult).toFixed(2);
+      return;
+    }
+    if (sc && sc.lastAward && sc.lastAward.seq !== G.lastAwardSeq) {
+      G.lastAwardSeq = sc.lastAward.seq;
+      migrateScore(sc.lastAward);
+    }
+    if (base === 0 && mult === 0 &&
+        (G.pendingView.targetBase > 0 || G.pendingView.targetMult > 0)) {
+      clearPendingNow(G.pendingView);
+      return;
+    }
+    if (G.pendingView.targetBase !== base) {
+      var fromBase = G.pendingView.targetBase;
+      G.pendingView.targetBase = base;
+      var baseSource = pendingSourceLabel(sc, 'base');
+      G.pendingView.chain = G.pendingView.chain.then(function () {
+        return rollPendingValue('base', fromBase, base, baseSource);
+      });
+    }
+    if (G.pendingView.targetMult !== mult) {
+      var fromMult = G.pendingView.targetMult;
+      G.pendingView.targetMult = mult;
+      var multSource = pendingSourceLabel(sc, 'mult');
+      G.pendingView.chain = G.pendingView.chain.then(function () {
+        return rollPendingValue('mult', fromMult, mult, multSource);
+      });
+    }
+    var tip = $('pending-tooltip');
+    if (tip && !tip.hidden) showPendingTooltip();
+  }
+
+  function showHudTooltip(cell) {
+    var tip = $('hud-tooltip');
+    var g = G.game;
+    if (!tip || !g || !cell) return;
+    var key = cell.getAttribute('data-hud-tip');
+    var title = '';
+    var body = '';
+    if (key === 'decree') {
+      title = g.decree ? '本局令 · ' + E.decreeName(g.decree) : '本局令 · 未定';
+      body = g.decree ? decreeDescription(g.decree) : '叫地主后展示本局江湖令。';
+    } else if (key === 'extra') {
+      var map = { H: '红桃', S: '黑桃', C: '梅花', D: '方片' };
+      title = '额外花色 · ' + (map[g.extraSuit] || '未定');
+      body = '本局随机一种花色。该花色牌打出后进入待结算；获得牌权时，前序被压的该花色牌每张 +2 基础分。';
+    } else if (key === 'score') {
+      title = '分数牌 · 本局 ' + $('hud-score-cards').textContent + ' 张';
+      body = '淡蓝色分牌。打出后立刻进入待结算；获得牌权者每张 +5 基础分。';
+    } else if (key === 'mult') {
+      title = '倍率牌 · 本局 ' + $('hud-mult-cards').textContent + ' 张';
+      body = '淡红色倍率牌。打出后立刻进入待结算；获得牌权者每张 +0.10 倍率。';
+    }
+    if (!body) return;
+    tip.innerHTML = '<b>' + title + '</b><span class="hud-tip-line">' + body + '</span>';
+    tip.hidden = false;
+    var r = cell.getBoundingClientRect();
+    var left = r.left + r.width / 2 - 135;
+    left = Math.max(8, Math.min(window.innerWidth - 278, left));
+    tip.style.left = left + 'px';
+    tip.style.top = (r.bottom + 8) + 'px';
+  }
+
+  function hideHudTooltip() {
+    var tip = $('hud-tooltip');
+    if (tip) tip.hidden = true;
+  }
+
+  function showPendingTooltip() {
+    var tip = $('pending-tooltip');
+    var sc = G.game && G.game.scoring;
+    if (!tip || !sc) return;
+    var baseMap = {}, multMap = {};
+    (sc.pendingSources || []).forEach(function (s) {
+      if (!s.amount || s.amount <= 0) return;
+      var map = s.kind === 'base' ? baseMap : multMap;
+      var key = s.source || '待结算';
+      if (!map[key]) map[key] = { amount: 0, cards: [] };
+      map[key].amount += s.amount;
+      (s.cards || []).forEach(function (c) {
+        var label = c.joker ? c.label : c.suitSymbol + c.label;
+        if (map[key].cards.indexOf(label) < 0) map[key].cards.push(label);
+      });
+    });
+    var baseTotal = sc.pendingBase || 0;
+    var multTotal = sc.pendingMult || 0;
+    function group(title, map, kind) {
+      var keys = Object.keys(map);
+      var cls = kind === 'base' ? 'pt-base' : 'pt-mult';
+      var lines = keys.map(function (k) {
+        var item = map[k];
+        var val = kind === 'base' ? '+' + item.amount : '+' + item.amount.toFixed(2);
+        return '<div class="' + cls + '">' + k + ' ' + val +
+          (item.cards.length ? ' · ' + item.cards.join('、') : '') + '</div>';
+      }).join('');
+      return '<div class="pt-group"><span class="pt-group-title">' + title + '</span>' +
+        (lines || '<div class="pt-empty">暂无</div>') + '</div>';
+    }
+    tip.innerHTML = '<b>本轮待结算来源</b>' +
+      group('基础 +' + baseTotal, baseMap, 'base') +
+      group('倍率 +' + multTotal.toFixed(2), multMap, 'mult') +
+      (!Object.keys(baseMap).length && !Object.keys(multMap).length
+        ? '<div class="pt-empty">本轮暂无待结算。特殊牌、额外花色和长征令倍率会显示在这里。</div>'
+        : '');
+    tip.hidden = false;
+  }
+
+  function hidePendingTooltip() {
+    var tip = $('pending-tooltip');
+    if (tip) tip.hidden = true;
+  }
+
+  function pendingSourceLabel(sc, kind) {
+    if (!sc || !sc.pendingSources) return '';
+    var seen = {};
+    var out = [];
+    sc.pendingSources.forEach(function (s) {
+      if (s.kind !== kind || s.amount <= 0 || !s.source || seen[s.source]) return;
+      seen[s.source] = true;
+      out.push(s.source);
+    });
+    return out.join('、');
+  }
+
+  function clearPendingNow(view) {
+    hidePendingTooltip();
+    var oldBase = view.targetBase || 0;
+    var oldMult = view.targetMult || 0;
+    view.targetBase = 0;
+    view.targetMult = 0;
+    G.pendingGen = (G.pendingGen || 0) + 1;
+    var baseEl = $('pending-base'), multEl = $('pending-mult');
+    if (baseEl) baseEl.textContent = String(oldBase);
+    if (multEl) multEl.textContent = Number(oldMult).toFixed(2);
+    view.chain = Promise.all([
+      rollPendingValue('base', oldBase, 0),
+      rollPendingValue('mult', oldMult, 0)
+    ]);
+  }
+
+  function rollPendingValue(kind, from, to, source) {
+    var el = $('pending-' + kind);
+    if (!el) return Promise.resolve();
+    var gen = G.pendingGen || 0;
+    var deltaEl = $('pending-' + kind + '-delta');
+    var decimals = kind === 'mult' ? 2 : 0;
+    var clearMode = to === 0 && from > 0;
+    var delta = to - from;
+    if (deltaEl) {
+      deltaEl.classList.remove('show');
+      deltaEl.textContent = '';
+      if (!clearMode && delta > 0.00001) {
+        deltaEl.textContent = '+' + (decimals ? delta.toFixed(decimals) : String(Math.round(delta))) +
+          (source ? '（' + source + '）' : '');
+        deltaEl.classList.add('show');
+      }
+    }
+    var fromText = decimals ? Number(from).toFixed(decimals) : String(Math.round(from));
+    var toText = decimals ? Number(to).toFixed(decimals) : String(Math.round(to));
+    var len = Math.max(fromText.length, toText.length);
+    fromText = fromText.padStart(len, '0');
+    toText = toText.padStart(len, '0');
+    var html = '';
+    for (var i = 0; i < len; i++) {
+      var fc = fromText.charAt(i), tc = toText.charAt(i);
+      if (fc === '.' || tc === '.') html += '<span class="roll-dot">.</span>';
+      else {
+        html += '<span class="roll-digit" data-old="' + fc + '" data-new="' + tc + '">' +
+          '<span class="roll-strip">' +
+          '01234567890123456789'.split('').map(function (d) { return '<i>' + d + '</i>'; }).join('') +
+          '</span></span>';
+      }
+    }
+    el.innerHTML = html;
+    var animations = [];
+    Array.prototype.slice.call(el.querySelectorAll('.roll-digit')).forEach(function (d, index) {
+      var oldD = Number(d.getAttribute('data-old'));
+      var newD = Number(d.getAttribute('data-new'));
+      var strip = one('.roll-strip', d);
+      strip.style.transform = 'translateY(-' + oldD + 'em)';
+      if (oldD === newD) return;
+      var targetIndex = newD < oldD ? newD + 10 : newD;
+      animations.push(strip.animate([
+        { transform: 'translateY(-' + oldD + 'em)' },
+        { transform: 'translateY(-' + targetIndex + 'em)' }
+      ], {
+        duration: 520,
+        delay: ((len - 1) - index) * 55,
+        easing: 'cubic-bezier(.18,.7,.25,1)',
+        fill: 'forwards'
+      }).finished.then(function () {
+        strip.style.transform = 'translateY(-' + newD + 'em)';
+      }));
+    });
+    var scale = el.animate(clearMode ? [
+      { transform: 'scale(1)', opacity: 1 },
+      { transform: 'scale(1.5)', opacity: 1, offset: 0.28 },
+      { transform: 'scale(.25)', opacity: .25, offset: 0.72 },
+      { transform: 'scale(1)', opacity: 1 }
+    ] : [
+      { transform: 'scale(2)', offset: 0 },
+      { transform: 'scale(2)', offset: 0.5 },
+      { transform: 'scale(1)', offset: 1 }
+    ], { duration: 900, easing: 'cubic-bezier(.2,.8,.2,1)' }).finished;
+    return Promise.all(animations.concat([scale])).then(function () {
+      if (gen !== (G.pendingGen || 0)) return;
+      el.textContent = toText;
+      if (deltaEl) {
+        deltaEl.classList.remove('show');
+        deltaEl.textContent = '';
+      }
+    });
+  }
+
+  function migrateScore(award) {
+    if (reducedMotion()) return;
+    var app = $('app');
+    if (!app) return;
+    var target = award.playerId === 0
+      ? one('.self-profile .avatar')
+      : $('avatar-' + award.playerId);
+    var tr = rectOf(target);
+    if (!tr) return;
+    var layer = document.createElement('div');
+    layer.className = 'score-migrate-layer';
+    var parts = [];
+    if (award.base) parts.push('+' + award.base + ' 基础');
+    if (award.mult) parts.push('+' + Number(award.mult).toFixed(2) + ' 倍率');
+    layer.innerHTML = '<span class="score-migrate-chip">' + parts.join(' · ') + '</span>';
+    app.appendChild(layer);
+    var chip = one('.score-migrate-chip', layer);
+    var sx = appWidth() / 2;
+    var sy = appHeight() * 0.6;
+    var tx = tr.x + tr.w / 2;
+    var ty = tr.y + tr.h / 2;
+    chip.style.left = sx + 'px';
+    chip.style.top = sy + 'px';
+    chip.animate([
+      { transform: 'translate(-50%,-50%) scale(.7)', opacity: 0 },
+      { transform: 'translate(-50%,-50%) scale(1.08)', opacity: 1, offset: 0.18 },
+      { transform: 'translate(-50%,-50%) scale(.9)', opacity: 1, offset: 0.7 },
+      { transform: 'translate(calc(-50% + ' + (tx - sx) + 'px), calc(-50% + ' + (ty - sy) + 'px)) scale(.62)', opacity: 0 }
+    ], { duration: 720, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' }).finished.then(function () {
+      layer.remove();
+    });
+  }
+
   function renderSeats() {
     var g = G.game;
     var ids = [1, 2];
     var arrowId = null;
+    var activeTurn = g.turn;
+    if (g.pending && g.pending.type === 'shuangbi' && g.pending.stage === 'choose') {
+      activeTurn = g.pending.previous;
+    }
     ids.forEach(function (id) {
       var p = g.players[id];
       $('name-' + id).textContent = p.name;
       $('title-' + id).textContent = p.title;
       $('count-' + id).textContent = p.hand.length;
-      $('score-' + id).textContent = p.score;
+      $('score-' + id).textContent = Number(p.totalScore || 0).toFixed(2);
+      renderRoundStats(id, p);
       one('.count-pill', $('seat-' + id)).classList.toggle('low', p.hand.length <= 2);
       var role = $('role-' + id);
       role.textContent = roleText(p);
       role.className = 'role-badge' + (p.role === 'landlord' ? ' landlord' : p.role === 'farmer' ? ' farmer' : '');
-      var active = (g.phase === 'bidding' || g.phase === 'playing') && g.turn === id && !g.reaction && g.phase !== 'over';
+      var active = (g.phase === 'bidding' || g.phase === 'playing') && activeTurn === id && !g.reaction && g.phase !== 'over';
       $('seat-' + id).classList.toggle('active', active);
       if (active) arrowId = id;
       $('turn-tag-' + id).textContent = g.phase === 'bidding' ? '叫分' :
@@ -10286,13 +12809,12 @@ body { font-size: 17px; }
     });
 
     var human = g.players[0];
-    $('score-0').textContent = human.score;
-    $('count-0').textContent = human.hand.length;
-    $('count-0').classList.toggle('low', human.hand.length <= 2);
+    $('score-0').textContent = Number(human.totalScore || 0).toFixed(2);
+    renderRoundStats(0, human);
     var hr = $('role-0');
     hr.textContent = roleText(human);
     hr.className = 'role-badge' + (human.role === 'landlord' ? ' landlord' : human.role === 'farmer' ? ' farmer' : '');
-    var humanActive = (g.phase === 'bidding' || g.phase === 'playing') && g.turn === 0 && !g.reaction && g.phase !== 'over';
+    var humanActive = (g.phase === 'bidding' || g.phase === 'playing') && activeTurn === 0 && !g.reaction && g.phase !== 'over';
     one('.avatar-wrap', one('.self-profile')).classList.toggle('active', humanActive);
     one('.self-profile').classList.toggle('active', humanActive);
     if (humanActive) arrowId = 0;
@@ -10357,8 +12879,15 @@ body { font-size: 17px; }
     var red = c.color === 'red';
     var art = c.joker ? '王' : c.suitSymbol;
     var face = cardFaceImage(c);
-    return '<div class="bottom-card ' + (red ? 'red' : '') + (face ? ' has-face' : '') + '">' +
+    var sm = G.game && G.game.specialMarks && G.game.specialMarks[c.id];
+    var specialClass = sm && !sm.settled ? (sm.type === 'score' ? ' bottom-score-card' : ' bottom-multi-card') : '';
+    var tint = sm && !sm.settled
+      ? '<span class="special-tint ' + (sm.type === 'score' ? 'score-tint' : 'multi-tint') + '"></span>' +
+        '<span class="special-ring ' + (sm.type === 'score' ? 'score-ring' : 'multi-ring') + '"></span>'
+      : '';
+    return '<div class="bottom-card ' + (red ? 'red' : '') + (face ? ' has-face' : '') + specialClass + '">' +
       (face ? '<img class="card-face" src="' + face + '" alt="" draggable="false">' : '') +
+      tint +
       '<span class="bc-rank">' + (c.joker ? (c.bigJoker ? '大' : '小') : c.label) + '</span>' +
       '<span class="bc-suit">' + (c.joker ? '王' : c.suitSymbol) + '</span>' +
       '<span class="bc-art">' + art + '</span>' +
@@ -10396,8 +12925,11 @@ body { font-size: 17px; }
     var turnId = -1;
     if (g.phase === 'bidding') turnId = g.turn;
     else if (g.phase === 'playing') {
-      if (pending) turnId = pending.actor;
-      else if (!isReaction) turnId = g.turn;
+      if (pending) {
+        turnId = pending.type === 'shuangbi' && pending.stage === 'choose'
+          ? pending.previous
+          : pending.actor;
+      } else if (!isReaction) turnId = g.turn;
     }
     var turnRgb = turnId === 0 ? '231, 194, 111' :
       turnId === 1 ? '116, 190, 216' :
@@ -10433,6 +12965,8 @@ body { font-size: 17px; }
       else if (pending && pending.type === 'qijin') note = '七进七出 · 一枪回马，收回一张';
       else if (pending && pending.type === 'yuanmen') note = '辕门射戟 · 等待两家弃牌';
       else if (pending && pending.type === 'sanrenReturn') note = '三人行 · 还一张牌';
+      else if (pending && pending.type === 'geshan') note = '隔山打牛 · 等待下家响应';
+      else if (pending && pending.type === 'shuangbi') note = '双璧锁关 · 地主让路';
       else if (!last) note = '第 ' + g.trick + ' 巡 · ' + g.players[g.turn].name + ' 领出';
       else note = '第 ' + g.trick + ' 巡 · ' + g.players[last.player].name + ' 掌牌权';
     } else if (g.phase === 'bidding') {
@@ -10462,7 +12996,7 @@ body { font-size: 17px; }
       var id = el.dataset.id;
       var on = G.selected.has(id);
       el.classList.toggle('selected', on);
-      ['siliang', 'sanren', 'jiujiu', 'guowuguan', 'qijin', 'yuanmen'].forEach(function (k) {
+      ['siliang', 'sanren', 'jiujiu', 'guowuguan', 'qijin', 'yuanmen', 'geshan', 'shuangbi', 'pindming'].forEach(function (k) {
         el.classList.toggle('skill-glow-' + k, on && G.selectionGlow === k);
       });
       el.classList.toggle('drawn', G.drawnId === id);
@@ -10499,7 +13033,10 @@ body { font-size: 17px; }
 
   function cardFaceImage(c) {
     var map = typeof window !== 'undefined' ? window.DDZ_CARD_IMAGES : null;
-    return map && map[c.id] ? map[c.id] : '';
+    if (!map) return '';
+    if (map[c.id]) return map[c.id];
+    var key = c.joker ? (c.bigJoker ? 'JOKER_B' : 'JOKER_S') : (c.suit && c.rankKey ? c.suit + c.rankKey : '');
+    return key && map[key] ? map[key] : '';
   }
 
   function cardMarkup(c, opts) {
@@ -10515,6 +13052,12 @@ body { font-size: 17px; }
     if (opts.noAnim) classes.push('no-anim');
     var face = cardFaceImage(c);
     if (face) classes.push('has-face');
+    var sm = G.game && G.game.specialMarks && G.game.specialMarks[c.id];
+    var tint = sm && !sm.settled && !opts.noSpecial
+      ? '<span class="special-tint ' + (sm.type === 'score' ? 'score-tint' : 'multi-tint') + '"></span>' +
+        '<span class="special-ring ' + (sm.type === 'score' ? 'score-ring' : 'multi-ring') + '"></span>'
+      : '';
+    if (sm && !sm.settled && !opts.noSpecial) classes.push(sm.type === 'score' ? 'score-card' : 'multi-card');
     var label = c.joker ? c.label : c.suitName + c.label;
     var tag = opts.interactive ? 'button' : 'div';
     var attrs = ' class="' + classes.join(' ') + '" data-id="' + c.id + '" data-rank="' + c.rankKey + '"';
@@ -10532,6 +13075,7 @@ body { font-size: 17px; }
     }
     return '<' + tag + attrs + '>' +
       (face ? '<img class="card-face" src="' + face + '" alt="" draggable="false">' : '') +
+      tint +
       '<span class="corner-top">' + top + '</span>' +
       '<span class="corner-top corner-bottom">' + top + '</span>' +
       art +
@@ -10704,28 +13248,56 @@ body { font-size: 17px; }
 
   function renderSkills() {
     var g = G.game;
+    var grid = $('skill-grid');
+    if (!g || !grid) return;
     var humanTurn = g.phase === 'playing' && g.turn === 0 && !g.pending && !g.reaction && !G.busy;
-    var buttons = {};
-    all('.skill-btn').forEach(function (b) { buttons[b.getAttribute('data-skill')] = b; });
-    Object.keys(buttons).forEach(function (k) {
-      buttons[k].classList.remove('available', 'reaction-ready', 'passive');
+    var states = {};
+    var available = [];
+
+    if (g.pending && g.pending.type === 'geshan' && g.pending.actor === 0) {
+      states.geshan = true;
+      available.push('geshan');
+    } else if (g.pending && g.pending.type === 'shuangbi' && g.pending.stage === 'choose' && g.pending.actor === 0) {
+      states.shuangbi = true;
+      available.push('shuangbi');
+    }
+
+    if (g.reaction && g.reaction.candidates.indexOf(0) >= 0) {
+      states.jiujiu = true;
+      available.push('jiujiu');
+    }
+
+    if (humanTurn) {
+      if (findSiliangMove(g)) { states.siliang = true; available.push('siliang'); }
+      if (E.canUseSanren(g, 0)) { states.sanren = true; available.push('sanren'); }
+      if (E.canUseGuowuguan(g, 0)) { states.guowuguan = true; available.push('guowuguan'); }
+      if (E.canUseQijin(g, 0)) { states.qijin = true; available.push('qijin'); }
+      if (E.canUseYuanmen(g, 0)) { states.yuanmen = true; available.push('yuanmen'); }
+    }
+
+    // 只装填前 6 个可用的技能窗口；其余位置保持空槽。
+    available = available.slice(0, 6);
+    var slots = all('.skill-slot', grid);
+    slots.forEach(function (slot, i) {
+      var key = available[i];
+      var ui = key && SKILL_UI[key];
+      slot.classList.toggle('filled', !!ui);
+      if (!ui) {
+        slot.innerHTML = '';
+        slot.removeAttribute('data-filled-skill');
+        return;
+      }
+      var cls = ['skill-btn', ui.cls, 'available'];
+      if (key === 'jiujiu') cls.push('reaction-ready');
+      if (key === 'qijin' && G.qijinArmed) cls.push('armed');
+      if (key === 'yuanmen' && g.mode === 'yuanmen-choice') cls.push('armed');
+      slot.innerHTML = '<button class="' + cls.join(' ') + '" data-skill="' + key +
+        '" type="button" title="' + (SKILL_GUIDES[key] ? SKILL_GUIDES[key].title + '：' + SKILL_GUIDES[key].sub : ui.name) + '">' +
+        '<span class="skill-glyph">' + ui.glyph + '</span>' +
+        '<span class="skill-copy"><b>' + ui.name + '</b><i>' + ui.sub + '</i></span>' +
+        '<span class="skill-lamp"></span></button>';
+      slot.setAttribute('data-filled-skill', key);
     });
-    var states = {
-      siliang: humanTurn && !!findSiliangMove(g),
-      sanren: humanTurn && E.canUseSanren(g, 0),
-      guowuguan: humanTurn && E.canUseGuowuguan(g, 0),
-      qijin: humanTurn && E.canUseQijin(g, 0),
-      yuanmen: humanTurn && E.canUseYuanmen(g, 0),
-      jiujiu: !!(g.reaction && g.reaction.candidates.indexOf(0) >= 0)
-    };
-    if (states.siliang) buttons.siliang.classList.add('available');
-    if (states.sanren) buttons.sanren.classList.add('available');
-    if (states.guowuguan) buttons.guowuguan.classList.add('available');
-    if (states.qijin) buttons.qijin.classList.add('available');
-    if (states.yuanmen) buttons.yuanmen.classList.add('available');
-    if (states.jiujiu) buttons.jiujiu.classList.add('reaction-ready');
-    if (buttons.qijin) buttons.qijin.classList.toggle('armed', !!G.qijinArmed);
-    if (buttons.yuanmen) buttons.yuanmen.classList.toggle('armed', g.mode === 'yuanmen-choice');
     notifySkillReady(states);
   }
 
@@ -11309,13 +13881,14 @@ body { font-size: 17px; }
   // ============================================================
   // 技能演出
   // ============================================================
-  async function cinematic(kind, title, actorName, subtitle, duration) {
+  async function cinematic(kind, title, actorName, subtitle, duration, titleHtml) {
     var el = $('skill-cinematic');
     el.hidden = false;
     el.dataset.skill = kind;
     $('cinematic-kicker').textContent = actorName + ' · 施展绝技';
     var titleEl = $('cinematic-title');
-    titleEl.textContent = title;
+    if (titleHtml) titleEl.innerHTML = titleHtml;
+    else titleEl.textContent = title;
     titleEl.className = 'cinematic-title' + (title.length <= 4 ? ' short' : '');
     $('cinematic-sub').textContent = subtitle;
     var particles = $('ink-particles');
@@ -11549,7 +14122,7 @@ body { font-size: 17px; }
       }
       if (name === 'skillReady') {
         var first = (detail && detail[0]) || 'siliang';
-        var baseMap = { siliang: 523.25, sanren: 587.33, jiujiu: 392, guowuguan: 440, qijin: 466.16, yuanmen: 493.88 };
+        var baseMap = { siliang: 523.25, sanren: 587.33, jiujiu: 392, guowuguan: 440, qijin: 466.16, yuanmen: 493.88, geshan: 410, shuangbi: 554.37, pindming: 349.23 };
         var base = baseMap[first] || 523.25;
         [1, 1.5, 2].forEach(function (ratio, i) {
           var o = ctx.createOscillator(); var g2 = ctx.createGain();
@@ -11676,6 +14249,137 @@ body { font-size: 17px; }
           g2.gain.exponentialRampToValueAtTime(0.001, t + i * 0.06 + 0.3);
           o.connect(g2); g2.connect(ctx.destination);
           o.start(t + i * 0.06); o.stop(t + i * 0.06 + 0.32);
+        });
+        return;
+      }
+      if (name === 'geshan') {
+        // 隔山打牛：闷雷般的山腹回响 + 一记短促破空
+        var echoOsc = ctx.createOscillator();
+        var echoGain = ctx.createGain();
+        echoOsc.type = 'sine';
+        echoOsc.frequency.setValueAtTime(78, t);
+        echoOsc.frequency.exponentialRampToValueAtTime(46, t + 0.55);
+        echoGain.gain.setValueAtTime(0.0001, t);
+        echoGain.gain.linearRampToValueAtTime(0.14, t + 0.03);
+        echoGain.gain.exponentialRampToValueAtTime(0.001, t + 0.62);
+        echoOsc.connect(echoGain); echoGain.connect(ctx.destination);
+        echoOsc.start(t); echoOsc.stop(t + 0.65);
+        [260, 390, 585].forEach(function (f, i) {
+          var o = ctx.createOscillator(); var g2 = ctx.createGain();
+          o.type = 'triangle';
+          o.frequency.setValueAtTime(f, t + 0.08 + i * 0.07);
+          g2.gain.setValueAtTime(0.0001, t + 0.08 + i * 0.07);
+          g2.gain.linearRampToValueAtTime(0.03 / (i + 1), t + 0.1 + i * 0.07);
+          g2.gain.exponentialRampToValueAtTime(0.001, t + 0.5 + i * 0.07);
+          o.connect(g2); g2.connect(ctx.destination);
+          o.start(t + 0.08 + i * 0.07); o.stop(t + 0.55 + i * 0.07);
+        });
+        return;
+      }
+      if (name === 'shuangbi') {
+        // 双璧锁关：两声玉璧相击，随后一道低沉锁扣
+        [880, 1174].forEach(function (f, i) {
+          var o = ctx.createOscillator(); var g2 = ctx.createGain();
+          o.type = 'sine';
+          o.frequency.setValueAtTime(f, t + i * 0.16);
+          g2.gain.setValueAtTime(0.0001, t + i * 0.16);
+          g2.gain.linearRampToValueAtTime(0.045, t + i * 0.16 + 0.01);
+          g2.gain.exponentialRampToValueAtTime(0.001, t + i * 0.16 + 0.48);
+          o.connect(g2); g2.connect(ctx.destination);
+          o.start(t + i * 0.16); o.stop(t + i * 0.16 + 0.5);
+        });
+        osc = ctx.createOscillator();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, t + 0.12);
+        osc.frequency.exponentialRampToValueAtTime(72, t + 0.5);
+        gain.gain.setValueAtTime(0.0001, t + 0.12);
+        gain.gain.linearRampToValueAtTime(0.08, t + 0.16);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.54);
+        osc.connect(gain); osc.start(t + 0.12); osc.stop(t + 0.58);
+        return;
+      }
+      if (name === 'decree') {
+        [196, 261.63, 392, 523.25].forEach(function (f, i) {
+          var o = ctx.createOscillator(); var g2 = ctx.createGain();
+          o.type = 'sine'; o.frequency.setValueAtTime(f, t + i * 0.11);
+          g2.gain.setValueAtTime(0.0001, t + i * 0.11);
+          g2.gain.linearRampToValueAtTime(0.04, t + i * 0.11 + 0.02);
+          g2.gain.exponentialRampToValueAtTime(0.001, t + i * 0.11 + 0.9);
+          o.connect(g2); g2.connect(ctx.destination);
+          o.start(t + i * 0.11); o.stop(t + i * 0.11 + 0.95);
+        });
+        return;
+      }
+      if (name === 'chain') {
+        // 锁链：三声金属碰撞 + 一记短促锁扣
+        [0, 0.1, 0.22].forEach(function (d, i) {
+          var o = ctx.createOscillator(); var g2 = ctx.createGain();
+          o.type = i === 1 ? 'square' : 'triangle';
+          o.frequency.setValueAtTime([1460, 1880, 2340][i], t + d);
+          o.frequency.exponentialRampToValueAtTime([980, 1320, 1720][i], t + d + 0.06);
+          g2.gain.setValueAtTime(0.0001, t + d);
+          g2.gain.linearRampToValueAtTime(0.045 / (i + 1), t + d + 0.008);
+          g2.gain.exponentialRampToValueAtTime(0.001, t + d + 0.16);
+          o.connect(g2); g2.connect(ctx.destination);
+          o.start(t + d); o.stop(t + d + 0.18);
+        });
+        var chainBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.18), ctx.sampleRate);
+        var chainData = chainBuf.getChannelData(0);
+        for (var ci = 0; ci < chainData.length; ci++) {
+          chainData[ci] = (Math.random() * 2 - 1) * Math.pow(1 - ci / chainData.length, 5);
+        }
+        var chainSrc = ctx.createBufferSource();
+        chainSrc.buffer = chainBuf;
+        var chainHp = ctx.createBiquadFilter();
+        chainHp.type = 'highpass'; chainHp.frequency.value = 1800;
+        var chainGain = ctx.createGain();
+        chainGain.gain.setValueAtTime(0.09, t + 0.26);
+        chainGain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+        chainSrc.connect(chainHp); chainHp.connect(chainGain); chainGain.connect(ctx.destination);
+        chainSrc.start(t + 0.26);
+        osc = ctx.createOscillator();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(170, t + 0.26);
+        osc.frequency.exponentialRampToValueAtTime(78, t + 0.48);
+        gain.gain.setValueAtTime(0.0001, t + 0.26);
+        gain.gain.linearRampToValueAtTime(0.08, t + 0.29);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+        osc.connect(gain); osc.start(t + 0.26); osc.stop(t + 0.52);
+        return;
+      }
+      if (name === 'pindming') {
+        // 拼命三郎：心跳两拍 + 孤注一掷的高频破空
+        [0, 0.2].forEach(function (d, i) {
+          var o = ctx.createOscillator(); var g2 = ctx.createGain();
+          o.type = 'sine';
+          o.frequency.setValueAtTime(i ? 58 : 70, t + d);
+          g2.gain.setValueAtTime(0.0001, t + d);
+          g2.gain.linearRampToValueAtTime(0.13, t + d + 0.02);
+          g2.gain.exponentialRampToValueAtTime(0.001, t + d + 0.3);
+          o.connect(g2); g2.connect(ctx.destination);
+          o.start(t + d); o.stop(t + d + 0.32);
+        });
+        osc = ctx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, t + 0.42);
+        osc.frequency.exponentialRampToValueAtTime(980, t + 0.72);
+        gain.gain.setValueAtTime(0.0001, t + 0.42);
+        gain.gain.linearRampToValueAtTime(0.035, t + 0.46);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.78);
+        osc.connect(gain); osc.start(t + 0.42); osc.stop(t + 0.82);
+        return;
+      }
+      if (name === 'pmGlow') {
+        // 拼命三郎变牌：金光泛起 + 玉石翻面
+        [523.25, 783.99, 1046.5, 1567.98].forEach(function (f, i) {
+          var o = ctx.createOscillator(); var g2 = ctx.createGain();
+          o.type = i === 3 ? 'triangle' : 'sine';
+          o.frequency.setValueAtTime(f, t + i * 0.055);
+          g2.gain.setValueAtTime(0.0001, t + i * 0.055);
+          g2.gain.linearRampToValueAtTime(0.038 / (i + 1), t + i * 0.055 + 0.02);
+          g2.gain.exponentialRampToValueAtTime(0.001, t + i * 0.055 + 0.7);
+          o.connect(g2); g2.connect(ctx.destination);
+          o.start(t + i * 0.055); o.stop(t + i * 0.055 + 0.74);
         });
         return;
       }
