@@ -9993,7 +9993,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
           '，再分别向上取整，保留两位小数。这里是乘法，不是直接增加' + pct(d.rapid.tripleBombMult) +
           '倍率。例如，某人的倍率为' + pct(sample) + '，乘后为' + (sample * num(d.rapid.tripleBombMult)).toFixed(4) +
           '，向上取整后为' + pct(sampleAfter) + '。',
-        num(d.rapid.tripleBombSize) + '张炸弹可以压普通非飞机牌型，但不能压飞机、飞机带单或飞机带对。' + num(d.rapid.tripleBombSize) + '张炸弹之间按牌点比较；四张炸弹恒大于' + num(d.rapid.tripleBombSize) + '张炸弹；四张炸弹之间按牌点比较。镇山炸高于普通炸弹，王炸高于镇山炸。',
+        num(d.rapid.tripleBombSize) + '张炸弹可以压普通非飞机牌型，但不能压飞机、飞机带单或飞机带对。压制顺序为：单 4+2 的四两拨千斤 < ' + num(d.rapid.tripleBombSize) + '张炸弹 < 四张炸弹 < 镇山炸 < 王炸。' + num(d.rapid.tripleBombSize) + '张炸弹之间按牌点比较，四张炸弹之间也按牌点比较。',
         '<b>疾行令 · 点数入池</b>：每次正常出牌，把这一手所有牌的点数相加，以基础分奖励加入待结算池。' + pointMapping(R) + '。',
         '例如，打出' + pe.cards.map(function (c) { return c.label; }).join('、') + '，向池内增加' +
           pe.total + '基础分。点数入池只按普通出牌流程触发；七进七出的首次技能牌打出计入，双璧锁关的续出不计入。技能弃牌、交换、补牌、变牌不触发点数入池。',
@@ -10900,7 +10900,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   }
 
   function scenarioPositionHighlight(h, el, box) {
-    var r = screenRectOf(el);
+    var r = rectOf(el);
     if (!r) { h.hidden = true; return false; }
     h.hidden = false;
     h.classList.toggle('box', !!box);
@@ -10943,7 +10943,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     selectors.forEach(function (selector) {
       var el = $(selector) || one(selector);
-      var r = el && screenRectOf(el);
+      var r = el && rectOf(el);
       if (!r) return;
       minX = Math.min(minX, r.x); minY = Math.min(minY, r.y);
       maxX = Math.max(maxX, r.x + r.w); maxY = Math.max(maxY, r.y + r.h);
@@ -11191,13 +11191,11 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
 
 
   function decreeDoubleText() {
-    var all = (typeof window !== 'undefined' && window.DDZConfig && window.DDZConfig.decrees) || {};
-    var dbl = all.double || { pairBase: 30, pairLeadMult: 0.50 };
-    var ps = E.doublePairStraightBonus(4);
-    return '本局游戏为双持令。对子（包括连对里的对子）获得额外 ' + dbl.pairBase +
-      ' 分；对子或四两拨千斤领出获得 ' + Number(dbl.pairLeadMult).toFixed(2) +
-      ' 倍率；三连以上的连对获得额外 ' + Number(ps.mult).toFixed(2) + ' 倍率。';
+    var text = decreeDescription('double') || '';
+    return String(text).replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, '');
   }
+
+
 
   function setupDecreeDeal() {
     var g = G.game;
@@ -15998,7 +15996,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     var wasShown = arrow.classList.contains('show');
     if (!wasShown) arrow.style.transition = 'none';
     arrow.style.left = (rect.x + rect.w / 2) + 'px';
-    arrow.style.top = (rect.y - 36) + 'px';
+    arrow.style.top = (rect.y - 4) + 'px';
     if (!wasShown) {
       void arrow.offsetWidth;
       arrow.style.transition = '';
