@@ -3217,10 +3217,10 @@ button:disabled { cursor: default; }
   overflow-y: auto;
   padding: 18px 20px;
   background:
-    radial-gradient(ellipse at 50% 34%, rgba(29, 71, 58, .5), transparent 46%),
-    linear-gradient(180deg, rgba(4, 10, 9, .96), rgba(4, 10, 9, .985));
-  backdrop-filter: blur(2px);
-  animation: fadeIn .5s;
+    radial-gradient(ellipse at 50% 34%, #173a30 0%, #07120f 54%, #040a09 100%),
+    #040a09;
+  backdrop-filter: none;
+  animation: none;
 }
 .start-screen::before {
   content: "";
@@ -3281,7 +3281,7 @@ button:disabled { cursor: default; }
   position: relative;
   margin: 24px auto 0;
   width: fit-content;
-  padding: 0 82px 0 96px;
+  padding: 0;
 }
 .hero-vertical {
   position: absolute;
@@ -3417,9 +3417,14 @@ button:disabled { cursor: default; }
 .hero-stats .dot { color: rgba(212,176,106,.3); }
 .start-footer {
   position: absolute;
-  bottom: 30px;
+  bottom: 28px;
   left: 50%;
+  width: min(560px, 72vw);
+  padding-top: 10px;
   transform: translateX(-50%);
+  border-top: 1px solid rgba(212, 176, 106, .28);
+  box-shadow: 0 -1px 0 rgba(244, 223, 168, .06);
+  text-align: center;
   font-family: var(--sans);
   font-size: 9px;
   letter-spacing: .3em;
@@ -3888,7 +3893,7 @@ button:disabled { cursor: default; }
   .hero { margin-top: 0; }
   .hero-topline { font-size: 8px; letter-spacing: .24em; gap: 8px; }
   .hero-topline span { width: 24px; }
-  .hero-title-wrap { padding: 0 46px 0 46px; margin-top: 16px; }
+  .hero-title-wrap { padding: 0; margin-top: 16px; }
   .hero-vertical { font-size: 22px; left: 2px; }
   .hero-title { font-size: 46px; }
   .hero-seal { width: 40px; height: 40px; font-size: 15px; right: -2px; top: 0; }
@@ -5566,13 +5571,9 @@ body { font-size: 17px; }
   <div class="start-screen" id="start-screen">
     <div class="start-mist"></div>
     <div class="hero">
-      <div class="hero-topline"><span></span>单机 · 三人 · 九门绝技<span></span></div>
       <div class="hero-title-wrap">
-        <div class="hero-vertical">江湖</div>
         <h1 class="hero-title">技能斗地主</h1>
-        <div class="hero-seal">入局</div>
       </div>
-      <p class="hero-sub">九门绝技 · 规则情景 · 技能教学</p>
       <div class="home-actions">
         <button class="start-btn home-start" id="btn-start" type="button">
           <span>开始游戏</span><i>开始单机牌局</i>
@@ -5592,7 +5593,7 @@ body { font-size: 17px; }
         <button class="text-btn" id="btn-settings-start" type="button">设置</button>
       </div>
     </div>
-    <div class="start-footer">纯本地单机 · 无需联网 · 两名侠客 AI</div>
+    <div class="start-footer">© 2026 Plyhi. All rights reserved.</div>
   </div>
 
   <div class="gameover-screen" id="gameover-screen" hidden>
@@ -10426,10 +10427,8 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     loadSettings();
     renderDecreeRulesPage();
     $('start-screen').hidden = true;
-    setupPreview();
     updateStartStats();
     renderStickerTray();
-    renderAll();
     $('bid-panel').hidden = true;
     $('turn-clock').classList.add('hidden');
     await bootLoading();
@@ -10485,14 +10484,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     };
   }
 
-  function setupPreview() {
-    G.game = E.createGame({ rng: Math.random });
-    E.startRound(G.game);
-    G.mode = 'start';
-    G.startVisible = true;
-    G.handAnimation = false;
-    G.finished = false;
-  }
+
 
   function bindEvents() {
     // 任何首次用户手势都可以解锁音频；开始按钮仍会在自己的点击中再次解锁。
@@ -10522,11 +10514,23 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     $('btn-teaching-close').addEventListener('click', closeTeaching);
     $('btn-teaching-close-foot').addEventListener('click', closeTeaching);
     all('.teaching-tab').forEach(function (tab) {
-      tab.addEventListener('click', function () { renderTeachingList(tab.getAttribute('data-teach-tab')); });
+      tab.addEventListener('click', function () {
+        sfx('select', { eventId: 'teaching-tab:' + tab.getAttribute('data-teach-tab') + ':' + Date.now() });
+        renderTeachingList(tab.getAttribute('data-teach-tab'));
+      });
+    });
+    $('teaching-list').addEventListener('pointerover', function (ev) {
+      var item = ev.target.closest ? ev.target.closest('.teaching-item') : null;
+      if (!item || !$('teaching-list').contains(item)) return;
+      var from = ev.relatedTarget && ev.relatedTarget.closest
+        ? ev.relatedTarget.closest('.teaching-item') : null;
+      if (from === item) return;
+      sfx('hover', { eventId: 'teaching-hover:' + (item.getAttribute('data-scenario') || item.getAttribute('data-skill') || '') + ':' + Date.now() });
     });
     $('teaching-list').addEventListener('click', function (ev) {
       var item = ev.target.closest('.teaching-item');
       if (!item) return;
+      sfx('select', { eventId: 'teaching-select:' + (item.getAttribute('data-scenario') || item.getAttribute('data-skill') || '') + ':' + Date.now() });
       var scenario = item.getAttribute('data-scenario');
       if (scenario) { startScenario(scenario); return; }
       var skill = item.getAttribute('data-skill');
@@ -10896,7 +10900,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   }
 
   function scenarioPositionHighlight(h, el, box) {
-    var r = rectOf(el);
+    var r = screenRectOf(el);
     if (!r) { h.hidden = true; return false; }
     h.hidden = false;
     h.classList.toggle('box', !!box);
@@ -10939,7 +10943,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     selectors.forEach(function (selector) {
       var el = $(selector) || one(selector);
-      var r = el && rectOf(el);
+      var r = el && screenRectOf(el);
       if (!r) return;
       minX = Math.min(minX, r.x); minY = Math.min(minY, r.y);
       maxX = Math.max(maxX, r.x + r.w); maxY = Math.max(maxY, r.y + r.h);
@@ -11161,8 +11165,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       scenarioHighlightMany([
         { selector: '#hud-extra', box: true },
         { selector: '#hud-score-cards', box: true },
-        { selector: '#hud-mult-cards', box: true },
-        { selector: '#pending-score', box: true }
+        { selector: '#hud-mult-cards', box: true }
       ]);
     }
   }
@@ -15441,7 +15444,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   function makeFinalHistory(id, r2, r1) {
     var baseEl = $('base-' + id);
     if (!baseEl) return null;
-    var r = rectOf(baseEl);
+    var r = screenRectOf(baseEl);
     if (!r) return null;
     var host = document.createElement('div');
     host.className = 'final-history';
@@ -17604,6 +17607,13 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     if (!r.width || !r.height) return null;
     var s = uiScale();
     return { x: r.left / s, y: r.top / s, w: r.width / s, h: r.height / s };
+  }
+
+  function screenRectOf(el) {
+    if (!el) return null;
+    var r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return null;
+    return { x: r.left, y: r.top, w: r.width, h: r.height };
   }
 
   function centerOf(rect) {
