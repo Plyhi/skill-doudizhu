@@ -4620,6 +4620,7 @@ body { font-size: 17px; }
 }
 
 .app.tutorial-active .turn-clock { display: none !important; }
+.app.scenario-active .turn-clock { display: block !important; }
 .tutorial-infinity {
   flex: none;
   width: 30px;
@@ -4856,9 +4857,133 @@ body { font-size: 17px; }
   .icon-btn .icon { width: 20px; height: 20px; font-size: 10px; }
 }
 
+
+/* ===== 首页双入口 / 教学模式 / 情景教学提示 ===== */
+.home-actions{display:flex;flex-direction:column;gap:14px;align-items:center;width:min(360px,92%);margin:28px auto 20px;position:relative;z-index:3}
+.home-action{width:100%;min-height:76px;border:1px solid rgba(228,194,121,.72);border-radius:8px;background:linear-gradient(160deg,rgba(87,45,31,.94),rgba(38,29,21,.96));color:#f3dfb7;font-family:var(--kai);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;box-shadow:0 12px 30px rgba(0,0,0,.3),inset 0 0 0 1px rgba(255,232,173,.06)}
+.home-action b{font-size:28px;letter-spacing:.18em;font-weight:500;color:#ffe6ae}
+.home-action span{font-size:11px;letter-spacing:.12em;color:rgba(234,214,174,.68)}
+.home-action:hover{transform:translateY(-2px);border-color:#f0cf8a;box-shadow:0 16px 36px rgba(0,0,0,.36),0 0 24px rgba(230,183,92,.16)}
+.home-start{width:100%;min-height:68px;margin:0;background:linear-gradient(160deg,rgba(151,57,45,.94),rgba(92,34,29,.96))}
+.home-start span{font-size:27px}
+.teaching-modal{width:min(620px,calc(var(--ui-vw)*94/100));height:min(640px,calc(var(--ui-vh)*86/100));max-height:calc(var(--ui-vh)*88/100);display:flex;flex-direction:column}
+.teaching-tabs{display:flex;gap:8px;border-bottom:1px solid rgba(212,176,106,.28);margin-top:16px}
+.teaching-tab{border:1px solid rgba(255,173,161,.5);border-bottom:0;border-radius:7px 7px 0 0;background:rgba(207,112,103,.92);color:#fff;font-family:var(--kai);font-size:17px;padding:9px 22px;cursor:pointer;text-shadow:0 1px 2px rgba(56,12,10,.35)}
+.teaching-tab.active{color:#fff;background:linear-gradient(160deg,rgba(151,57,45,.94),rgba(92,34,29,.96));border-color:rgba(255,173,161,.75);box-shadow:inset 0 0 18px rgba(255,150,130,.12)}
+.teaching-list{overflow:auto;flex:1;min-height:0;max-height:none;padding:12px 2px 8px;display:flex;flex-direction:column;gap:8px}
+.teaching-item{display:grid;grid-template-columns:46px 1fr 22px;align-items:center;gap:12px;text-align:left;padding:12px 14px;border:1px solid rgba(255,173,161,.5);border-radius:7px;background:linear-gradient(160deg,rgba(151,57,45,.94),rgba(92,34,29,.96));color:#fff;cursor:pointer;transition:border-color .16s,background .16s,box-shadow .16s}
+.teaching-item:hover{border-color:rgba(255,210,199,.95);background:linear-gradient(160deg,rgba(168,70,57,.96),rgba(106,42,35,.98));box-shadow:0 0 22px rgba(255,92,78,.2)}
+.teaching-item-mark{font-family:var(--brush);font-size:30px;line-height:1;color:#fff;text-align:center;text-shadow:0 2px 3px rgba(52,10,8,.35)}
+.teaching-item b{display:block;font-family:var(--kai);font-size:19px;font-weight:500;color:#fff}
+.teaching-item small{display:block;margin-top:2px;font-size:11px;color:rgba(255,238,234,.78)}
+.teaching-item i{font-style:normal;color:rgba(240,210,141,.65)}
+.teaching-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid rgba(212,176,106,.2);font-size:11px;color:rgba(217,203,175,.5)}
+.scenario-prompt{position:fixed;z-index:190;left:50%;top:222px;transform:translateX(-50%);width:min(560px,calc(var(--ui-vw)*88/100));padding:12px 14px;border:1px solid rgba(239,205,131,.8);border-radius:8px;background:linear-gradient(160deg,rgba(57,38,25,.97),rgba(20,26,23,.97));box-shadow:0 14px 34px rgba(0,0,0,.5),0 0 24px rgba(226,178,86,.12);color:#f4e4c2;display:flex;align-items:center;gap:12px;pointer-events:none}
+.scenario-prompt p{margin:0;flex:1;font-family:var(--kai);font-size:15px;line-height:1.55}
+.scenario-prompt .btn{pointer-events:auto;flex:none;height:34px;padding:0 16px;font-size:13px}
+.scenario-prompt.shake{animation:scenarioShake .25s ease}
+@keyframes scenarioShake{0%,100%{transform:translateX(-50%)}25%{transform:translateX(calc(-50% - 5px))}75%{transform:translateX(calc(-50% + 5px))}}
+.scenario-highlight{position:fixed;z-index:185;border:3px solid #ff4c3d;border-radius:50%;box-shadow:0 0 0 5px rgba(255,75,60,.22),0 0 28px 10px rgba(255,68,54,.55),0 0 70px 22px rgba(255,40,28,.32),inset 0 0 18px rgba(255,95,70,.3);pointer-events:none;animation:scenarioHighlightIn .46s cubic-bezier(.18,.75,.2,1)}
+.scenario-highlight.box{border-radius:12px}
+@keyframes scenarioHighlightIn{0%{transform:scale(2.2);opacity:0}55%{opacity:1}100%{transform:scale(1);opacity:1}}
+@media (max-width:640px){.scenario-prompt{top:190px;width:calc(var(--ui-vw)*92/100);padding:9px 10px}.scenario-prompt p{font-size:12px}.scenario-prompt .btn{height:30px;padding:0 10px;font-size:11px}.home-actions{margin-top:18px;gap:10px}.home-action{min-height:62px}.home-action b{font-size:23px}.home-start{min-height:58px}.home-start span{font-size:23px}.teaching-modal{height:calc(var(--ui-vh)*90/100)}}
+
+.tutorial-complete{position:fixed;inset:0;z-index:500;display:grid;place-items:center;background:rgba(2,8,6,.28);pointer-events:all}
+.tutorial-complete span{font-family:var(--brush);font-size:clamp(58px,8vw,104px);line-height:1;color:#58e28d;text-shadow:0 0 12px rgba(70,255,142,.55),0 0 38px rgba(34,220,108,.38),0 5px 14px rgba(0,0,0,.45);animation:tutorialCompleteIn .48s cubic-bezier(.18,.8,.2,1)}
+@keyframes tutorialCompleteIn{0%{opacity:0;transform:scale(1.7)}65%{opacity:1;transform:scale(.98)}100%{opacity:1;transform:scale(1)}}
+
+/* 统一并加深分数/倍率数字：上栏、两名 AI、玩家 */
+.hud-score-cell b,
+.counter-base .counter-num,
+.counter-base .counter-num .roll-strip i,
+.player-panel .counter-base .counter-num,
+.player-panel .counter-base .counter-num .roll-strip i {
+  color:#2f86ff !important;
+  text-shadow:0 0 7px rgba(47,134,255,.35) !important;
+}
+.hud-mult-cell b,
+.counter-mult .counter-num,
+.counter-mult .counter-num .roll-strip i,
+.player-panel .counter-mult .counter-num,
+.player-panel .counter-mult .counter-num .roll-strip i {
+  color:#ff3b30 !important;
+  text-shadow:0 0 7px rgba(255,59,48,.35) !important;
+}
+
+/* 教学 HUD 半透明 */
+.tutorial-hud { opacity: .5; transition: opacity .18s ease; }
+.tutorial-hud:hover, .tutorial-hud:focus-within { opacity: .88; }
+
+/* 第三关：牌型图鉴 */
+.pattern-modal{width:min(720px,calc(var(--ui-vw)*94/100));max-height:calc(var(--ui-vh)*90/100);display:flex;flex-direction:column;text-align:left}
+.pattern-modal h2{font-size:38px;text-align:center;margin-bottom:4px}
+.pattern-body{overflow:auto;flex:1;min-height:0;padding:6px 2px 10px}
+.pattern-intro{font-family:var(--kai);font-size:15px;line-height:1.7;color:#5b432c;margin:0 0 10px;text-align:center}
+.pattern-row{padding:8px 10px;border-top:1px solid rgba(122,95,49,.18)}
+.pattern-row:first-of-type{border-top:0}
+.pattern-row b{display:block;font-family:var(--kai);font-size:17px;color:#7f2d25;margin-bottom:3px}
+.pattern-row small{font-family:var(--sans);font-size:10px;color:#896a47}
+.pattern-cards{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
+.pattern-mini{display:inline-flex;width:34px;height:48px;border-radius:4px;overflow:hidden;box-shadow:0 2px 7px rgba(0,0,0,.2);background:#fbf4e3;flex:none}
+.pattern-mini img{width:100%;height:100%;object-fit:cover;display:block}
+.pattern-mini .pattern-fallback{display:grid;place-items:center;width:100%;height:100%;font-family:var(--serif);font-size:16px;color:#2e2418}
+.pattern-complete{width:190px;height:46px;margin:12px auto 0;display:block;background:linear-gradient(160deg,#3f9d63,#226b45);border-color:rgba(116,237,166,.8);color:#effff5;font-family:var(--kai);font-size:20px;letter-spacing:.16em}
+.pattern-complete:hover{background:linear-gradient(160deg,#51b978,#2b8054)}
+@media(max-width:640px){.pattern-modal{width:calc(var(--ui-vw)*96/100);max-height:calc(var(--ui-vh)*92/100)}.pattern-modal h2{font-size:30px}.pattern-intro{font-size:12px}.pattern-row b{font-size:15px}.pattern-mini{width:27px;height:38px}.pattern-complete{width:100%;height:42px}.pattern-body{max-height:calc(var(--ui-vh)*62/100)}}
+
+.decree-inherit{font-family:var(--kai);font-size:14px;color:#553b2b;margin:7px 0 2px}
+.decree-inherit .red{color:#b52b25;font-weight:700}
+.decree-inherit .black{color:#1f2b28;font-weight:700}
+.decree-inherit .big,.decree-inherit .small{color:#8a2c24;font-weight:700}
+.decree-end-modal .pattern-row small{display:block;line-height:1.7;margin-top:3px}
+
+/* “三局江湖”牌型/江湖令图鉴正文放大 */
+.decree-end-modal .pattern-intro{font-size:18px;line-height:1.85}
+.decree-end-modal .pattern-row b{font-size:22px}
+.decree-end-modal .pattern-row small{font-size:14px;line-height:1.8}
+.decree-end-modal .decree-inherit{font-size:17px;line-height:1.85;margin:10px 0 3px}
+.decree-end-modal .pattern-cards{gap:4px;margin-top:7px}
+.decree-end-modal .pattern-mini{width:44px;height:62px}
+.decree-end-modal .pattern-complete{font-size:22px}
+@media(max-width:640px){
+  .decree-end-modal .pattern-intro{font-size:15px}
+  .decree-end-modal .pattern-row b{font-size:19px}
+  .decree-end-modal .pattern-row small{font-size:12px}
+  .decree-end-modal .decree-inherit{font-size:14px}
+  .decree-end-modal .pattern-mini{width:34px;height:48px}
+}
+
+/* 启动加载页 */
+.loading-screen{position:fixed;inset:0;z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 38%,#15312a 0%,#071310 62%,#030806 100%);color:#ead6ac;transition:opacity .5s ease,visibility .5s ease}
+.loading-screen.done{opacity:0;visibility:hidden;pointer-events:none}
+.loading-mark{font-family:var(--brush);font-size:clamp(54px,8vw,92px);line-height:1;color:#e8c47d;text-shadow:0 0 22px rgba(229,180,84,.3);margin-bottom:12px}
+.loading-title{font-family:var(--kai);font-size:clamp(24px,4vw,38px);letter-spacing:.22em;color:#f5e3bc}
+.loading-sub{margin-top:10px;font-family:var(--sans);font-size:10px;letter-spacing:.18em;color:rgba(235,213,170,.55)}
+.loading-track{width:min(360px,76vw);height:5px;margin-top:30px;border:1px solid rgba(232,196,125,.32);border-radius:999px;background:rgba(0,0,0,.32);overflow:hidden;box-shadow:inset 0 0 8px rgba(0,0,0,.5)}
+.loading-track i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8d2f28,#e1ad58,#f4dc9c);box-shadow:0 0 12px rgba(231,173,75,.55);transition:width .16s ease}
+.loading-percent{margin-top:12px;font-family:var(--sans);font-size:10px;letter-spacing:.14em;color:rgba(240,220,174,.7);font-variant-numeric:tabular-nums}
+
+/* 每局结束的数字结算动画 */
+.score-counter.final-prep { z-index: 80; }
+.score-counter.final-prep .counter-num { transform: scale(1.5); transform-origin: 50% 50%; transition: transform .22s ease; }
+.score-counter.final-base-grow { z-index: 81; }
+.score-counter.final-base-grow .counter-base .counter-num { transform: scale(2); transform-origin: 50% 50%; transition: transform .3s ease; }
+.score-counter.final-base-grow .counter-mult .counter-num { transform: scale(1); transform-origin: 50% 50%; transition: transform .3s ease; }
+.final-history { position: fixed; z-index: 90; display: flex; flex-direction: column; gap: 2px; pointer-events: none; transform: translateY(-100%); font-family: var(--kai); font-size: 16px; line-height: 1.2; color: #ffe5a8; text-shadow: 0 0 8px rgba(255,195,85,.45); }
+.final-history span { opacity: 0; transform: translateY(5px); transition: opacity .25s ease, transform .25s ease; }
+.final-history span.show { opacity: 1; transform: translateY(0); }
+
 </style>
 </head>
 <body>
+<div class="loading-screen" id="loading-screen">
+  <div class="loading-mark">江湖</div>
+  <div class="loading-title">技能斗地主</div>
+  <div class="loading-sub">正在打点行囊 · 加载牌局与音效</div>
+  <div class="loading-track"><i id="loading-bar"></i></div>
+  <div class="loading-percent" id="loading-percent">0%</div>
+</div>
+
 <div class="app" id="app">
   <div class="ambient" aria-hidden="true">
     <div class="ambient-moon"></div>
@@ -5150,6 +5275,14 @@ body { font-size: 17px; }
   <div class="arrow-layer" id="arrow-layer" aria-hidden="true"></div>
   <div class="turn-arrow" id="turn-arrow" aria-hidden="true"></div>
   <div class="reveal-layer" id="reveal-layer" aria-hidden="true"></div>
+  <div class="scenario-prompt" id="scenario-prompt" hidden>
+    <p id="scenario-prompt-text"></p>
+    <button class="btn btn-primary" id="scenario-next" type="button">下一步</button>
+  </div>
+  <div class="scenario-highlight" id="scenario-highlight" hidden aria-hidden="true"></div>
+  <div class="tutorial-complete" id="tutorial-complete" hidden aria-live="polite"><span>完成</span></div>
+
+
 
   <div class="skill-cinematic" id="skill-cinematic" hidden aria-hidden="true">
     <div class="ink-splash"></div>
@@ -5223,6 +5356,15 @@ body { font-size: 17px; }
           </div>
           <button class="setting-switch on" id="btn-setting-sound" type="button" role="switch" aria-checked="true" aria-label="音效开关">
             <i></i><span id="setting-sound-label">开</span>
+          </button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-copy">
+            <b>快速模式</b>
+            <span>AI 思考时间固定为 1 秒</span>
+          </div>
+          <button class="setting-switch" id="btn-setting-fast" type="button" role="switch" aria-checked="false" aria-label="快速模式开关">
+            <i></i><span id="setting-fast-label">关</span>
           </button>
         </div>
         <div class="setting-row setting-row-scale">
@@ -5302,17 +5444,7 @@ body { font-size: 17px; }
         <section>
           <h3>三、额外花色与江湖令</h3>
           <p>每局开始时随机一种额外花色，相邻两局不会相同；同一局流局重发时保留原花色。该花色牌打出后立刻进入待结算，每张 +20 基础分；获得牌权时随待结算一起结算给获得牌权者，每张只计一次。</p>
-          <p>每局从比武、双持、长征、王储四种江湖令中抽取一种，三局互不重复。</p>
-          <p><b>比武令</b>：每次技能成功发动，发动者 +50 基础分、+0.30 倍率；双璧锁关时释放者 +50 基础分/+0.30 倍率，上家 +18 基础分/+0.10 倍率。</p>
-          <p><b>双持令</b>：打出对子立刻 +30 基础分；以对子获得牌权立刻 +0.50 倍率。九九归一、对 7、单 42 也按对子计算；连对额外 +20n 基础分、+(n-3)×0.20 倍率（n≥3）。全部即时结算，不进入待结算。</p>
-          <p><b>长征令</b>：每轮从第 1 次出牌开始计数。第 n 次出牌者立刻获得 20n 基础分（+20、+40、+60、+80…）；每次出牌同时向待结算池累积 +0.10 倍率。有人获得牌权时，获得牌权者拿走本轮累计的 n×0.10 倍率，随后本轮出牌次数与倍率归零，下一轮重新从第 1 次计算。</p>
-          <p><b>王储令</b>：开局人人有王，宫廷继位登基，小王可以称帝，末王有最大奖励。</p>
-          <p><b>王储令 · 牌型</b>：王只能单出，或一张大王加一张小王组成王炸；不能组成同王对子、三张、四张炸弹，也不能作为三带一、四带二、飞机等带牌。单张大王压小王，同种王不能互压；王炸高于镇山炸和普通炸弹，王炸之间不能互压。</p>
-          <p><b>王储令 · 补王</b>：地主拿到底牌后、首次出牌前，先记录原始大小王归属。若双王原在同一人手中，另外两人各补一张小王；若分属两人，第三人补一张小王。补王只执行一次，加入手牌而非替换，不改变额外花色和特殊牌。</p>
-          <p><b>王储令 · 单王与继承</b>：单出大王 +60 基础分、单出小王 +30 基础分，均无额外基础倍率。首次单出大王额外 +0.30 倍率；首次单出小王额外 +0.15 倍率，首王只给倍率、不给基础分。王炸由大小王相加组成，王储附加 +90 基础分，不叠加单王奖励，也不触发任何继承；王炸使全体当前倍率×2，但不会领取首大王/首小王奖励（仍记录首王归属用于王冠）。单王只从出王者本人手牌继承：大王依次找红桃K、方片K、红桃J、方片J、红桃Q、方片Q；小王依次找黑桃K、梅花K、黑桃J、梅花J、黑桃Q、梅花Q；只变第一张。</p>
-          <p><b>王储令 · 独王登基</b>：当三家手牌合计只有一张小王且没有大王时，该小王立即变为大王。只统计手牌，桌面和弃牌不计；不发出牌、首王、末王、比武奖励，也不授予牌权。</p>
-          <p><b>王储令 · 末王与剩王</b>：只有最后一张大王被打出，或王炸打出，且没有触发继承、三家手中都已没有王时，才结算末大王，立即 +100 基础分/+0.20 倍率；不存在末小王。终局按手牌中剩余王逐张扣分：大王每张 -100，小王每张 -50。所有正向奖励加完后统一扣罚，最后基础分不低于 0。</p>
-          <p><b>王储令 · 王冠</b>：银色王冠表示首个打出大王，铜色王冠表示首个打出小王，金色王冠表示末大王；王冠纵列显示在对应头像旁。</p>
+          <div id="decree-rules-body"></div>
         </section>
         <section>
           <h3>四、计时与计分</h3>
@@ -5329,6 +5461,38 @@ body { font-size: 17px; }
           <p>右上角「设置」或首页「设置」可打开设置面板：音效开关已收入其中；「界面尺寸」滑块可整体缩放 UI、汉字、表情与按键。桌面最高 120%，较窄屏幕会自动收紧上限，并重新收拢手牌、牌桌与按钮间距，避免互相遮挡。</p>
         </section>
       </div>
+    </div>
+  </div>
+
+  <div class="modal-layer teaching-layer" id="teaching-modal" hidden>
+    <div class="modal teaching-modal" role="dialog" aria-modal="true" aria-labelledby="teaching-title">
+      <button class="modal-close" id="btn-teaching-close" type="button" aria-label="关闭教学模式">×</button>
+      <div class="modal-kicker">江湖入门</div>
+      <h2 id="teaching-title">教学模式</h2>
+      <div class="teaching-tabs" role="tablist">
+        <button class="teaching-tab active" type="button" data-teach-tab="rules" role="tab">游戏规则</button>
+        <button class="teaching-tab" type="button" data-teach-tab="skills" role="tab">技能</button>
+      </div>
+      <div class="teaching-list" id="teaching-list"></div>
+      <div class="teaching-foot"><span>教学使用独立临时牌局，不影响正式战绩。</span><button class="text-btn" id="btn-teaching-close-foot" type="button">退出</button></div>
+    </div>
+  </div>
+
+  <div class="modal-layer pattern-layer" id="pattern-modal" hidden>
+    <div class="modal pattern-modal" role="dialog" aria-modal="true" aria-labelledby="pattern-title">
+      <div class="modal-kicker">牌型图鉴</div>
+      <h2 id="pattern-title">更多牌型</h2>
+      <div class="pattern-body" id="pattern-body"></div>
+      <button class="btn pattern-complete" id="btn-pattern-complete" type="button">完成</button>
+    </div>
+  </div>
+
+  <div class="modal-layer pattern-layer" id="decree-end-modal" hidden>
+    <div class="modal pattern-modal decree-end-modal" role="dialog" aria-modal="true" aria-labelledby="decree-end-title">
+      <div class="modal-kicker">江湖令 · 图鉴</div>
+      <h2 id="decree-end-title">三局江湖</h2>
+      <div class="pattern-body" id="decree-end-body"></div>
+      <button class="btn pattern-complete" id="btn-decree-complete" type="button">完成</button>
     </div>
   </div>
 
@@ -5408,20 +5572,16 @@ body { font-size: 17px; }
         <h1 class="hero-title">技能斗地主</h1>
         <div class="hero-seal">入局</div>
       </div>
-      <p class="hero-sub">九门绝技 · 点技能方块查看说明与固定教学</p>
-      <div class="hero-skills" id="hero-skills" aria-label="点击查看技能说明与教学">
-        <button class="hero-skill" type="button" data-skill="siliang"><b>四</b><span>以 4 与 2 借力打力<br>双四双二镇山压顶</span></button>
-        <button class="hero-skill" type="button" data-skill="sanren"><b>三</b><span>弃 JQK，洗牌抽牌<br>择一人为我师</span></button>
-        <button class="hero-skill" type="button" data-skill="jiujiu"><b>九</b><span>逢 A 抢九归一<br>弃双九夺牌权</span></button>
-        <button class="hero-skill" type="button" data-skill="guowuguan"><b>五</b><span>弃 5566，全场斩将<br>发起 +6 分，平分比花色</span></button>
-        <button class="hero-skill" type="button" data-skill="qijin"><b>七</b><span>对 7 留枪痕<br>同花回马，枪出如龙</span></button>
-        <button class="hero-skill" type="button" data-skill="yuanmen"><b>辕</b><span>逢 J 弃 A 开辕门<br>令两家弃牌，重夺牌权</span></button>
-        <button class="hero-skill" type="button" data-skill="geshan"><b>隔</b><span>下家弃余牌<br>隔山收回带牌</span></button>
-        <button class="hero-skill" type="button" data-skill="shuangbi"><b>双</b><span>上家出对，弃同点对<br>逼上家续出更大对子</span></button>
-        <button class="hero-skill" type="button" data-skill="pindming"><b>拼</b><span>孤张 3 化龙<br>按本局用牌变点</span></button>
+      <p class="hero-sub">九门绝技 · 规则情景 · 技能教学</p>
+      <div class="home-actions">
+        <button class="start-btn home-start" id="btn-start" type="button">
+          <span>开始游戏</span><i>开始单机牌局</i>
+        </button>
+        <button class="start-btn home-start home-teaching" id="btn-teaching" type="button">
+          <span>教学模式</span><i>规则情景 · 九门技能</i>
+        </button>
       </div>
-      <p class="hero-skill-hint">点击技能方块 · 查看说明与固定教学</p>
-      <button class="start-btn" id="btn-start" type="button"><span>入 局</span><i>开始单机牌局</i></button>
+
       <div class="hero-stats">
         <span>战绩 <b id="stat-wins">0</b> 胜 · <b id="stat-losses">0</b> 负</span>
         <span class="dot">·</span>
@@ -5462,6 +5622,12 @@ body { font-size: 17px; }
   'use strict';
 
   return {
+    decreePool: ['duel', 'double', 'rapid', 'long', 'royal'],
+    sessionRounds: 3,
+    score: {
+      straightPerCard: 4,
+      pairStraightPerPair: 5
+    },
     decrees: {
       duel: {
         base: 50,
@@ -5474,12 +5640,21 @@ body { font-size: 17px; }
       double: {
         pairBase: 30,
         pairLeadMult: 0.50,
+        pairStraightMin: 3,
+        pairStraightBase: 20,
+        pairStraightMult: 0.20,
         jiujiuBase: 30,
         jiujiuMult: 0.50
       },
       long: {
         basePerPlay: 20,
         multPerPlay: 0.10
+      },
+      rapid: {
+        straightMin: 4,
+        pairStraightMin: 2,
+        tripleBombSize: 3,
+        tripleBombMult: 1.25
       },
       royal: {
         singleBigBase: 60,
@@ -5660,7 +5835,8 @@ body { font-size: 17px; }
    * 识别一手牌。返回 null 或组合对象：
    * { type, len, key, cards, label, bomb, special }
    */
-  function detectCombo(inputCards) {
+  function detectCombo(inputCards, options) {
+    var opts = options || {};
     if (!Array.isArray(inputCards) || inputCards.length === 0) return null;
     var cards = inputCards.slice();
     var n = cards.length;
@@ -5706,19 +5882,26 @@ body { font-size: 17px; }
       return combo('bomb', sortedRanks[0], { bombRank: sortedRanks[0] });
     }
 
+    // 疾行令：三张相同视为三张炸弹；三带一/三带二仍走原牌型。
+    if (opts.rapid && n === 3 && groups.size === 1) {
+      return combo('bomb', sortedRanks[0], {
+        bombRank: sortedRanks[0], rapidBomb: true, label: '三张炸弹'
+      });
+    }
+
     // 单张、对子、三张
     if (n === 1) return combo('single', sortedRanks[0]);
     if (n === 2 && groups.size === 1) return combo('pair', sortedRanks[0]);
     if (n === 3 && groups.size === 1) return combo('triple', sortedRanks[0]);
 
     // 顺子：5 张以上连续单牌，不含 2 与王
-    if (n >= 5 && counts.every(function (g) { return g.count === 1; }) &&
+    if (n >= (opts.rapid ? 4 : 5) && counts.every(function (g) { return g.count === 1; }) &&
         sortedRanks[sortedRanks.length - 1] <= 14 && isConsecutive(sortedRanks)) {
       return combo('straight', sortedRanks[sortedRanks.length - 1], { seqLen: n });
     }
 
     // 连对：3 对以上连续对子，不含 2 与王
-    if (n >= 6 && n % 2 === 0 && counts.every(function (g) { return g.count === 2; }) &&
+    if (n >= (opts.rapid ? 4 : 6) && n % 2 === 0 && counts.every(function (g) { return g.count === 2; }) &&
         sortedRanks[sortedRanks.length - 1] <= 14 && isConsecutive(sortedRanks)) {
       return combo('pairStraight', sortedRanks[sortedRanks.length - 1], { seqLen: n / 2 });
     }
@@ -5818,7 +6001,8 @@ body { font-size: 17px; }
    * candidate 能否压过 previous。
    * previous 为 null 表示自由出牌。
    */
-  function canBeat(candidate, previous) {
+  function canBeat(candidate, previous, options) {
+    var opts = options || {};
     if (!candidate) return false;
     if (!previous) return true;
 
@@ -5832,7 +6016,16 @@ body { font-size: 17px; }
 
     // 普通炸弹压一切非炸弹牌型；炸弹之间比点数
     if (candidate.type === 'bomb') {
-      if (previous.type === 'bomb') return candidate.key > previous.key;
+      if (opts.rapid && candidate.rapidBomb &&
+          (previous.type === 'plane' || previous.type === 'planeSingle' || previous.type === 'planePair')) {
+        return false;
+      }
+      if (previous.type === 'bomb') {
+        var candSize = candidate.rapidBomb ? 3 : 4;
+        var prevSize = previous.rapidBomb ? 3 : 4;
+        if (candSize !== prevSize) return candSize > prevSize;
+        return candidate.key > previous.key;
+      }
       return true;
     }
     if (previous.type === 'bomb') return false;
@@ -5885,7 +6078,7 @@ body { font-size: 17px; }
       var ids = cards.map(function (c) { return c.id; }).sort();
       var key = ids.join('|');
       if (seen.has(key)) return;
-      var combo = detectCombo(cards);
+      var combo = detectCombo(cards, opts);
       if (!combo) return;
       if (opts.royal && !isRoyalComboLegal(cards, combo)) return;
       seen.add(key);
@@ -5926,7 +6119,7 @@ body { font-size: 17px; }
 
     // 顺子
     for (var start = 3; start <= 10; start++) {
-      for (var len = 5; start + len - 1 <= 14; len++) {
+      for (var len = (opts.rapid ? 4 : 5); start + len - 1 <= 14; len++) {
         var straight = [];
         var ok = true;
         for (var r = start; r < start + len; r++) {
@@ -5940,7 +6133,7 @@ body { font-size: 17px; }
 
     // 连对
     for (var ps = 3; ps <= 12; ps++) {
-      for (var plen = 3; ps + plen - 1 <= 14; plen++) {
+      for (var plen = (opts.rapid ? 2 : 3); ps + plen - 1 <= 14; plen++) {
         var pairs = [];
         var pok = true;
         for (var pr = ps; pr < ps + plen; pr++) {
@@ -6026,7 +6219,7 @@ body { font-size: 17px; }
 
   function legalMoves(hand, previous, options) {
     return enumerateMoves(hand, options).filter(function (m) {
-      return canBeat(m.combo, previous);
+      return canBeat(m.combo, previous, options);
     });
   }
 
@@ -6240,8 +6433,8 @@ body { font-size: 17px; }
       case 'triple': return 8;
       case 'tripleSingle':
       case 'triplePair': return 10;
-      case 'pairStraight': return (combo.seqLen || 3) * 5;
-      case 'straight': return (combo.seqLen || 5) * 4;
+      case 'pairStraight': return (combo.seqLen || C.decrees.rapid.pairStraightMin) * C.score.pairStraightPerPair;
+      case 'straight': return (combo.seqLen || C.decrees.rapid.straightMin) * C.score.straightPerCard;
       case 'fourTwoSingle':
       case 'fourTwoPair': return 15;
       case 'bomb':
@@ -6285,15 +6478,25 @@ body { font-size: 17px; }
     return pending.length * 25;
   }
 
+  function doublePairStraightBonus(n) {
+    var d = C.decrees.double;
+    var len = Math.max(d.pairStraightMin, Number(n) || d.pairStraightMin);
+    return {
+      base: len * d.pairStraightBase,
+      mult: (len - d.pairStraightMin) * d.pairStraightMult
+    };
+  }
+
   function awardDoubleCombo(game, playerId, combo) {
     if (game.decree !== 'double' || !combo) return;
     if (isPairLike(combo)) {
       addPlayerBase(game, playerId, C.decrees.double.pairBase, '双持令：' + combo.label + '按对子 +' + C.decrees.double.pairBase + ' 基础分', '双持令');
     }
-    if (combo.type === 'pairStraight' && (combo.seqLen || 0) >= 3) {
+    if (combo.type === 'pairStraight' && (combo.seqLen || 0) >= C.decrees.double.pairStraightMin) {
       var n = combo.seqLen;
-      addPlayerBase(game, playerId, n * 20, '双持令：' + n + ' 连对 +' + (n * 20) + ' 基础分', '双持令');
-      addPlayerMult(game, playerId, (n - 3) * 0.2, '双持令：' + n + ' 连对 +' + ((n - 3) * 0.2).toFixed(2) + ' 倍率', '双持令');
+      var bonus = doublePairStraightBonus(n);
+      addPlayerBase(game, playerId, bonus.base, '双持令：' + n + ' 连对 +' + bonus.base + ' 基础分', '双持令');
+      addPlayerMult(game, playerId, bonus.mult, '双持令：' + n + ' 连对 +' + bonus.mult.toFixed(2) + ' 倍率', '双持令');
     }
   }
 
@@ -6363,7 +6566,7 @@ body { font-size: 17px; }
       var nLong = (sc.playsSinceLead[0] || 0) + (sc.playsSinceLead[1] || 0) + (sc.playsSinceLead[2] || 0);
       if (nLong) {
         updateLongPending(game);
-        pushLog(game, 'score', '长征令：' + game.players[playerId].name + ' 获得牌权，本轮出牌 ' + nLong + ' 次，+' + (nLong * 0.1).toFixed(2) + '倍率', playerId);
+        pushLog(game, 'score', '长征令：' + game.players[playerId].name + ' 获得牌权，本轮出牌 ' + nLong + ' 次，+' + (nLong * C.decrees.long.multPerPlay).toFixed(2) + '倍率', playerId);
       }
     }
     // 均衡令
@@ -6398,7 +6601,7 @@ body { font-size: 17px; }
     return {
       hearts: '红桃令', spades: '黑桃令', clubs: '梅花令', diamonds: '方片令',
       duel: '比武令', double: '双持令', long: '长征令', balance: '均衡令',
-      charge: '蓄力令', royal: '王储令'
+      charge: '蓄力令', royal: '王储令', rapid: '疾行令'
     }[key] || '江湖令';
   }
 
@@ -7033,12 +7236,12 @@ body { font-size: 17px; }
       if (!card) return fail('所选牌不在手牌中');
       cards.push(card);
     }
-    var combo = R.detectCombo(cards);
+    var combo = R.detectCombo(cards, { rapid: game.decree === 'rapid' });
     if (!combo) return fail('所选牌型不成立');
     if (isRoyal(game) && !R.isRoyalComboLegal(cards, combo)) {
       return fail('王储令：王只能单出，或一大一小组成王炸');
     }
-    if (game.lastPlay && !R.canBeat(combo, game.lastPlay.combo)) {
+    if (game.lastPlay && !R.canBeat(combo, game.lastPlay.combo, { rapid: game.decree === 'rapid' })) {
       return fail('这手牌压不过上家');
     }
 
@@ -7071,6 +7274,13 @@ body { font-size: 17px; }
     scPlay.playsSinceLead[playerId] = (scPlay.playsSinceLead[playerId] || 0) + 1;
     scPlay.passStreak = 0;
     addPlayPendingCards(game, cards);
+    if (game.decree === 'rapid') {
+      var rapidPoints = R.sumPoints(cards);
+      if (rapidPoints) {
+        addPending(game, rapidPoints, 0,
+          '疾行令：本次出牌点数 +' + rapidPoints + ' 进入待结算', '疾行令', cards);
+      }
+    }
     if (game.decree === 'long') {
       var nLongPlay = (scPlay.playsSinceLead[0] || 0) + (scPlay.playsSinceLead[1] || 0) + (scPlay.playsSinceLead[2] || 0);
       addPlayerBase(game, playerId, nLongPlay * C.decrees.long.basePerPlay, '长征令：本轮第 ' + nLongPlay + ' 次出牌，+' + (nLongPlay * C.decrees.long.basePerPlay) + ' 基础分', '长征令');
@@ -7095,16 +7305,30 @@ body { font-size: 17px; }
     if (combo.type === 'bomb') player.usedSkills.bomb += 1;
     if (combo.type === 'bomb' || combo.type === 'rocket' || combo.type === 'superBomb') {
       game.bombs += 1;
-      game.multiplier *= 2;
-      var bombMult = combo.type === 'superBomb' ? 2.5 : 2;
-      var bombName = combo.type === 'superBomb' ? '镇山炸' : combo.type === 'rocket' ? '王炸' : '普通炸弹';
-      game.players.forEach(function (p) {
-        p.mult = Math.max(p.role === 'farmer' ? 1.2 : 1, p.mult * bombMult);
-        p.lastMultSource = bombName;
-        p.multSources.push(bombName);
-      });
-      pushLog(game, 'score', (combo.type === 'superBomb' ? '镇山炸' : combo.type === 'rocket' ? '王炸' : '普通炸弹') +
-        '：全体当前倍率 ×' + bombMult, playerId);
+      var rapidThree = combo.type === 'bomb' && combo.rapidBomb;
+      var bombMult = rapidThree ? (C.decrees.rapid.tripleBombMult || 1.25) :
+        combo.type === 'superBomb' ? 2.5 : 2;
+      var bombName = rapidThree ? '三张炸弹' :
+        combo.type === 'superBomb' ? '镇山炸' : combo.type === 'rocket' ? '王炸' : '普通炸弹';
+      var ceil2 = function (v) { return Math.ceil(v * 100 - 1e-9) / 100; };
+      if (rapidThree) {
+        game.multiplier = ceil2(game.multiplier * bombMult);
+        game.players.forEach(function (p) {
+          p.mult = Math.max(p.role === 'farmer' ? 1.2 : 1, ceil2(p.mult * bombMult));
+          p.lastMultSource = bombName;
+          p.multSources.push(bombName);
+        });
+        pushLog(game, 'score', '疾行令：三张炸弹，全体当前倍率 ×' + bombMult.toFixed(2) + '（向上取整两位）', playerId);
+      } else {
+        game.multiplier *= 2;
+        game.players.forEach(function (p) {
+          p.mult = Math.max(p.role === 'farmer' ? 1.2 : 1, p.mult * bombMult);
+          p.lastMultSource = bombName;
+          p.multSources.push(bombName);
+        });
+        pushLog(game, 'score', (combo.type === 'superBomb' ? '镇山炸' : combo.type === 'rocket' ? '王炸' : '普通炸弹') +
+          '：全体当前倍率 ×' + bombMult, playerId);
+      }
     }
     if (game.decree === 'double') {
       awardDoubleCombo(game, playerId, combo);
@@ -7552,7 +7776,7 @@ body { font-size: 17px; }
     addPlayPendingCards(game, cards);
     if (game.decree === 'long') {
       var nLongSb = (scSb.playsSinceLead[0] || 0) + (scSb.playsSinceLead[1] || 0) + (scSb.playsSinceLead[2] || 0);
-      addPlayerBase(game, a.id, nLongSb * 20, '长征令：本轮第 ' + nLongSb + ' 次出牌，+' + (nLongSb * 20) + ' 基础分', '长征令');
+      addPlayerBase(game, a.id, nLongSb * C.decrees.long.basePerPlay, '长征令：本轮第 ' + nLongSb + ' 次出牌，+' + (nLongSb * C.decrees.long.basePerPlay) + ' 基础分', '长征令');
       updateLongPending(game);
     }
     if (game.decree === 'double') {
@@ -7843,7 +8067,7 @@ body { font-size: 17px; }
 
   function legalMovesFor(game, playerId) {
     var p = game.players[playerId];
-    return R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null, { royal: isRoyal(game) });
+    return R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null, { royal: isRoyal(game), rapid: game.decree === 'rapid' });
   }
 
   function canUseSanren(game, playerId) {
@@ -8255,6 +8479,7 @@ body { font-size: 17px; }
     resolveShuangbi: resolveShuangbi,
     continueShuangbi: continueShuangbi,
     playBaseForCombo: playBaseForCombo,
+    doublePairStraightBonus: doublePairStraightBonus,
     checkPindming: checkPindming,
     applyPindming: applyPindming,
     decreeName: decreeName,
@@ -8712,7 +8937,7 @@ body { font-size: 17px; }
 
   function chooseNormalMove(game, playerId) {
     var p = game.players[playerId];
-    var moves = R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null, { royal: game.decree === 'royal' });
+    var moves = R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null, { royal: game.decree === 'royal', rapid: game.decree === 'rapid' });
     if (!moves.length) return { type: 'pass' };
 
     var winning = findWinningMove(moves, p.hand.length);
@@ -8803,7 +9028,7 @@ body { font-size: 17px; }
   function chooseAction(game, playerId) {
     var p = game.players[playerId];
     var per = persona(playerId);
-    var moves = R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null, { royal: game.decree === 'royal' });
+    var moves = R.legalMoves(p.hand, game.lastPlay ? game.lastPlay.combo : null, { royal: game.decree === 'royal', rapid: game.decree === 'rapid' });
     var winning = findWinningMove(moves, p.hand.length);
     if (winning) return { type: 'play', cards: winning.cards, combo: winning.combo };
 
@@ -8891,7 +9116,7 @@ body { font-size: 17px; }
   function chooseShuangbiContinue(game, playerId, combo) {
     var p = game.players[playerId];
     if (!p) return { type: 'pass' };
-    var moves = R.legalMoves(p.hand, combo, { royal: game.decree === 'royal' }).filter(function (m) {
+    var moves = R.legalMoves(p.hand, combo, { royal: game.decree === 'royal', rapid: game.decree === 'rapid' }).filter(function (m) {
       return m.combo.type === 'pair' && m.combo.key > combo.key;
     });
     if (!moves.length) return { type: 'pass' };
@@ -9606,6 +9831,265 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
 
 </script>
 <script>
+
+/*! 江湖 · 正式江湖令文案数据源；运行时和构建期共用。 */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.DDZDecreeText = factory();
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+
+  function pct(v) { return Number(v || 0).toFixed(2); }
+  function num(v) { return Number(v || 0); }
+  function ceil2(v) { return Math.ceil(v * 100 - 1e-9) / 100; }
+  function cnCount(n) {
+    return ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'][n] || String(n);
+  }
+  function pool(C) { return (C && C.decreePool) || ['duel', 'double', 'rapid', 'long', 'royal']; }
+  function name(C, E, key) { return E && E.decreeName ? E.decreeName(key) : key; }
+  function names(C, E) { return pool(C).map(function (k) { return name(C, E, k); }); }
+  function cardById(R, id) {
+    var deck = R.makeDeck();
+    return deck.find(function (c) { return c.id === id; }) || null;
+  }
+  function cardText(c) {
+    if (!c) return '';
+    return c.joker ? c.label : (c.suitSymbol || '') + c.label;
+  }
+  function orderText(C, R, big) {
+    var ids = (C.decrees.royal[big ? 'inheritBigOrder' : 'inheritSmallOrder']) || [];
+    return ids.map(function (id) { return cardText(cardById(R, id)); }).join('、');
+  }
+  function pointMapping(R) {
+    var deck = R.makeDeck();
+    function one(rank) {
+      var c = deck.find(function (x) { return x.rank === rank && !x.joker; });
+      return c ? String(R.cardPoint(c)) : '';
+    }
+    var low = [3, 4, 5, 6, 7, 8, 9, 10].map(function (r) {
+      var c = deck.find(function (x) { return x.rank === r && !x.joker; });
+      return c ? String(R.cardPoint(c)) : '';
+    });
+    var small = deck.find(function (x) { return x.rank === 16; });
+    var big = deck.find(function (x) { return x.rank === 17; });
+    return low[0] + '–' + low[low.length - 1] + ' 按面值，J=' + one(11) + '、Q=' + one(12) +
+      '、K=' + one(13) + '、A=' + one(14) + '、2=' + one(15) + '；小王 ' + (small ? R.cardPoint(small) : '') +
+      '、大王 ' + (big ? R.cardPoint(big) : '');
+  }
+  function pointExample(R) {
+    var deck = R.makeDeck(), cards = [3, 4, 5, 6].map(function (r) {
+      return deck.find(function (c) { return c.rank === r && !c.joker; });
+    });
+    return { cards: cards, total: R.sumPoints(cards) };
+  }
+  function longExamples(C) {
+    var step = num(C.decrees.long.basePerPlay);
+    return [step, step * 2, step * 3, step * 4];
+  }
+  function straightExample(C, R) {
+    var min = num(C.decrees.rapid.straightMin), deck = R.makeDeck(), out = [];
+    for (var r = 3; r < 3 + min; r++) {
+      var c = deck.find(function (x) { return x.rank === r && !x.joker; });
+      if (c) out.push(c);
+    }
+    return out;
+  }
+  function pairStraightExample(C, R) {
+    var min = num(C.decrees.rapid.pairStraightMin), deck = R.makeDeck(), out = [];
+    for (var r = 3; r < 3 + min; r++) {
+      var cards = deck.filter(function (c) { return c.rank === r && !c.joker; }).slice(0, 2);
+      out = out.concat(cards);
+    }
+    return out;
+  }
+  function pairStraightText(C, R) {
+    var cards = pairStraightExample(C, R), out = [], i = 0;
+    while (i < cards.length) {
+      var label = cards[i].label, n = 0;
+      while (i < cards.length && cards[i].label === label) { n++; i++; }
+      out.push(new Array(n + 1).join(label));
+    }
+    return out.join('、');
+  }
+  function doubleExample(C, extra) {
+    var d = C.decrees.double, n = num(d.pairStraightMin) + (extra ? 1 : 0);
+    return {
+      n: n,
+      base: n * num(d.pairStraightBase),
+      mult: (n - num(d.pairStraightMin)) * num(d.pairStraightMult)
+    };
+  }
+
+  function hudText(key, C, R, E) {
+    var d = C.decrees;
+    var out = {
+      duel: '技能成功发动，发动者获得' + num(d.duel.base) + '基础分，倍率增加' + pct(d.duel.mult) + '。<br>' +
+        '双璧锁关另有奖励：释放者获得' + num(d.duel.base) + '基础分，倍率增加' + pct(d.duel.mult) +
+        '，上家获得' + num(d.duel.shuangbiUpperBase) + '基础分，倍率增加' + pct(d.duel.shuangbiUpperMult) + '。<br>' +
+        '七进七出只在发动时领奖，后续枪痕引动不重复领奖。',
+      double: '打出普通对子，立即获得' + num(d.double.pairBase) + '基础分；用普通对子获得牌权，倍率增加' +
+        pct(d.double.pairLeadMult) + '。<br>' +
+        '九九归一、对7和单42也享受对应奖励。连对有额外奖励，越长收益越高，但不领取普通对子的那份奖励。',
+      rapid: '顺子' + num(d.rapid.straightMin) + '张起，连对' + num(d.rapid.pairStraightMin) +
+        '对起，' + num(d.rapid.tripleBombSize) + '张同点牌可作炸弹。<br>' +
+        num(d.rapid.tripleBombSize) + '张炸弹会让所有人的当前倍率乘以' + pct(d.rapid.tripleBombMult) + '，但不能压飞机；三带一、三带二仍按原牌型处理。<br>' +
+        '每手打出的牌还会按点数产生池内奖励，由获得牌权的人收取。',
+      long: '同一轮里，出牌越靠后，额外得分越高，依次为' + longExamples(C).slice(0, 3).join('、') + '分……<br>' +
+        '每次出牌还会向池里增加' + pct(d.long.multPerPlay) + '倍率，获得牌权的人全部收走，之后重新开始累计。过牌不计次数。',
+      royal: '开局人人有王。单出大王额外得' + num(d.royal.singleBigBase) + '分，小王额外得' +
+        num(d.royal.singleSmallBase) + '分，还可能让自己手中的人物牌继承为新王；王炸额外得' +
+        num(d.royal.rocketBase) + '分，全体当前倍率翻倍，但不继承。<br>' +
+        '首个单出大小王有倍率奖励；全场手牌只剩一张小王时，它会升为大王。<br>' +
+        '打尽全场最后的王可获奖励，终局留王会扣分。'
+    };
+    return out[key] || '';
+  }
+
+  function ruleParagraphs(key, C, R, E) {
+    var d = C.decrees;
+    if (key === 'duel') {
+      return [
+        '<b>比武令</b>：每次技能成功发动，发动者获得' + num(d.duel.base) + '基础分，倍率增加' + pct(d.duel.mult) + '。',
+        '双璧锁关中，释放者获得' + num(d.duel.base) + '基础分，倍率增加' + pct(d.duel.mult) + '，上家另外获得' +
+          num(d.duel.shuangbiUpperBase) + '基础分，倍率增加' + pct(d.duel.shuangbiUpperMult) + '。',
+        '一次技能事务只发放一次奖励。七进七出在对7作为技能打出时领奖，之后枪痕引动不重复领奖。',
+        '普通炸弹、王炸和普通飞机本身不算技能；四两拨千斤的44+22属于技能，可获得本令奖励。'
+      ];
+    }
+    if (key === 'double') {
+      var a = doubleExample(C, false), b = doubleExample(C, true);
+      return [
+        '<b>双持令</b>：打出普通对子，立即额外获得' + num(d.double.pairBase) + '基础分；以普通对子获得牌权，倍率增加' +
+          pct(d.double.pairLeadMult) + '。',
+        '对7和单42享受对应的对子奖励；九九归一成功时，获得' + num(d.double.jiujiuBase) + '基础分，倍率增加' +
+          pct(d.double.jiujiuMult) + '。',
+        '连对另行计算：至少' + num(d.double.pairStraightMin) + '对时，每对额外获得' +
+          num(d.double.pairStraightBase) + '基础分；超过' + num(d.double.pairStraightMin) +
+          '对后，每多一对，再额外增加' + pct(d.double.pairStraightMult) + '倍率。',
+        '例如，' + a.n + '连对额外获得' + a.base + '基础分、不增加倍率；' + b.n + '连对额外获得' +
+          b.base + '基础分和' + pct(b.mult) + '倍率。这些是附加奖励，普通连对原有的牌型分仍正常计算。',
+        '连对不再领取“普通对子额外' + num(d.double.pairBase) + '分”和“普通对子获牌权额外' +
+          pct(d.double.pairLeadMult) + '倍率”。',
+        '本令附加奖励均直接计入个人，不进入待结算池；其中获牌权奖励在实际获得牌权时发放。'
+      ];
+    }
+    if (key === 'rapid') {
+      var pe = pointExample(R);
+      var sample = 1.01;
+      var sampleAfter = ceil2(sample * num(d.rapid.tripleBombMult));
+      return [
+        '<b>疾行令</b>：顺子与连对的最低长度缩短，' + num(d.rapid.tripleBombSize) +
+          '张同点牌也可以作为炸弹；每次正常出牌还会产生额外的点数入池奖励。',
+        '<b>疾行令 · 顺子与连对</b>：顺子至少' + num(d.rapid.straightMin) + '张，例如' +
+          straightExample(C, R).map(function (c) { return c.label; }).join('、') + '；连对至少' +
+          num(d.rapid.pairStraightMin) + '对，例如' + pairStraightText(C, R) +
+          '。两者均不能包含2和大小王，且可以继续延长。',
+        '顺子仍按每张' + num(C.score.straightPerCard) + '基础分计算，连对仍按每对' +
+          num(C.score.pairStraightPerPair) + '基础分计算。',
+        '<b>疾行令 · ' + num(d.rapid.tripleBombSize) + '张炸弹</b>：' + num(d.rapid.tripleBombSize) +
+          '张同点牌独立打出时，按' + num(d.rapid.tripleBombSize) + '张炸弹处理。三带一、三带二仍按原牌型处理，不触发' + num(d.rapid.tripleBombSize) + '张炸弹效果。',
+        num(d.rapid.tripleBombSize) + '张炸弹打出后，三名玩家各自的当前倍率立即乘以' + pct(d.rapid.tripleBombMult) +
+          '，再分别向上取整，保留两位小数。这里是乘法，不是直接增加' + pct(d.rapid.tripleBombMult) +
+          '倍率。例如，某人的倍率为' + pct(sample) + '，乘后为' + (sample * num(d.rapid.tripleBombMult)).toFixed(4) +
+          '，向上取整后为' + pct(sampleAfter) + '。',
+        num(d.rapid.tripleBombSize) + '张炸弹可以压普通非飞机牌型，但不能压飞机、飞机带单或飞机带对。' + num(d.rapid.tripleBombSize) + '张炸弹之间按牌点比较；四张炸弹恒大于' + num(d.rapid.tripleBombSize) + '张炸弹；四张炸弹之间按牌点比较。镇山炸高于普通炸弹，王炸高于镇山炸。',
+        '<b>疾行令 · 点数入池</b>：每次正常出牌，把这一手所有牌的点数相加，以基础分奖励加入待结算池。' + pointMapping(R) + '。',
+        '例如，打出' + pe.cards.map(function (c) { return c.label; }).join('、') + '，向池内增加' +
+          pe.total + '基础分。点数入池只按普通出牌流程触发；七进七出的首次技能牌打出计入，双璧锁关的续出不计入。技能弃牌、交换、补牌、变牌不触发点数入池。',
+        '这一奖励与分数牌、倍率牌、额外花色奖励分别计算，可以同时加入同一待结算池，不互相替代。获得牌权的人收取池内奖励；若有人直接出完手牌，剩余池内奖励交给实际清空手牌的人。'
+      ];
+    }
+    if (key === 'long') {
+      var ex = longExamples(C);
+      return [
+        '<b>长征令</b>：每轮从第一次正常出牌开始计数。计数是全场共用，不是每人各自计算。',
+        '第1、2、3、4次出牌，出牌者分别立即额外获得' + ex[0] + '、' + ex[1] + '、' + ex[2] + '、' + ex[3] +
+          '基础分，此后继续递增。计算方式是“本轮出牌次序乘以' + num(d.long.basePerPlay) + '”。',
+        '每次出牌还会向待结算池增加' + pct(d.long.multPerPlay) + '倍率，过牌不计次数。例如，一轮共出牌4次，就累计' +
+          pct(4 * num(d.long.multPerPlay)) + '倍率。',
+        '有人获得牌权时，收取这轮累计的倍率；然后出牌次数和本轮待结算倍率清零，下一轮重新从第一次计算。',
+        '同一玩家在一轮内多次出牌，也按全场实际顺位继续累计。若有人直接出完手牌，未结算的倍率随待结算池交给实际清空手牌者。'
+      ];
+    }
+    if (key === 'royal') {
+      return [
+        '<b>王储令</b>：开局人人有王；单出王可以触发人物牌继承，唯一剩下的小王可以登基为大王。先出王、打尽最后的王有奖励，终局留王会受罚。',
+        '<b>王储令 · 牌型</b>：王只能单张打出，或一张大王和一张小王组成王炸。同种王不能组成对子、三张或四张炸弹，也不能作为三带一、四带二、飞机等组合的带牌。',
+        '大王单张可以压小王，同种王不能互压。王炸大于镇山炸和普通炸弹，王炸之间不能互压。允许持有多张同种王，但仍必须遵守以上出牌方式。',
+        '<b>王储令 · 补王</b>：地主拿到底牌后、首次出牌前，按原始大小王的归属补王：两张王原本属于同一人，另外两人各获得一张小王；两张王原本属于不同的人，第三人获得一张小王。补王只执行一次，直接加入手牌，不替换已有牌。补出的王无花色、不带分数牌或倍率牌标记，不改变本局额外花色和原有特殊牌。补王不算出牌，不发出牌奖励。',
+        '<b>王储令 · 单王与继承</b>：单出大王额外获得' + num(d.royal.singleBigBase) + '基础分，单出小王额外获得' +
+          num(d.royal.singleSmallBase) + '基础分；这些是王储附加分，普通单张出牌分仍正常计算。这两种单王奖励本身不增加倍率。',
+        '每局首个单独打出大王的人，倍率增加' + pct(d.royal.firstBigMult) + '；首个单独打出小王的人，倍率增加' +
+          pct(d.royal.firstSmallMult) + '。每类首王奖励全场只有一次，只加倍率，不另加基础分。',
+        '单王打出后，只检查出王者本人剩余手牌：大王依次寻找' + orderText(C, R, true) + '；小王依次寻找' +
+          orderText(C, R, false) + '。找到第一张符合条件的牌，就把它变为对应的王；找不到则不变。每次最多继承一张，不增加手牌张数，也不额外获得出牌机会。继承出的王以后单独打出，还可以再次触发继承。如果这次出牌已经结束牌局，不再继承。',
+        '<b>王储令 · 王炸</b>：王炸额外获得' + num(d.royal.rocketBase) + '基础分，普通王炸的牌型分仍正常计算；三名玩家当前倍率均翻倍。王炸不叠加两次单王奖励，不触发任何继承，也不领取首大王或首小王倍率奖励。但王炸仍会占用尚未产生的首王归属记录，用于王冠显示；之后再单出对应王，不能重新领取该类首王奖励。',
+        '<b>王储令 · 独王登基</b>：当三名玩家手牌合计只剩一张小王、且没有大王时，这张小王立即变成大王。只统计手牌，不统计桌面和弃牌区。每次相关操作完整结算后检查；牌局已经结束则不再登基。登基不算出牌，不发出牌、首王、末王或比武奖励，也不授予牌权。登基后的牌按大王处理，终局仍留在手里时按大王扣分。',
+        '<b>王储令 · 末王与剩王</b>：最后一张大王单独打出，或最后一组大小王作为王炸打出后，如果没有产生继承，并且三名玩家手中已经没有任何王，则立即发放末大王奖励：' +
+          num(d.royal.lastBigBase) + '基础分，倍率增加' + pct(d.royal.lastBigMult) + '。不是“本局最后一个出过王的人”自动领奖，也不存在末小王奖励。技能弃王、交换、补王、变牌和登基不属于实际出王，不更新首王、末王记录。',
+        '终局时，手中每剩一张大王扣除' + num(d.royal.remainBigPenalty) + '基础分，每剩一张小王扣除' +
+          num(d.royal.remainSmallPenalty) + '基础分。先加完胜利等全部正向奖励，再统一扣除剩王处罚，最后把基础分限制为不低于0。',
+        '<b>王储令 · 王冠</b>：银色王冠表示首个实际打出大王的人，铜色王冠表示首个实际打出小王的人，金色王冠表示取得末大王奖励的人。王冠纵向显示在对应头像旁。王冠反映实际归属记录；尤其王炸可能记录首王归属，但不代表领取了首王倍率奖励。'
+      ];
+    }
+    return [];
+  }
+
+  function rulesHTML(C, R, E) {
+    var ps = pool(C), namesList = names(C, E);
+    var out = '<p>' + '每局从' + namesList.join('、') + cnCount(ps.length) + '种江湖令中抽取一种，' +
+      cnCount(num(C.sessionRounds || 3)) + '局互不重复。</p>';
+    ps.forEach(function (key) {
+      ruleParagraphs(key, C, R, E).forEach(function (p) {
+        out += '<p>' + p + '</p>';
+      });
+    });
+    return out;
+  }
+
+  function teachingHTML(C, R, E) {
+    var d = C.decrees;
+    var simple = {
+      duel: '技能成功发动时领取基础分与倍率；双璧锁关另有上家奖励。',
+      double: '普通对子和以对子获牌权有奖励；连对另有附加分与倍率。',
+      rapid: '顺子与连对更短，' + num(d.rapid.tripleBombSize) + '张同点可作炸弹；' + num(d.rapid.tripleBombSize) + '张炸弹乘倍率但不能打飞机，出牌点数还会进入待结算池。',
+      long: '本轮出牌顺位越靠后，基础分越高；每次出牌积累待结算倍率。',
+      royal: '开局补王，单王、首王、王炸、末王、剩王与独王登基共同结算。'
+    };
+    var out = '<p class="pattern-intro">' + cnCount(num(C.sessionRounds || 3)) + '局游戏的令各不相同，当前正式令池为' +
+      names(C, E).join('、') + '。' + '</p>';
+    pool(C).forEach(function (key) {
+      out += '<div class="pattern-row"><b>' + name(C, E, key) + '</b><small>' + simple[key] + '</small></div>';
+    });
+    return out;
+  }
+
+  function ruleBookMarkdown(C, R, E) {
+    var ps = pool(C), namesList = names(C, E);
+    var out = '## 5. 江湖令\n\n每局从' + namesList.join('、') + cnCount(ps.length) + '种江湖令中抽取一种，' +
+      cnCount(num(C.sessionRounds || 3)) + '局互不重复。\n\n';
+    ps.forEach(function (key) {
+      out += '### 5.' + (ps.indexOf(key) + 1) + ' ' + name(C, E, key) + '\n\n';
+      ruleParagraphs(key, C, R, E).forEach(function (p) {
+        out += '- ' + p.replace(/<\/?b>/g, '').replace(/<br>/g, '\n') + '\n';
+      });
+      out += '\n';
+    });
+    return out;
+  }
+
+  return {
+    hudText: hudText,
+    teachingHTML: teachingHTML,
+    rulesHTML: rulesHTML,
+    ruleBookMarkdown: ruleBookMarkdown,
+    ruleParagraphs: ruleParagraphs,
+    pointMapping: pointMapping
+  };
+});
+
+</script>
+<script>
 /*!
  * 江湖技能斗地主 · 界面与牌局流程
  */
@@ -9616,6 +10100,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   var E = window.DDZEngine;
   var AI = window.DDZAI;
   var S = window.DDZStickers;
+  var CFG = window.DDZConfig;
 
   var G = {
     game: null,
@@ -9680,6 +10165,9 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     confirmAction: null,
     aiTimer: null,
     tutorial: null,
+    scenario: null,
+    teachReturn: null,
+    teachTab: 'rules',
     tutorialDone: false,
     tutorialFinaleResolve: null,
     tutorialRocketDemo: false,
@@ -9691,7 +10179,9 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     uiScale: 1,
     uiScalePreferred: 1,
     stats: { wins: 0, losses: 0 },
-    sound: true
+    sound: true,
+    fastMode: false,
+    finalizing: false
   };
 
   var UI_SCALE_MIN = 0.8;
@@ -9924,18 +10414,57 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   // ============================================================
   document.addEventListener('DOMContentLoaded', init);
 
-  function init() {
+  function renderDecreeRulesPage() {
+    var host = $('decree-rules-body');
+    if (!host || !window.DDZDecreeText) return;
+    host.innerHTML = window.DDZDecreeText.rulesHTML(window.DDZConfig, R, E);
+  }
+
+  async function init() {
     cacheStatic();
     bindEvents();
     loadSettings();
-    warmAudio();
+    renderDecreeRulesPage();
+    $('start-screen').hidden = true;
     setupPreview();
     updateStartStats();
     renderStickerTray();
     renderAll();
     $('bid-panel').hidden = true;
     $('turn-clock').classList.add('hidden');
+    await bootLoading();
     $('start-screen').hidden = false;
+  }
+
+  async function bootLoading() {
+    var bar = $('loading-bar');
+    var pct = $('loading-percent');
+    var screen = $('loading-screen');
+    if (!bar || !pct || !screen) return;
+    var warm = warmAudio();
+    var warmed = false;
+    warm.then(function () { warmed = true; }).catch(function () { warmed = true; });
+    var started = performance.now();
+    var shown = 0;
+    while (performance.now() - started < 12000) {
+      var elapsed = performance.now() - started;
+      var target = warmed && elapsed > 900 ? 100 : Math.min(90, 8 + elapsed / 34);
+      if (target > shown) {
+        shown = Math.min(target, 100);
+        bar.style.width = shown.toFixed(1) + '%';
+        pct.textContent = Math.round(shown) + '%';
+      }
+      if (warmed && elapsed > 900) break;
+      await sleep(60);
+    }
+    if (!warmed) {
+      await Promise.race([warm.catch(function () {}), sleep(5000)]);
+    }
+    bar.style.width = '100%';
+    pct.textContent = '100%';
+    await sleep(220);
+    screen.classList.add('done');
+    setTimeout(function () { screen.hidden = true; }, 550);
   }
 
   function cacheStatic() {
@@ -9967,7 +10496,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
 
   function bindEvents() {
     // 任何首次用户手势都可以解锁音频；开始按钮仍会在自己的点击中再次解锁。
-    document.addEventListener('pointerdown', function () { unlockAudio(); }, { passive: true, once: true });
+    document.addEventListener('pointerdown', function () { unlockAudio(); }, { passive: true });
     document.addEventListener('keydown', function () { unlockAudio(); }, { once: true });
     var pendingBox = $('pending-score');
     if (pendingBox) {
@@ -9983,6 +10512,44 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       cell.addEventListener('mouseleave', hideHudTooltip);
     });
     $('btn-start').addEventListener('click', startSession);
+    $('btn-teaching').addEventListener('click', function () { openTeaching('rules'); });
+    window.addEventListener('resize', function () {
+      if (!G.scenario || !G.scenario.highlightTarget) return;
+      var ht = G.scenario.highlightTarget;
+      if (ht.type === 'group') scenarioHighlightGroup(ht.selectors, ht.box);
+      else scenarioHighlightMany(ht);
+    });
+    $('btn-teaching-close').addEventListener('click', closeTeaching);
+    $('btn-teaching-close-foot').addEventListener('click', closeTeaching);
+    all('.teaching-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () { renderTeachingList(tab.getAttribute('data-teach-tab')); });
+    });
+    $('teaching-list').addEventListener('click', function (ev) {
+      var item = ev.target.closest('.teaching-item');
+      if (!item) return;
+      var scenario = item.getAttribute('data-scenario');
+      if (scenario) { startScenario(scenario); return; }
+      var skill = item.getAttribute('data-skill');
+      if (skill) startTutorial(skill);
+    });
+    $('btn-pattern-complete').addEventListener('click', function () {
+      $('pattern-modal').hidden = true;
+      sfx('panelClose', { eventId: 'pattern-close:' + Date.now() });
+      completeScenario('牌型教学完成');
+    });
+    $('btn-decree-complete').addEventListener('click', function () {
+      $('decree-end-modal').hidden = true;
+      sfx('panelClose', { eventId: 'decree-end-close:' + Date.now() });
+      completeScenario('江湖令教学完成');
+    });
+    $('scenario-next').addEventListener('click', function () {
+      var fn = G.scenario && G.scenario.next;
+      if (!fn) return;
+      G.scenario.next = null;
+      this.hidden = true;
+      $('scenario-prompt').hidden = true;
+      fn();
+    });
     $('btn-again').addEventListener('click', function () {
       $('gameover-screen').hidden = true;
       if (G.session && !G.session.final) {
@@ -10000,10 +10567,6 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     $('btn-rules').addEventListener('click', openRules);
     $('btn-rules-start').addEventListener('click', openRules);
     $('btn-rules-close').addEventListener('click', closeRules);
-    $('hero-skills').addEventListener('click', function (ev) {
-      var btn = ev.target.closest('.hero-skill');
-      if (btn) openSkillGuide(btn.getAttribute('data-skill'));
-    });
     $('btn-skill-guide-close').addEventListener('click', function () { closeSkillGuide(); });
     $('btn-skill-tutorial').addEventListener('click', function () {
       if (G.guideSkill) startTutorial(G.guideSkill);
@@ -10035,6 +10598,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       if (ev.target === $('settings-modal')) closeSettings();
     });
     $('btn-setting-sound').addEventListener('click', toggleSound);
+    $('btn-setting-fast').addEventListener('click', toggleFastMode);
     $('ui-scale-range').addEventListener('input', function () {
       applyUiScale(Number(this.value) / 100, true);
     });
@@ -10044,6 +10608,19 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     });
     $('btn-restart').addEventListener('click', requestRestart);
     $('btn-home-game').addEventListener('click', requestGoHome);
+    // 倒三角动画是 turnStart 的唯一触发源：left/top 真正开始过渡时才播。
+    $('turn-arrow').addEventListener('transitionrun', function (ev) {
+      if (ev.propertyName !== 'left' && ev.propertyName !== 'top') return;
+      if (G.arrowSilentMoveUntil && Date.now() < G.arrowSilentMoveUntil) return;
+      if (!G.game || G.game.phase !== 'playing' || G.startVisible) return;
+      var now = Date.now();
+      if (now - (G.lastTurnArrowCue || 0) < 450) return;
+      G.lastTurnArrowCue = now;
+      G.turnArrowSeq = (G.turnArrowSeq || 0) + 1;
+      sfx('turnStart', {
+        eventId: 'turnStart:arrow-anim:' + G.epoch + ':' + G.turnArrowSeq
+      });
+    });
     $('btn-confirm-cancel').addEventListener('click', function () { closeConfirm(true); });
     $('btn-confirm-ok').addEventListener('click', confirmGameAction);
 
@@ -10172,6 +10749,886 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     return a;
   }
 
+
+  // ============================================================
+  // 教学模式：规则列表 / 技能列表 / 两个情景关
+  // ============================================================
+  function renderTeachingList(tab) {
+    G.teachTab = tab || 'rules';
+    all('.teaching-tab').forEach(function (el) {
+      el.classList.toggle('active', el.getAttribute('data-teach-tab') === G.teachTab);
+    });
+    var host = $('teaching-list');
+    if (!host) return;
+    if (G.teachTab === 'rules') {
+      host.innerHTML =
+        '<button class="teaching-item" type="button" data-scenario="pressure">' +
+          '<span class="teaching-item-mark">压</span><span><b>压牌</b><small>用 10、2、大王依次压过对手 · 4 步</small></span><i>›</i></button>' +
+        '<button class="teaching-item" type="button" data-scenario="score">' +
+          '<span class="teaching-item-mark">分</span><span><b>分数</b><small>对子即时分 · 待结算池 · 四两拨千斤</small></span><i>›</i></button>' +
+        '<button class="teaching-item" type="button" data-scenario="patterns">' +
+          '<span class="teaching-item-mark">型</span><span><b>牌型</b><small>顺子 · 炸弹 · 三带 · 连对 / 飞机 / 四带二 / 王炸</small></span><i>›</i></button>' +
+        '<button class="teaching-item" type="button" data-scenario="decree">' +
+          '<span class="teaching-item-mark">令</span><span><b>江湖令</b><small>双持令 · 三人行 · 王储令 / 长征令 / 比武令</small></span><i>›</i></button>';
+      return;
+    }
+    host.innerHTML = Object.keys(SKILL_GUIDES).map(function (key) {
+      var g = SKILL_GUIDES[key];
+      return '<button class="teaching-item" type="button" data-skill="' + key + '">' +
+        '<span class="teaching-item-mark">' + g.mark + '</span>' +
+        '<span><b>' + g.title + '</b><small>' + g.sub + ' · 进入原有技能教学</small></span>' +
+        '<i>›</i></button>';
+    }).join('');
+  }
+
+  function openTeaching(tab) {
+    renderTeachingList(tab || G.teachTab || 'rules');
+    $('teaching-modal').hidden = false;
+    sfx('panelOpen', { eventId: 'teaching-open:' + Date.now() });
+  }
+
+  function closeTeaching() {
+    var wasOpen = !$('teaching-modal').hidden;
+    $('teaching-modal').hidden = true;
+    if (wasOpen) sfx('panelClose', { eventId: 'teaching-close:' + Date.now() });
+  }
+
+  function scenarioCard(id) {
+    var deck = R.makeDeck();
+    for (var i = 0; i < deck.length; i++) if (deck[i].id === id) return deck[i];
+    throw new Error('教学牌不存在: ' + id);
+  }
+
+  function makeTutorialFour() {
+    return {
+      id: 'TUTORIAL_4', rank: 4, rankKey: '4', label: '4',
+      suit: 'H', suitSymbol: '♥', suitName: '红桃', suitOrder: 3,
+      color: 'red', joker: false, point: 4
+    };
+  }
+
+  function setScenarioLast(g, playerId, ids) {
+    var cards = ids.map(scenarioCard);
+    g.lastPlay = { player: playerId, cards: cards, combo: R.detectCombo(cards) };
+  }
+
+  function createScenarioGame(id) {
+    var g = E.createGame({ rng: function () { return 0.42; } });
+    g.phase = 'playing';
+    g.round = 1;
+    g.roundNo = 1;
+    g.baseScore = 1;
+    g.landlord = 0;
+    g.turn = 0;
+    g.trick = 1;
+    g.passes = 0;
+    g.bottom = [];
+    g.decree = null;
+    g.extraSuit = null;
+    g.specialMarks = {};
+    g.players.forEach(function (p) {
+      p.role = p.id === 0 ? 'landlord' : 'farmer';
+      p.base = 0;
+      p.mult = 1;
+      p.score = 0;
+      p.totalScore = 0;
+      p.playCount = 0;
+      p.lastAction = null;
+      p.usedSkills = {
+        sanren: 0, jiujiu: 0, guowuguan: 0, siliang: 0,
+        qijin: 0, yuanmen: 0, geshan: 0, shuangbi: 0, pindming: 0,
+        rocket: 0, plane: 0, bomb: 0
+      };
+    });
+    g.scoring.pendingBase = 0;
+    g.scoring.pendingMult = 0;
+    g.scoring.pendingSpecials = [];
+    g.scoring.pendingColor = [];
+    g.scoring.pendingSources = [];
+    g.scoring.pendingLong = 0;
+    g.scoring.extraSuit = null;
+    g.scoring.passStreak = 0;
+    g.scoring.firstLead = true;
+
+    if (id === 'pressure') {
+      g.players[0].hand = ['S10', 'D2', 'JOKER_B'].map(scenarioCard);
+      g.players[1].hand = ['SK', 'JOKER_S', 'H4', 'C5', 'D6', 'S7', 'H8'].map(scenarioCard);
+      g.players[2].hand = ['S9', 'SA', 'H5', 'C6', 'D7', 'S8', 'H9'].map(scenarioCard);
+      setScenarioLast(g, 1, ['S3']);
+      g.turn = 2;
+      g.tutorialNoExtras = true;
+    } else if (id === 'patterns') {
+      g.players[0].hand = ['S5', 'S6', 'S7', 'S8', 'S9', 'S10', 'SA', 'HA', 'CA', 'D7'].map(scenarioCard);
+      g.players[1].hand = ['S3', 'H3', 'C3', 'D3', 'S2', 'H2', 'C2', 'D8', 'C8', 'H10', 'C10', 'D10', 'D5', 'C4', 'C9'].map(scenarioCard);
+      g.players[2].hand = ['H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'SQ', 'HQ', 'CQ', 'D4', 'C5', 'D6'].map(scenarioCard);
+      setScenarioLast(g, 2, ['H4', 'H5', 'H6', 'H7', 'H8', 'H9']);
+      g.turn = 0;
+      g.tutorialNoExtras = true;
+    } else if (id === 'decree') {
+      g.players[0].role = 'farmer';
+      g.players[1].role = 'landlord';
+      g.players[2].role = 'farmer';
+      g.players.forEach(function (p) { p.hand = []; });
+      g.landlord = 1;
+      g.turn = 0;
+      g.tutorialNoExtras = true;
+    } else {
+      g.players[0].hand = ['S4', 'D2', 'HK', 'CK', 'S9', 'H9', 'D5'].map(scenarioCard);
+      g.players[1].hand = ['SJ', 'HJ', 'S5', 'H6', 'C7', 'D8', 'S10'].map(scenarioCard);
+      g.players[2].hand = ['H2', 'S2', 'H5', 'C6', 'D7', 'S8', 'H10'].map(scenarioCard);
+      setScenarioLast(g, 2, ['H8', 'C8']);
+      g.turn = 0;
+      g.extraSuit = 'C';
+      g.scoring.extraSuit = 'C';
+      g.tutorialNoExtras = false;
+      g.specialMarks.HK = { type: 'score', settled: false, pending: false };
+      g.specialMarks.CK = { type: 'mult', settled: false, pending: false };
+      g.specialMarks.H2 = { type: 'mult', settled: false, pending: false };
+    }
+    return g;
+  }
+
+  function scenarioClearHighlight() {
+    var h = $('scenario-highlight');
+    if (h) h.hidden = true;
+    all('.scenario-highlight-extra').forEach(function (x) { x.remove(); });
+    if (G.scenario) G.scenario.highlightTarget = null;
+  }
+
+  function scenarioPositionHighlight(h, el, box) {
+    var r = rectOf(el);
+    if (!r) { h.hidden = true; return false; }
+    h.hidden = false;
+    h.classList.toggle('box', !!box);
+    h.style.animation = 'none';
+    void h.offsetWidth;
+    h.style.animation = '';
+    h.style.left = (r.x - 7) + 'px';
+    h.style.top = (r.y - 7) + 'px';
+    h.style.width = (r.w + 14) + 'px';
+    h.style.height = (r.h + 14) + 'px';
+    return true;
+  }
+
+  function scenarioHighlightMany(items) {
+    scenarioClearHighlight();
+    if (!G.scenario || !items || !items.length) return;
+    var used = [];
+    items.forEach(function (item, index) {
+      var selector = item.selector;
+      var el = typeof selector === 'string' ? ($(selector) || one(selector)) : selector;
+      if (!el) return;
+      var h;
+      if (index === 0) h = $('scenario-highlight');
+      else {
+        h = document.createElement('div');
+        h.className = 'scenario-highlight scenario-highlight-extra';
+        document.body.appendChild(h);
+      }
+      if (!h) return;
+      if (scenarioPositionHighlight(h, el, !!item.box)) {
+        used.push({ selector: selector, box: !!item.box });
+      }
+    });
+    if (used.length) G.scenario.highlightTarget = used;
+  }
+
+  function scenarioHighlightGroup(selectors, box) {
+    scenarioClearHighlight();
+    if (!G.scenario || !selectors || !selectors.length) return;
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    selectors.forEach(function (selector) {
+      var el = $(selector) || one(selector);
+      var r = el && rectOf(el);
+      if (!r) return;
+      minX = Math.min(minX, r.x); minY = Math.min(minY, r.y);
+      maxX = Math.max(maxX, r.x + r.w); maxY = Math.max(maxY, r.y + r.h);
+    });
+    if (!isFinite(minX)) return;
+    var h = $('scenario-highlight');
+    if (!h) return;
+    h.hidden = false;
+    h.classList.toggle('box', !!box);
+    h.style.animation = 'none';
+    void h.offsetWidth;
+    h.style.animation = '';
+    h.style.left = (minX - 7) + 'px';
+    h.style.top = (minY - 7) + 'px';
+    h.style.width = (maxX - minX + 14) + 'px';
+    h.style.height = (maxY - minY + 14) + 'px';
+    G.scenario.highlightTarget = { type: 'group', selectors: selectors, box: !!box };
+  }
+
+  function scenarioHighlight(selector, box) {
+    scenarioHighlightMany([{ selector: selector, box: !!box }]);
+  }
+
+  function scenarioSay(text, buttonText, next, target, box, keepHighlight) {
+    var prompt = $('scenario-prompt');
+    $('scenario-prompt-text').textContent = text;
+    prompt.hidden = false;
+    prompt.classList.remove('shake');
+    var btn = $('scenario-next');
+    btn.hidden = !buttonText;
+    btn.textContent = buttonText || '下一步';
+    G.scenario.next = next || null;
+    if (target) scenarioHighlight(target, box);
+    else if (!keepHighlight) scenarioClearHighlight();
+  }
+
+  function scenarioInvalid(message, keepNext) {
+    var now = Date.now();
+    if (!G.scenario) return;
+    $('scenario-prompt-text').textContent = message;
+    $('scenario-prompt').hidden = false;
+    $('scenario-prompt').classList.remove('shake');
+    void $('scenario-prompt').offsetWidth;
+    $('scenario-prompt').classList.add('shake');
+    if (now - (G.scenario.lastError || 0) > 350) {
+      G.scenario.lastError = now;
+      sfx('error', { eventId: 'scenario-error:' + now });
+    }
+    if (!keepNext) {
+      G.scenario.next = null;
+      $('scenario-next').hidden = true;
+    }
+    G.busy = false;
+    renderControls();
+  }
+
+  function scenarioClockShowPlayer() {
+    if (!G.scenario) return;
+    showTutorialClock();
+  }
+
+  async function scenarioAIDelay(label) {
+    if (!G.scenario) return false;
+    startClock(60, label || 'AI 出牌');
+    await sleep(2000);
+    if (!G.scenario) return false;
+    stopClock();
+    return true;
+  }
+
+  async function scenarioAIPlay(id, ids) {
+    if (!G.scenario) return false;
+    scenarioTurnCue();
+    if (!await scenarioAIDelay('AI 出牌')) return false;
+    var g = G.game;
+    var cards = ids.map(scenarioCard);
+    var res = E.playCards(g, id, ids);
+    if (!res.ok) { console.warn('scenario AI play failed', res.error, ids); return false; }
+    G.scenario.scripting = true;
+    await afterPlayEvent(res, id, cards, null);
+    G.scenario.scripting = false;
+    return true;
+  }
+
+  async function scenarioAIPass(id) {
+    if (!G.scenario) return;
+    scenarioTurnCue();
+    if (!await scenarioAIDelay('AI 跳过')) return;
+    var g = G.game;
+    if (!g) return;
+    E.passTurn(g, id);
+    setSpeech(id, '不出', 'pass');
+    renderAll();
+    sfx('pass');
+    scenarioClockShowPlayer();
+  }
+
+  function scenarioValidate(cards, combo) {
+    var s = G.scenario;
+    if (!s) return { ok: true };
+    var id = s.id, step = s.step;
+    if (step === 'intro') return { ok: false, keep: true, message: '先看提示，点「下一步」开始教学。' };
+    if (!combo) return { ok: false, message: '请按提示组成合法牌型。' };
+    if (id === 'pressure') {
+      if (step === 'pressure10') {
+        if (combo.type === 'single' && cards[0].rank === 10) return { ok: true };
+        if (combo.type === 'single' && (cards[0].rank === 15 || cards[0].rank === 17)) {
+          return { ok: false, message: '这张牌很大哦，我们先出 10 压过他就好！' };
+        }
+        return { ok: false, message: '这张牌点数太小，先用 10 压过 9。' };
+      }
+      if (step === 'pressure2') {
+        if (combo.type === 'single' && cards[0].rank === 15) return { ok: true };
+        if (combo.type === 'single' && cards[0].rank === 17) {
+          return { ok: false, message: '这张牌很大哦，我们先出 2 压过他就好！' };
+        }
+        return { ok: false, message: '先选一张 2，压过上家的 A。' };
+      }
+      if (step === 'pressureBJ') {
+        if (combo.type === 'single' && cards[0].rank === 17) return { ok: true };
+        return { ok: false, message: '出最后一张大王，结束这一局。' };
+      }
+    }
+    if (id === 'decree') {
+      if (step === 'decree55') {
+        if (combo.type === 'pair' && cards.length === 2 && cards[0].rank === 5) return { ok: true };
+        return { ok: false, message: '请打出对 5。' };
+      }
+      if (step === 'decreePair') {
+        var dr = cards.map(function (c) { return c.rank; }).sort(function (a, b) { return a - b; }).join(',');
+        if (combo.type === 'pairStraight' && cards.length === 8 && dr === '6,6,7,7,8,8,9,9') return { ok: true };
+        return { ok: false, message: '请打出 66778899 连对。' };
+      }
+      if (step === 'decree42') {
+        if (combo.type === 'superBomb' && G.scenario.decree42Armed) return { ok: true };
+        return { ok: false, message: '请点击右下角「四两拨千斤」技能按钮来释放 44+22。' };
+      }
+      return { ok: false, keep: true, message: '请按当前教学提示操作。' };
+    }
+    if (id === 'patterns') {
+      if (step === 'patternStraight') {
+        var isStraight = combo.type === 'straight' && cards.length === 6 &&
+          cards.map(function (c) { return c.rank; }).sort(function (a, b) { return a - b; }).join(',') === '5,6,7,8,9,10';
+        if (isStraight) return { ok: true };
+        return { ok: false, message: '请打出 5678910 这手六张顺子。' };
+      }
+      if (step === 'patternAAA') {
+        var patternRanks = cards.map(function (c) { return c.rank; }).sort(function (a, b) { return a - b; });
+        if (combo.type === 'tripleSingle' && cards.length === 4 &&
+            patternRanks[0] === 7 && patternRanks[1] === 14 && patternRanks[2] === 14 && patternRanks[3] === 14) {
+          return { ok: true };
+        }
+        return { ok: false, message: '请用 AAA7 压过 QQQ4。' };
+      }
+      return { ok: false, keep: true, message: '请按当前教学提示操作。' };
+    }
+    if (id === 'score') {
+      if (step === 'scoreWaitK' || step === 'scoreWait42' || step === 'score42a') {
+        return { ok: false, keep: true, message: '先看完当前说明，再点提示框里的按钮继续。' };
+      }
+      if (step === 'score9') {
+        if (combo.type === 'pair' && cards.length === 2 && cards[0].rank === 9) return { ok: true };
+        return { ok: false, message: '选择对 9 来恰好压牌。' };
+      }
+      if (step === 'scoreKK') {
+        if (combo.type === 'pair' && cards.length === 2 && cards[0].rank === 13) return { ok: true };
+        return { ok: false, message: '选择对 K 来压牌。' };
+      }
+      if (step === 'score42b') {
+        if (combo.type === '42') return { ok: true };
+        return { ok: false, message: '点击右下角「四两拨千斤」技能，再按提示出牌。' };
+      }
+    }
+    return { ok: false, message: '按当前提示操作。' };
+  }
+
+  function scenarioPrepareHighlight() {
+    if (!G.scenario || G.scenario.id !== 'score') return;
+    if (G.scenario.step === 'score9') scenarioHighlight('#counter-0', true);
+    else if (G.scenario.step === 'score42b') scenarioHighlight('#pending-score', true);
+  }
+
+  function scenarioTurnCue() {
+    // turnStart 只跟随倒三角动画：positionTurnArrow 真正移动时播放。
+    // 这里不再额外补音，避免没有箭头动画也响。
+  }
+
+  function pressureAfterHuman() {
+    var g = G.game;
+    if (G.scenario.step === 'pressure10') {
+      G.scenario.step = 'pressure2';
+      scenarioAIPlay(1, ['SK']).then(function () {
+        return scenarioAIPlay(2, ['SA']);
+      }).then(function () {
+        G.game.turn = 0;
+        renderAll();
+        scenarioClockShowPlayer();
+        scenarioTurnCue();
+        scenarioSay('大王 > 小王 > 2 > A > K > Q > J > 10 > …… > 3。', '', null);
+      });
+    } else if (G.scenario.step === 'pressure2') {
+      G.scenario.step = 'pressureBJ';
+      scenarioAIPlay(1, ['JOKER_S']).then(async function () {
+        await scenarioAIPass(2);
+        G.game.turn = 0;
+        renderAll();
+        scenarioClockShowPlayer();
+        scenarioTurnCue();
+        scenarioSay('出最后一张牌来结束游戏吧！', '', null);
+      });
+    } else if (G.scenario.step === 'pressureBJ') {
+      completeScenario('压牌教学完成');
+    }
+  }
+
+  function scoreKkPrompt(showButton, refreshHighlight) {
+    scenarioSay('本局蓝标牌、梅花牌计算额外分数，红标牌计算额外倍率。', showButton ? '继续' : '', showButton ? scoreKkContinue : null, null, false, true);
+    if (refreshHighlight) {
+      scenarioHighlightMany([
+        { selector: '#hud-extra', box: true },
+        { selector: '#hud-score-cards', box: true },
+        { selector: '#hud-mult-cards', box: true },
+        { selector: '#pending-score', box: true }
+      ]);
+    }
+  }
+
+  async function scoreKkContinue() {
+    if (!G.scenario || !G.scenario.kkAnimationDone) return;
+    scenarioClearHighlight();
+    G.scenario.step = 'score42a';
+    await scenarioAIPass(1);
+    await scenarioAIPlay(2, ['H2', 'S2']);
+    G.game.turn = 0;
+    G.scenario.showSkill = true;
+    renderAll();
+    scenarioClockShowPlayer();
+    scenarioTurnCue();
+    scenarioSay('1/2 四两拨千斤是强大的技能，2 和 4 一起出，可以压过普通单牌和对子，但不能压大小王。', '下一步', function () {
+      G.scenario.step = 'score42b';
+      renderAll();
+      scenarioSay('2/2 点击右下角的「四两拨千斤」技能键来释放技能。', '', null, '.skill-btn[data-skill="siliang"]');
+    });
+  }
+
+
+
+  function decreeDoubleText() {
+    var all = (typeof window !== 'undefined' && window.DDZConfig && window.DDZConfig.decrees) || {};
+    var dbl = all.double || { pairBase: 30, pairLeadMult: 0.50 };
+    var ps = E.doublePairStraightBonus(4);
+    return '本局游戏为双持令。对子（包括连对里的对子）获得额外 ' + dbl.pairBase +
+      ' 分；对子或四两拨千斤领出获得 ' + Number(dbl.pairLeadMult).toFixed(2) +
+      ' 倍率；三连以上的连对获得额外 ' + Number(ps.mult).toFixed(2) + ' 倍率。';
+  }
+
+  function setupDecreeDeal() {
+    var g = G.game;
+    g.phase = 'playing';
+    g.round = 1;
+    g.roundNo = 1;
+    g.landlord = 1;
+    g.turn = 1;
+    g.trick = 1;
+    g.passes = 0;
+    g.lastPlay = null;
+    g.bottom = [];
+    g.decree = 'double';
+    g.extraSuit = 'C';
+    g.scoring.extraSuit = 'C';
+    g.tutorialNoExtras = false;
+    g.players[0].role = 'farmer';
+    g.players[1].role = 'landlord';
+    g.players[2].role = 'farmer';
+    g.players.forEach(function (p) { p.base = 0; p.mult = 1; p.score = 0; p.totalScore = 0; p.playCount = 0; });
+    g.players[0].hand = ['SJ', 'HJ', 'SQ', 'SK', 'C5', 'D5', 'C6', 'D6', 'C7', 'D7', 'C8', 'D8', 'C9', 'D9', 'C2', 'D2', 'H4'].map(scenarioCard);
+    g.players[1].hand = ['S3', 'H3', 'S10', 'H10', 'C10', 'D10', 'S6', 'H7', 'S8', 'H9', 'CQ', 'H2', 'S2', 'C4', 'H6', 'S9'].map(scenarioCard);
+    g.players[2].hand = ['S4', 'D4', 'C3', 'D3', 'S5', 'H5', 'S7', 'H8', 'DQ', 'DK', 'CJ', 'DJ'].map(scenarioCard);
+    g.players[2].usedSkills.shuangbi = 1;
+    g.specialMarks = {
+      S6: { type: 'score', settled: false, pending: false },
+      H7: { type: 'score', settled: false, pending: false },
+      S8: { type: 'score', settled: false, pending: false },
+      H9: { type: 'score', settled: false, pending: false },
+      H2: { type: 'mult', settled: false, pending: false },
+      D2: { type: 'mult', settled: false, pending: false }
+    };
+    G.handAnimation = true;
+    renderAll();
+  }
+
+  async function decreeAfterHuman() {
+    var g = G.game;
+    if (!G.scenario) return;
+    if (G.scenario.step === 'decree55') {
+      G.scenario.step = 'decreeSanren';
+      $('scenario-prompt').hidden = true;
+      await scenarioAIPass(1);
+      await scenarioAIPass(2);
+      if (!G.scenario) return;
+      G.game.turn = 0;
+      G.scenario.showSkill = true;
+      renderAll();
+      scenarioClockShowPlayer();
+      scenarioSay('其他两家不出，你自由出牌，请使用三人行技能', '', null, '.skill-btn[data-skill="sanren"]');
+    } else if (G.scenario.step === 'decreePair') {
+      G.scenario.step = 'decreeBomb';
+      scenarioClearHighlight();
+      await scenarioAIPlay(1, ['S10', 'H10', 'C10', 'D10']);
+      await scenarioAIPass(2);
+      if (!G.scenario) return;
+      G.game.turn = 0;
+      G.scenario.step = 'decree42';
+      G.scenario.decree42Armed = false;
+      renderAll();
+      scenarioClockShowPlayer();
+      scenarioSay('4422 是除王炸以外最大的炸弹，使用四两拨千斤来获得胜利！', '', null, '.skill-btn[data-skill="siliang"]');
+    } else if (G.scenario.step === 'decree42') {
+      finishDecree();
+    }
+  }
+
+  function decreeAfterReturn() {
+    if (!G.scenario) return;
+    G.scenario.step = 'decreeAfterReturn';
+    G.scenario.lockHand = true;
+    G.scenario.showSkill = false;
+    $('scenario-prompt').hidden = false;
+    renderAll();
+    scenarioClockShowPlayer();
+    scenarioSay('你通过三人行抽到了一张 4，现在你有两张 4 和两张 2。', '继续', function () {
+      if (!G.scenario) return;
+      G.scenario.lockHand = false;
+      G.scenario.step = 'decreePair';
+      renderAll();
+      scenarioSay('打出连对，获得双持令下的高分吧！', '', null);
+      scenarioHighlightGroup([
+        '#hand .pcard[data-id="C6"]', '#hand .pcard[data-id="D6"]',
+        '#hand .pcard[data-id="C7"]', '#hand .pcard[data-id="D7"]',
+        '#hand .pcard[data-id="C8"]', '#hand .pcard[data-id="D8"]',
+        '#hand .pcard[data-id="C9"]', '#hand .pcard[data-id="D9"]'
+      ], false);
+    });
+  }
+
+  function finishDecree() {
+    if (!G.scenario || G.scenario.step === 'decreeDone') return;
+    G.scenario.step = 'decreeDone';
+    G.scenario.lockHand = true;
+    G.scenario.passOnly = false;
+    G.scenario.showSkill = false;
+    G.busy = false;
+    $('scenario-prompt').hidden = true;
+    $('scenario-next').hidden = true;
+    scenarioClearHighlight();
+    renderAll();
+    showDecreeEnd();
+  }
+
+  function showDecreeEnd() {
+    var body = window.DDZDecreeText
+      ? window.DDZDecreeText.teachingHTML(window.DDZConfig, R, E)
+      : '';
+    $('decree-end-body').innerHTML = body;
+    $('decree-end-modal').hidden = false;
+    sfx('panelOpen', { eventId: 'decree-end-open:' + Date.now() });
+  }
+
+  function patternBombPrompt(showButton, refreshHighlight) {
+    scenarioSay('炸弹可以压住任何非炸弹的牌型。打出炸弹后所有人的倍率会翻倍！', showButton ? '下一步' : '', showButton ? patternBombNext : null, null, false, true);
+    if (refreshHighlight) {
+      scenarioHighlightMany([
+        { selector: '#mult-1', box: true },
+        { selector: '#mult-2', box: true },
+        { selector: '#mult-0', box: true }
+      ]);
+    }
+  }
+
+  function patternBombNext() {
+    if (!G.scenario || !G.scenario.bombDone) return;
+    scenarioClearHighlight();
+    G.scenario.step = 'patternBombPass';
+    G.scenario.passOnly = true;
+    $('scenario-prompt').hidden = true;
+    $('scenario-next').hidden = true;
+    scenarioAIPass(2).then(function () {
+      if (!G.scenario) return;
+      G.game.turn = 0;
+      renderAll();
+      scenarioClockShowPlayer();
+      scenarioSay('上家不出，你只能选择不出。', '', null);
+    });
+  }
+
+  async function patternPlayerPass() {
+    var g = G.game;
+    if (!G.scenario) return;
+    $('scenario-prompt').hidden = true;
+    $('scenario-next').hidden = true;
+    G.scenario.passOnly = false;
+    scenarioClearHighlight();
+    E.passTurn(g, 0);
+    renderAll();
+    if (G.scenario.step === 'patternBombPass') {
+      G.scenario.step = 'patternTripleWait';
+      await scenarioAIPlay(1, ['S2', 'H2', 'C2', 'D8', 'C8']);
+      await scenarioAIPass(2);
+      if (!G.scenario) return;
+      G.game.turn = 0;
+      G.scenario.step = 'patternTriplePass';
+      G.scenario.passOnly = true;
+      renderAll();
+      scenarioClockShowPlayer();
+      scenarioSay('三带一和三带对也是合法的牌型。\n你只能选择不出。', '', null);
+    } else if (G.scenario.step === 'patternTriplePass') {
+      G.scenario.step = 'patternTripleLead';
+      await scenarioAIPlay(1, ['H10', 'C10', 'D10', 'D5']);
+      await scenarioAIPlay(2, ['SQ', 'HQ', 'CQ', 'D4']);
+      if (!G.scenario) return;
+      G.game.turn = 0;
+      G.scenario.step = 'patternAAA';
+      G.scenario.passOnly = false;
+      renderAll();
+      scenarioClockShowPlayer();
+      scenarioSay('三带一或三带二时，只需主体点数更大即可，带牌不作比较。', '', null);
+    }
+  }
+
+  function patternAfterHuman() {
+    if (!G.scenario) return;
+    if (G.scenario.step === 'patternStraight') {
+      G.scenario.step = 'patternBombWait';
+      G.scenario.bombDone = false;
+      patternBombPrompt(false, true);
+      scenarioAIPlay(1, ['S3', 'H3', 'C3', 'D3']).then(function () {
+        if (!G.scenario) return;
+        G.scenario.bombDone = true;
+        patternBombPrompt(true, false);
+      });
+    } else if (G.scenario.step === 'patternAAA') {
+      finishPatterns();
+    }
+  }
+
+  function patternMiniCards(ids) {
+    return ids.map(function (id) {
+      var c = scenarioCard(id);
+      var face = cardFaceImage(c);
+      return '<span class="pattern-mini">' +
+        (face ? '<img src="' + face + '" alt="" draggable="false">' : '<span class="pattern-fallback">' + c.label + '</span>') +
+        '</span>';
+    }).join('');
+  }
+
+  function showPatternShowcase() {
+    if (!G.scenario) return;
+    $('pattern-body').innerHTML =
+      '<p class="pattern-intro">除了已经提到的牌型，还有如下牌型：</p>' +
+      '<div class="pattern-row"><b>1. 连对</b><small>比如</small><div class="pattern-cards">' +
+        patternMiniCards(['C4', 'D4', 'C5', 'D5', 'C6', 'D6']) + '</div></div>' +
+      '<div class="pattern-row"><b>2. 飞机，即相邻的三张，可以带两个单或者两个对</b><small>比如</small><div class="pattern-cards">' +
+        patternMiniCards(['C6', 'D6', 'H6', 'S7', 'H7', 'C7', 'C8', 'H9']) + '</div>' +
+        '<div class="pattern-cards">' + patternMiniCards(['SJ', 'HJ', 'CJ', 'SQ', 'HQ', 'CQ', 'SA', 'HA', 'S2', 'H2']) + '</div></div>' +
+      '<div class="pattern-row"><b>3. 四带二，即四张相同牌带两单或两对</b><small>比如</small><div class="pattern-cards">' +
+        patternMiniCards(['C8', 'D8', 'H8', 'S8', 'C6', 'D6', 'C7', 'D7']) + '</div>' +
+        '<div class="pattern-cards">' + patternMiniCards(['C8', 'D8', 'H8', 'S8', 'SA', 'DJ']) + '</div></div>' +
+      '<div class="pattern-row"><b>4. 王炸，算作最大的炸弹</b><div class="pattern-cards">' +
+        patternMiniCards(['JOKER_S', 'JOKER_B']) + '</div></div>';
+    $('pattern-modal').hidden = false;
+    sfx('panelOpen', { eventId: 'pattern-open:' + Date.now() });
+  }
+
+  function finishPatterns() {
+    if (!G.scenario || G.scenario.step === 'patternDone') return;
+    G.scenario.step = 'patternDone';
+    G.scenario.passOnly = false;
+    G.scenario.showSkill = false;
+    G.busy = false;
+    setSpeech(1, '不出', 'pass');
+    setSpeech(2, '不出', 'pass');
+    renderAll();
+    scenarioSay('其他两名玩家都不出，你获得牌权。', '', null, null, false, true);
+    if (G.patternModalTimer) clearTimeout(G.patternModalTimer);
+    G.patternModalTimer = setTimeout(function () {
+      G.patternModalTimer = null;
+      showPatternShowcase();
+    }, 800);
+  }
+
+  function scoreAfterHuman() {
+    var g = G.game;
+    if (G.scenario.step === 'score9') {
+      G.scenario.step = 'scoreWaitK';
+      var pairScore = E.playBaseForCombo({ type: 'pair' });
+      scenarioSay('打出牌型会立即获得分数，打出对子的分数为 ' + pairScore + ' 分（其余牌型分数参见规则）。', '继续', async function () {
+        scenarioClearHighlight();
+        G.scenario.step = 'scoreKK';
+        await scenarioAIPlay(1, ['SJ', 'HJ']);
+        await scenarioAIPass(2);
+        G.game.turn = 0;
+        renderAll();
+        scenarioClockShowPlayer();
+        scenarioTurnCue();
+        scenarioSay('选择对 K 来压牌。', '', null);
+      }, null, false, true);
+    } else if (G.scenario.step === 'scoreKK') {
+      G.scenario.kkAnimationDone = true;
+      scoreKkPrompt(true, false);
+    } else if (G.scenario.step === 'score42b') {
+      G.scenario.step = 'scoreDone';
+      G.scenario.showSkill = false;
+      renderAll();
+      (async function () {
+        await scenarioAIPass(1);
+        await scenarioAIPass(2);
+        G.scenario.scripting = true;
+        await afterAction();
+        G.scenario.scripting = false;
+        if (!G.scenario) return;
+        G.game.turn = 0;
+        renderAll();
+        scenarioClockShowPlayer();
+        scenarioTurnCue();
+        scenarioSay('其他两名玩家都不出，你获得了池子里分数和倍率！', '完成', function () {
+          completeScenario('分数教学完成');
+        }, null, false, true);
+      })();
+    }
+  }
+
+  function scenarioAfterHuman() {
+    if (!G.scenario || G.scenario.scripting) return;
+    if (G.scenario.id === 'pressure') pressureAfterHuman();
+    else if (G.scenario.id === 'patterns') patternAfterHuman();
+    else if (G.scenario.id === 'decree') decreeAfterHuman();
+    else scoreAfterHuman();
+  }
+
+  function showTutorialComplete(callback) {
+    var el = $('tutorial-complete');
+    if (!el) { callback(); return; }
+    if (G.tutorialCompleteTimer) clearTimeout(G.tutorialCompleteTimer);
+    el.hidden = false;
+    G.tutorialCompleteTimer = setTimeout(function () {
+      G.tutorialCompleteTimer = null;
+      el.hidden = true;
+      callback();
+    }, 1000);
+  }
+
+  function completeScenario(message) {
+    stopAllSfx();
+    clearGameTimeouts();
+    stopClock();
+    G.epoch += 1;
+    G.scenario = null;
+    G.tutorial = null;
+    G.tutorialDone = false;
+    G.busy = false;
+    G.selected.clear();
+    $('scenario-prompt').hidden = true;
+    $('scenario-next').hidden = true;
+    $('pattern-modal').hidden = true;
+    $('decree-end-modal').hidden = true;
+    if (G.patternModalTimer) { clearTimeout(G.patternModalTimer); G.patternModalTimer = null; }
+    scenarioClearHighlight();
+    $('tutorial-hud').hidden = true;
+    one('#app').classList.remove('tutorial-active', 'scenario-active');
+    resetTutorialClock();
+    var exitTutorial = !!(message && message.indexOf('退出') >= 0);
+    var finishScenarioReturn = function () {
+      showHome();
+      openTeaching('rules');
+      if (message) toast(message, 'good');
+    };
+    if (exitTutorial) finishScenarioReturn();
+    else showTutorialComplete(finishScenarioReturn);
+  }
+
+  async function startScenario(id) {
+    closeTeaching();
+    stopAllSfx();
+    await unlockAudio();
+    var turnStartFx = ensureAudio();
+    if (turnStartFx && turnStartFx.prepare) {
+      await turnStartFx.prepare(['turnStart']).catch(function () {});
+    }
+    clearGameTimeouts();
+    stopClock();
+    G.epoch += 1;
+    G.teachReturn = 'rules';
+    G.scenario = { id: id, step: 'intro', scripting: false, next: null, lastError: 0 };
+    G.game = createScenarioGame(id);
+    G.startVisible = false;
+    G.finished = false;
+    G.settled = false;
+    G.busy = false;
+    G.mode = 'playing';
+    G.selected.clear();
+    G.hintList = [];
+    G.hintActive = false;
+    G.selectionGlow = null;
+    G.skillSelectionTip = '';
+    G.tutorial = {
+      skill: 'scenario',
+      title: id === 'pressure' ? '教学 · 压牌' : (id === 'patterns' ? '教学 · 牌型' : (id === 'decree' ? '教学 · 江湖令' : '教学 · 分数')),
+      objective: id === 'pressure' ? '按提示依次打出 10、2、大王' : (id === 'patterns' ? '顺子 · 炸弹 · 三带 · 更多牌型' : (id === 'decree' ? '双持令 · 对子 · 三人行' : '按提示完成对子与技能结算')),
+      stage: 1,
+      maxStage: 1
+    };
+    G.tutorialDone = false;
+    $('start-screen').hidden = true;
+    $('gameover-screen').hidden = true;
+    one('#app').classList.add('tutorial-active', 'scenario-active');
+    $('tutorial-hud').hidden = false;
+    updateTutorialHud();
+    renderAll();
+    scenarioClockShowPlayer();
+    if (id === 'score' || id === 'patterns' || id === 'decree') scenarioTurnCue();
+    if (id === 'decree') {
+      G.scenario.step = 'decreeIntroRound';
+      scenarioSay('每次进入游戏需打满三局，局数显示在这里。', '继续', function () {
+        G.scenario.step = 'decreeIntroCards';
+        scenarioSay('每局会随机计分花色、4 张分数牌、2 张倍率牌。', '继续', function () {
+          G.scenario.step = 'decreeIntroDecree';
+          scenarioClearHighlight();
+          scenarioSay('江湖令是每局随机的一种规则，它影响本局获取分数和倍率的手段。', '继续', async function () {
+            $('scenario-prompt').hidden = true;
+            $('scenario-next').hidden = true;
+            scenarioClearHighlight();
+            G.scenario.step = 'decreeDealing';
+            setupDecreeDeal();
+            await showDecreeOpening();
+            if (!G.scenario) return;
+            G.scenario.step = 'decreeRule';
+            G.scenario.lockHand = true;
+            renderAll();
+            scenarioClockShowPlayer();
+            scenarioSay(decreeDoubleText(), '继续', function () {
+              $('scenario-prompt').hidden = true;
+              $('scenario-next').hidden = true;
+              G.scenario.lockHand = false;
+              G.scenario.step = 'decree55';
+              scenarioAIPlay(1, ['S3', 'H3']).then(function () {
+                return scenarioAIPlay(2, ['S4', 'D4']);
+              }).then(function () {
+                if (!G.scenario) return;
+                G.game.turn = 0;
+                renderAll();
+                scenarioClockShowPlayer();
+                scenarioSay('打出 55，压过 44。', '', null);
+              });
+            });
+          });
+        }, null, false, true);
+        scenarioHighlightMany([
+          { selector: '#hud-extra', box: true },
+          { selector: '#hud-score-cards', box: true },
+          { selector: '#hud-mult-cards', box: true }
+        ]);
+      }, '#hud-round');
+    } else if (id === 'patterns') {
+      G.scenario.step = 'intro';
+      scenarioSay('超过 5 张相邻牌可以组成顺子，必须使用同样长的顺子才能压过。', '继续', function () {
+        G.scenario.step = 'patternStraight';
+        scenarioSay('打出同样长的顺子来压牌吧！', '', null);
+      });
+    } else if (id === 'pressure') {
+      G.scenario.step = 'intro';
+      scenarioSay('斗地主中，你只能出相同的牌型来压别人的牌，有人出光所有牌，游戏就会结束。', '下一步', function () {
+        G.scenario.step = 'pressure10';
+        scenarioAIPlay(2, ['S9']).then(function () {
+          G.game.turn = 0;
+          renderAll();
+          scenarioClockShowPlayer();
+          scenarioTurnCue();
+          scenarioSay('出单牌压过其他人的单牌吧！', '', null);
+        });
+      });
+    } else {
+      G.scenario.step = 'intro';
+      scenarioSay('游戏的胜负由分数 × 倍率得到的总分来决定。', '继续', function () {
+        G.scenario.step = 'score9';
+        scenarioSay('选择对 9 来恰好压牌。', '', null);
+      });
+    }
+  }
+
   async function startSession() {
     stopAllSfx();
     await unlockAudio();
@@ -10182,12 +11639,22 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     closeStickerTray();
     resetTutorialClock();
     G.tutorial = null;
+    G.scenario = null;
     G.tutorialDone = false;
     G.tutorialFinaleResolve = null;
     G.tutorialRocketDemo = false;
     G.tutorialQijinDemo = false;
+    closeTeaching();
+    $('pattern-modal').hidden = true;
+    $('decree-end-modal').hidden = true;
+    if (G.patternModalTimer) { clearTimeout(G.patternModalTimer); G.patternModalTimer = null; }
+    $('scenario-prompt').hidden = true;
+    $('scenario-next').hidden = true;
+    $('tutorial-complete').hidden = true;
+    if (G.tutorialCompleteTimer) { clearTimeout(G.tutorialCompleteTimer); G.tutorialCompleteTimer = null; }
+    scenarioClearHighlight();
     G.aiStickerShown = false;
-    one('#app').classList.remove('tutorial-active');
+    one('#app').classList.remove('tutorial-active', 'scenario-active');
     $('tutorial-hud').hidden = true;
     $('tutorial-finish-modal').hidden = true;
     G.startVisible = false;
@@ -10211,7 +11678,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     G.game = E.createGame({ rng: Math.random });
     G.session = {
       round: 1,
-      decrees: shuffleCopy(['duel', 'double', 'long', 'royal']).slice(0, 3),
+      decrees: shuffleCopy(CFG.decreePool).slice(0, CFG.sessionRounds),
       history: [],
       final: false
     };
@@ -10324,7 +11791,16 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     $('guowu-result-modal').hidden = true;
     $('settings-modal').hidden = true;
     $('tutorial-finish-modal').hidden = true;
+    $('pattern-modal').hidden = true;
+    if (G.patternModalTimer) { clearTimeout(G.patternModalTimer); G.patternModalTimer = null; }
+    $('scenario-prompt').hidden = true;
+    $('scenario-next').hidden = true;
+    $('tutorial-complete').hidden = true;
+    if (G.tutorialCompleteTimer) { clearTimeout(G.tutorialCompleteTimer); G.tutorialCompleteTimer = null; }
+    scenarioClearHighlight();
+    closeTeaching();
     $('turn-clock').classList.add('hidden');
+    one('#app').classList.remove('scenario-active');
     $('start-screen').hidden = false;
     $('bid-panel').hidden = true;
     updateStartStats();
@@ -10458,7 +11934,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     });
     if (last) {
       var lastCards = tutorialCards(last.ids);
-      var combo = R.detectCombo(lastCards);
+      var combo = R.detectCombo(lastCards, { rapid: g.decree === 'rapid' });
       g.lastPlay = { player: last.player, cards: lastCards, combo: combo };
       g.discard = lastCards.slice();
       g.players[last.player].lastAction = combo.label;
@@ -10584,6 +12060,12 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     var guide = SKILL_GUIDES[skill];
     if (!guide) return;
     closeSkillGuide(true);
+    closeTeaching();
+    G.scenario = null;
+    $('scenario-prompt').hidden = true;
+    $('scenario-next').hidden = true;
+    scenarioClearHighlight();
+    G.teachReturn = 'skills';
     unlockAudio();
     var maxStage = skill === 'siliang' || skill === 'pindming' ? 2 : 1;
     G.tutorial = {
@@ -10680,6 +12162,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
 
   function exitTutorial() {
     if (!G.tutorial) return;
+    if (G.scenario) { completeScenario('已退出教学'); return; }
     var skill = G.tutorial.skill;
     finishTutorial(skill, '已退出教学');
   }
@@ -10704,9 +12187,19 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     $('tutorial-finish-modal').hidden = true;
     one('#app').classList.remove('tutorial-active');
     resetTutorialClock();
-    showHome();
-    openSkillGuide(skill);
-    if (message) toast(message, 'good');
+    var exitTutorial = !!(message && message.indexOf('退出') >= 0);
+    var finishTutorialReturn = function () {
+      showHome();
+      if (G.teachReturn === 'skills') {
+        G.teachReturn = null;
+        openTeaching('skills');
+      } else {
+        openSkillGuide(skill);
+      }
+      if (message) toast(message, 'good');
+    };
+    if (exitTutorial) finishTutorialReturn();
+    else showTutorialComplete(finishTutorialReturn);
   }
 
   function resetTutorialClock() {
@@ -10721,14 +12214,13 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   function showTutorialClock() {
     stopClock();
     var clock = $('turn-clock');
-    clock.classList.remove('hidden', 'warning', 'paused');
-    clock.classList.add('infinite');
+    clock.classList.remove('hidden', 'warning', 'paused', 'infinite');
     clock.style.setProperty('--p', '1');
     G.el.clockProgress.style.strokeDashoffset = '0';
-    G.el.clockNum.textContent = '∞';
-    G.el.clockLabel.textContent = '教学 · 不限时';
+    G.el.clockNum.textContent = '60';
+    G.el.clockLabel.textContent = '你的回合';
     var span = one('.clock-inner span');
-    if (span) span.textContent = '不限';
+    if (span) span.textContent = '秒';
   }
 
   function requestRestart() {
@@ -10741,6 +12233,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
 
   function requestGameAction(action) {
     if (!G.game) return;
+    if (G.scenario) { completeScenario('已退出教学'); return; }
     if (G.startVisible) {
       if (action === 'restart') startSession();
       return;
@@ -10781,7 +12274,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       if (G.session) {
         // 重开本局也重新抽取本局江湖令，并强制换一种额外花色。
         var oldDecree = G.game && G.game.decree;
-        G.session.decrees = shuffleCopy(['duel', 'double', 'long', 'royal']).slice(0, 3);
+        G.session.decrees = shuffleCopy(CFG.decreePool).slice(0, CFG.sessionRounds);
         var di = G.session.round - 1;
         if (oldDecree && G.session.decrees[di] === oldDecree) {
           var swapAt = di === 0 ? 1 : 0;
@@ -10864,7 +12357,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     G.aiTimer = setGameTimeout(function () {
       G.aiTimer = null;
       aiBid();
-    }, 900 + Math.floor(Math.random() * 1500));
+    }, G.fastMode ? 1000 : (900 + Math.floor(Math.random() * 1500)));
   }
 
   async function aiBid() {
@@ -11068,22 +12561,16 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     var name = E.decreeName(g.decree);
     var desc = decreeDescription(g.decree);
     sfx('decree', { eventId: 'decree:' + G.epoch + ':' + g.roundNo });
-    await cinematic('decree', '本局江湖令：' + name, '', desc, 1900,
+    await cinematic('decree', '本局江湖令：' + name, '', '', 1900,
       '本局江湖令：<span class="decree-name">' + name + '</span>');
     toast('分牌淡蓝 +50 基础分 · 倍率牌淡红 +0.10 倍率', 'good');
   }
 
   function decreeDescription(key) {
-    var all = (typeof window !== 'undefined' && window.DDZConfig && window.DDZConfig.decrees) || {};
-    var duel = all.duel || { base: 5, mult: 0.30, doubleBase: 5, doubleMult: 0.30 };
-    var dbl = all.double || { pairBase: 3, pairLeadMult: 0.50, jiujiuBase: 3, jiujiuMult: 0.50 };
-    var lng = all.long || { basePerPlay: 2, multPerPlay: 0.10 };
-    return {
-      duel: '技能成功发动：发动者 +' + duel.base + ' 基础分、+' + duel.mult.toFixed(2) + ' 倍率；双璧锁关时释放者 +' + duel.base + ' 基础分/+' + duel.mult.toFixed(2) + '，上家 +' + (duel.shuangbiUpperBase || 18) + ' 基础分/+' + (duel.shuangbiUpperMult || 0.1).toFixed(2) + ' 倍率',
-      double: '打出对子立即 +' + dbl.pairBase + ' 基础分；以对子获得牌权 +' + dbl.pairLeadMult.toFixed(2) + ' 倍率（99 归一、77 也算对子）',
-      long: '本轮第 1/2/3… 次出牌者分别立即 +' + lng.basePerPlay + '/' + (lng.basePerPlay * 2) + '/' + (lng.basePerPlay * 3) + '… 基础分；获得牌权者再获得本轮出牌次数 ×' + lng.multPerPlay.toFixed(2) + ' 倍率，随后重新计数',
-      royal: '开局人人有王：单大王 +60、单小王 +30；王炸由大小王相加为 +90，并使全体当前倍率×2；首大王 +0.30 倍率、首小王 +0.15 倍率，王炸不领首王奖励；末王 +100 基础分/+0.20 倍率；剩大王 -100/张、剩小王 -50/张'
-    }[key] || '';
+    if (window.DDZDecreeText) {
+      return window.DDZDecreeText.hudText(key, window.DDZConfig, R, E);
+    }
+    return '';
   }
 
   // ============================================================
@@ -11160,7 +12647,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     G.aiTimer = setGameTimeout(function () {
       G.aiTimer = null;
       aiTurn();
-    }, AI.thinkTime());
+    }, G.fastMode ? 1000 : AI.thinkTime());
   }
 
   async function aiTurn() {
@@ -11318,7 +12805,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     console.warn('AI recover:', message);
     var p = g.players[id];
     if (!p) { beginTurn(); return; }
-    var moves = R.legalMoves(p.hand, g.lastPlay ? g.lastPlay.combo : null, { royal: g.decree === 'royal' });
+    var moves = R.legalMoves(p.hand, g.lastPlay ? g.lastPlay.combo : null, { royal: g.decree === 'royal', rapid: g.decree === 'rapid' });
     if (moves.length) {
       var move = moves[0];
       var res = E.playCards(g, id, move.cards.map(function (c) { return c.id; }));
@@ -11470,6 +12957,16 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     if (!g) return;
     renderAll();
     if (G.pendingHarvest && G.pendingHarvest.active) await G.pendingHarvest.promise;
+    if (G.scenario) {
+      if (!G.scenario.scripting) {
+        if (g.pending && g.pending.type === 'sanrenReturn') {
+          await handleSanrenReturn();
+          return;
+        }
+        scenarioAfterHuman();
+      }
+      return;
+    }
     if (g.phase === 'over') { finishGame(); return; }
     if (g.reaction) { await handleReaction(); return; }
     if (g.pending && g.pending.type === 'sanrenReturn') { await handleSanrenReturn(); return; }
@@ -11882,6 +13379,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   function canHumanAct() {
     var g = G.game;
     if (!g) return false;
+    if (G.scenario && (G.scenario.step === 'scoreDone' || G.scenario.step === 'patternDone' || G.scenario.step === 'decreeDone')) return false;
     var continuation = g.pending && g.pending.type === 'shuangbi' &&
       g.pending.stage === 'continueA' && g.pending.previous === 0 && g.turn === 0;
     if (continuation) {
@@ -11905,19 +13403,64 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       return;
     }
     if (!canHumanAct()) return;
+    if (G.scenario && G.scenario.passOnly) {
+      toast('这一步只能选择不出。', '');
+      return;
+    }
+    if (G.scenario && G.scenario.lockHand) {
+      toast('请先点提示框里的按钮继续。', '');
+      return;
+    }
     var cards = selectedCards();
     if (!cards.length) { toast('请先选择要出的牌', 'error'); return; }
-    var combo = R.detectCombo(cards);
+    var combo = R.detectCombo(cards, { rapid: g.decree === 'rapid' });
+    if (G.scenario) {
+      var scenarioCheck = scenarioValidate(cards, combo);
+      if (!scenarioCheck.ok) { scenarioInvalid(scenarioCheck.message, scenarioCheck.keep); return; }
+      scenarioPrepareHighlight();
+      if (G.scenario.id === 'score' && G.scenario.step === 'scoreKK') {
+        G.scenario.kkAnimationDone = false;
+        scoreKkPrompt(false, true);
+      }
+      if (G.scenario.id === 'score' && G.scenario.step === 'score42b') {
+        G.scenario.next = null;
+        $('scenario-prompt').hidden = true;
+        $('scenario-next').hidden = true;
+        scenarioClearHighlight();
+      }
+      if (G.scenario.id === 'patterns' &&
+          (G.scenario.step === 'patternStraight' || G.scenario.step === 'patternAAA')) {
+        G.scenario.next = null;
+        $('scenario-prompt').hidden = true;
+        $('scenario-next').hidden = true;
+        scenarioClearHighlight();
+      }
+      if (G.scenario.id === 'decree' &&
+          (G.scenario.step === 'decree55' || G.scenario.step === 'decreePair' || G.scenario.step === 'decree42')) {
+        G.scenario.next = null;
+        $('scenario-prompt').hidden = true;
+        $('scenario-next').hidden = true;
+      }
+      if (G.scenario.id === 'decree' && G.scenario.step === 'decreePair') {
+        scenarioHighlight('#counter-0', true);
+      }
+      if (G.scenario.id === 'score' &&
+          (G.scenario.step === 'score9' || G.scenario.step === 'scoreKK' || G.scenario.step === 'score42b')) {
+        G.busy = true;
+        await sleep(300);
+        if (!G.scenario) return;
+      }
+    }
     if (!combo) { toast('这手牌不成牌型', 'error'); return; }
     if (g.decree === 'royal' && !R.isRoyalComboLegal(cards, combo)) {
       toast('王储令：王只能单出，或一大一小组成王炸', 'error');
       return;
     }
-    if (g.lastPlay && !R.canBeat(combo, g.lastPlay.combo)) {
+    if (g.lastPlay && !R.canBeat(combo, g.lastPlay.combo, { rapid: g.decree === 'rapid' })) {
       toast('这手牌压不过上家', 'error');
       return;
     }
-    if (G.tutorial) {
+    if (G.tutorial && !G.scenario) {
       if (G.tutorial.skill === 'siliang' && combo.type !== '42' && combo.type !== 'superBomb') {
         toast('教学关：请点「四两拨千斤」，用 4+2 压过上家的 10', 'error');
         return;
@@ -12000,6 +13543,14 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   }
 
   async function humanPass() {
+    if (G.scenario) {
+      if (G.scenario.id === 'patterns' && G.scenario.passOnly) {
+        await patternPlayerPass();
+        return;
+      }
+      toast('请按当前教学提示操作。', '');
+      return;
+    }
     var g = G.game;
     if (G.mode === 'sanren-choose' && G.sanrenChoice) {
       cancelSanrenChoice();
@@ -12042,6 +13593,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   }
 
   function humanHint() {
+    if (G.scenario) { toast('请按当前教学提示操作。', ''); return; }
     var g = G.game;
     if (!canHumanAct()) return;
     if (G.tutorial) { toast('教学关：按提示直接释放技能即可', ''); return; }
@@ -12057,7 +13609,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       playSelectionCue('deselect', 'hint');
       return;
     }
-    var moves = R.legalMoves(g.players[0].hand, g.lastPlay ? g.lastPlay.combo : null, { royal: g.decree === 'royal' });
+    var moves = R.legalMoves(g.players[0].hand, g.lastPlay ? g.lastPlay.combo : null, { royal: g.decree === 'royal', rapid: g.decree === 'rapid' });
     if (!moves.length) {
       G.hintActive = false;
       toast('没有能压上的牌，只能不出', '');
@@ -12243,6 +13795,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   function clickCard(id) {
     var g = G.game;
     if (!g) return;
+    if (G.scenario && (G.scenario.passOnly || G.scenario.lockHand)) return;
     var mode = G.mode;
     var allowed = false;
     if (mode === 'guowu-choice' || mode === 'yuanmen-choice' || mode === 'sanren-choose') allowed = true;
@@ -12259,7 +13812,18 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     G.skillSelectionTip = '';
 
     if (mode === 'sanren-return') {
-      if (G.selected.has(id)) G.selected.delete(id);
+      if (G.scenario && G.scenario.id === 'decree') {
+        var returnCard = g.players[0].hand.find(function (c) { return c.id === id; });
+        if (!returnCard || returnCard.rank !== 11) {
+          toast('请选择这张 J 归还。', '');
+          return;
+        }
+        if (G.selected.has(id)) return;
+        G.selected.clear();
+        G.selected.add(id);
+        scenarioClearHighlight();
+        scenarioHighlight('#btn-return', true);
+      } else if (G.selected.has(id)) G.selected.delete(id);
       else {
         G.selected.clear();
         G.selected.add(id);
@@ -12298,6 +13862,20 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   function onSkillButton(skill) {
     var g = G.game;
     if (!g) return;
+    if (G.scenario) {
+      var scenarioSkillAllowed =
+        (G.scenario.id === 'score' && G.scenario.step === 'score42b' && skill === 'siliang') ||
+        (G.scenario.id === 'decree' && G.scenario.step === 'decreeSanren' && skill === 'sanren') ||
+        (G.scenario.id === 'decree' && G.scenario.step === 'decree42' && skill === 'siliang');
+      if (!scenarioSkillAllowed) {
+        if (G.scenario.id === 'score' && G.scenario.step === 'score42a' && skill === 'siliang') {
+          toast('先看完 1/2 提示，点「下一步」后再释放技能。', '');
+        } else {
+          toast('这一步只需要按提示出牌。', '');
+        }
+        return;
+      }
+    }
     if (skill === 'geshan' || skill === 'shuangbi') {
       if (G.skillWindow && G.skillWindow.type === skill) {
         var resolve = G.skillWindow.resolve;
@@ -12308,7 +13886,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       }
       return;
     }
-    if (G.tutorial && G.tutorial.skill !== skill &&
+    if (!G.scenario && G.tutorial && G.tutorial.skill !== skill &&
         !(G.tutorial.skill === 'pindming' && skill === 'siliang')) {
       toast('教学关专注一门绝技，先完成当前目标', '');
       return;
@@ -12377,6 +13955,14 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       selectSkillPattern('siliang', siMove.cards,
         '四两拨千斤 · ' + (siMove.combo.type === 'superBomb' ? '44+22 镇山炸' : '4+2') + ' 已选，点击「出牌」释放');
       toast('已选好 ' + (siMove.combo.type === 'superBomb' ? '44+22 镇山炸' : '4+2') + '，点击「出牌」释放', 'skill');
+      if (G.scenario && G.scenario.id === 'score') {
+        scenarioSay('已选好四两拨千斤，点击「出牌」释放。', '', null, '#btn-play');
+      }
+      if (G.scenario && G.scenario.id === 'decree' && G.scenario.step === 'decree42') {
+        G.scenario.decree42Armed = true;
+        scenarioClearHighlight();
+        scenarioSay('已选好 44+22，点击「出牌」释放四两拨千斤。', '', null, null);
+      }
       return;
     }
     if (skill === 'jiujiu') {
@@ -12391,6 +13977,11 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     }
     if (skill === 'sanren') {
       if (G.busy || G.mode !== 'playing') { toast('此刻不可分心', ''); return; }
+      if (G.scenario && G.scenario.id === 'decree') {
+        G.scenario.showSkill = false;
+        scenarioClearHighlight();
+        scenarioSay('选择 J、Q、K 各一张发动三人行。', '', null);
+      }
       if (g.turn !== 0 || g.phase !== 'playing') { toast('还没轮到你出牌', ''); return; }
       if (g.lastPlay) { toast('需有牌权（轮到你首出）才能施展三人行', 'error'); return; }
       if (!E.canUseSanren(g, 0)) {
@@ -12503,6 +14094,11 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     G.sanrenChoice = null;
     G.mode = 'playing';
     G.busy = true;
+    if (G.scenario && G.scenario.id === 'decree') {
+      $('scenario-prompt').hidden = true;
+      $('scenario-next').hidden = true;
+      scenarioClearHighlight();
+    }
     G.selected.clear();
     G.selectionGlow = null;
     G.skillSelectionTip = '';
@@ -12512,6 +14108,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
 
   function cancelSanrenChoice() {
     if (G.mode !== 'sanren-choose') return;
+    if (G.scenario && G.scenario.id === 'decree') return;
     G.sanrenChoice = null;
     G.sanrenPick = null;
     G.mode = 'playing';
@@ -12543,6 +14140,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
         '</button>';
     }).join('');
     $('target-modal').hidden = false;
+    $('btn-target-cancel').disabled = !!(G.scenario && G.scenario.id === 'decree');
     sfx('panelOpen', { eventId: 'sanren-target-open:' + Date.now() });
     if (!G.tutorial) {
       G.targetTimeout = setGameTimeout(function () {
@@ -12556,6 +14154,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
 
   function cancelSanren() {
     if (G.mode !== 'target') return;
+    if (G.scenario && G.scenario.id === 'decree') return;
     sfx('panelClose', { eventId: 'sanren-target-close:' + Date.now() });
     clearTimeout(G.targetTimeout);
     G.targetTimeout = null;
@@ -12588,6 +14187,14 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
 
     // 只展示背面：按真实手牌洗乱一份预览，等玩家亲手翻中一张后
     // 才把选中的牌交给引擎结算。
+    if (G.scenario && G.scenario.id === 'decree') {
+      var forcedFour = target.hand.find(function (c) { return c.rank === 4 && !c.joker; });
+      if (!forcedFour) {
+        forcedFour = makeTutorialFour();
+        target.hand.push(forcedFour);
+      }
+      G.scenario.forceDraw4 = forcedFour.id;
+    }
     var preview = R.shuffle(target.hand.slice(), Math.random);
     G.mode = 'sanren-draw';
     G.busy = true;
@@ -12609,6 +14216,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
         '" aria-label="第 ' + (i + 1) + ' 张背面牌"></button>';
     }).join('');
     $('sanren-draw-modal').hidden = false;
+    $('btn-sanren-draw-cancel').disabled = !!(G.scenario && G.scenario.id === 'decree');
     sfx('panelOpen', { eventId: 'sanren-draw-open:' + Date.now() });
     if (!G.tutorial) {
       G.sanrenDrawTimeout = setGameTimeout(function () {
@@ -12653,6 +14261,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
 
   function cancelSanrenDraw() {
     if (G.mode !== 'sanren-draw') return;
+    if (G.scenario && G.scenario.id === 'decree') return;
     sfx('panelClose', { eventId: 'sanren-draw-close:' + Date.now() });
     if (G.sanrenDrawTimeout) clearTimeout(G.sanrenDrawTimeout);
     G.sanrenDrawTimeout = null;
@@ -12674,7 +14283,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   async function confirmSanrenDraw(auto) {
     if (G.mode !== 'sanren-draw' || !G.sanrenDraw) return;
     var draw = G.sanrenDraw;
-    var chosenId = draw.selected;
+    var chosenId = (G.scenario && G.scenario.id === 'decree' && G.scenario.forceDraw4) || draw.selected;
     if (!chosenId) return;
     var chosenEl = one('#sanren-draw-grid .draw-back.selected');
     var chosenRect = rectOf(chosenEl);
@@ -12695,6 +14304,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     if (jqk.length !== 3) jqk = R.findJQK(g.players[0].hand) || [];
     var actorRects = captureCardRects(0, jqk);
     var res = E.startSanren(g, 0, targetId, chosenId, jqk.map(function (c) { return c.id; }));
+    if (G.scenario) G.scenario.forceDraw4 = null;
     if (res.ok) G.sanrenPick = null;
     if (!res.ok) {
       G.busy = false;
@@ -12760,6 +14370,12 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       $('return-bar').hidden = false;
       $('return-text').textContent = '选择一张手牌归还给 ' + target.name;
       $('btn-return').disabled = true;
+      if (G.scenario && G.scenario.id === 'decree') {
+        G.scenario.step = 'decreeReturn';
+        var returnJ = g.players[0].hand.find(function (c) { return c.rank === 11; });
+        G.scenario.returnJId = returnJ ? returnJ.id : null;
+        scenarioSay('选择这张牌还给他。', '', null, returnJ ? '#hand .pcard[data-id="' + returnJ.id + '"]' : null);
+      }
       if (!G.tutorial) G.returnTimeout = setGameTimeout(function () { autoReturn(); }, 20000);
       return;
     }
@@ -12839,6 +14455,11 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     if (!res.ok) { toast(res.error, 'error'); return; }
     $('return-bar').hidden = true;
     $('btn-return').disabled = true;
+    if (G.scenario && G.scenario.id === 'decree') {
+      $('scenario-prompt').hidden = true;
+      $('scenario-next').hidden = true;
+      scenarioClearHighlight();
+    }
     G.busy = true;
     G.drawnId = null;
     G.selected.clear();
@@ -12858,6 +14479,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     toast('归还 ' + card.label + ' 给 ' + g.players[pending.target].name, 'good');
     G.busy = false;
     if (res.pindming) await showPindmingEffect(res.pindming);
+    if (G.scenario && G.scenario.id === 'decree') { decreeAfterReturn(); return; }
     if (G.tutorial) { completeTutorial(); return; }
     beginTurn();
   }
@@ -13590,7 +15212,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     }
 
     willingAI.forEach(function (id) {
-      var delay = AI.reactionDelay();
+      var delay = G.fastMode ? 1000 : AI.reactionDelay();
       if (conflictYuanmen) delay = Math.max(delay, 5200 + Math.random() * 500);
       if (delay > totalMs - 150) delay = totalMs - 150;
       var t = setTimeout(function () {
@@ -13709,6 +15331,12 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   // 结算
   // ============================================================
   function finishGame() {
+    if (G.scenario) {
+      if (G.scenario.id === 'patterns') { finishPatterns(); return; }
+      if (G.scenario.id === 'decree') { finishDecree(); return; }
+      completeScenario('教学完成');
+      return;
+    }
     if (G.finished) return;
     G.finished = true;
     clearAITimer();
@@ -13752,7 +15380,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
           mults: players.map(function (p) { return p.mult; })
         };
       }
-      G.session.final = roundNo >= 3;
+      G.session.final = roundNo >= CFG.sessionRounds;
     }
     var ranked = players.slice().sort(function (a, b) {
       if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
@@ -13763,7 +15391,6 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     var champion = ranked[0];
     var final = !!(G.session && G.session.final);
     var resultCue = final ? (champion.id === 0 ? 'finalWin' : 'lose') : (won ? 'win' : 'lose');
-    sfx(resultCue, { eventId: 'settlement:' + G.epoch + ':' + roundNo });
     var emblem = $('gameover-emblem');
     emblem.textContent = final ? (champion.id === 0 ? '魁' : '终') : (won ? '胜' : '负');
     emblem.className = 'gameover-emblem' + (final ? '' : won ? '' : ' lose');
@@ -13800,10 +15427,210 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
           '<div class="sr-total" data-count="' + p.totalScore + '">' + p.totalScore.toFixed(2) + '</div>' +
           '</div>';
       }).join('');
-    animateScoreCounts();
     $('btn-again').textContent = final ? '再来三局' : '下一局';
-    $('gameover-screen').hidden = false;
+    playRoundEndSequence(g, players, roundNo, final, resultCue);
  
+  }
+
+
+  function roundHistoryScores(roundIndex, playerId) {
+    var h = G.session && G.session.history && G.session.history[roundIndex];
+    return h && h.scores ? Number(h.scores[playerId] || 0) : 0;
+  }
+
+  function makeFinalHistory(id, r2, r1) {
+    var baseEl = $('base-' + id);
+    if (!baseEl) return null;
+    var r = rectOf(baseEl);
+    if (!r) return null;
+    var host = document.createElement('div');
+    host.className = 'final-history';
+    host.style.left = r.x + 'px';
+    host.style.top = (r.y - 4) + 'px';
+    host.innerHTML = '<span data-v="' + r2 + '">第二局 +' + r2.toFixed(2) + '</span>' +
+      '<span data-v="' + r1 + '">第一局 +' + r1.toFixed(2) + '</span>';
+    document.body.appendChild(host);
+    return host;
+  }
+
+  function tweenNumber(el, from, to, duration) {
+    return new Promise(function (resolve) {
+      var start = performance.now();
+      function frame(now) {
+        var k = Math.min(1, (now - start) / duration);
+        var eased = 1 - Math.pow(1 - k, 3);
+        var v = from + (to - from) * eased;
+        el.textContent = v.toFixed(2);
+        if (k < 1) requestAnimationFrame(frame);
+        else { el.textContent = to.toFixed(2); resolve(); }
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  function restoreFinalCounterSizes(players) {
+    (G.finalAnims || []).forEach(function (a) {
+      a.finished.catch(function () {});
+      try { a.cancel(); } catch (e) {}
+    });
+    G.finalAnims = [];
+    players.forEach(function (p) {
+      var be = $('base-' + p.id), me = $('mult-' + p.id);
+      if (be) {
+        be.textContent = Number(p.roundScore || 0).toFixed(0);
+        be.setAttribute('aria-label', Number(p.roundScore || 0).toFixed(0));
+        be.style.transition = '';
+        be.style.transform = '';
+        be.style.filter = '';
+      }
+      if (me) {
+        me.textContent = '0.00';
+        me.setAttribute('aria-label', '0.00');
+        me.style.transition = '';
+        me.style.transform = '';
+        me.style.filter = '';
+      }
+    });
+  }
+
+  async function playRoundEndSequence(g, players, roundNo, final, resultCue) {
+    G.finalizing = true;
+    try {
+      if (G.pendingHarvest && G.pendingHarvest.active) await G.pendingHarvest.promise;
+      players.forEach(function (p) {
+        [$('base-' + p.id), $('mult-' + p.id)].forEach(function (el) {
+          if (!el) return;
+          el.getAnimations().forEach(function (a) {
+            a.finished.catch(function () {});
+            try { a.finish(); } catch (e) { try { a.cancel(); } catch (e2) {} }
+          });
+        });
+      });
+      await sleep(1000);
+      var numberEls = players.map(function (p) {
+        return { base: $('base-' + p.id), mult: $('mult-' + p.id) };
+      });
+      numberEls.forEach(function (pair) {
+        [pair.base, pair.mult].forEach(function (el) {
+          if (!el) return;
+          el.getAnimations().forEach(function (a) {
+            a.finished.catch(function () {});
+            try { a.finish(); } catch (e) { try { a.cancel(); } catch (e2) {} }
+          });
+        });
+        if (pair.base) {
+          pair.base.style.transition = 'none';
+          pair.base.style.transform = 'scale(1)';
+          pair.base.style.filter = '';
+        }
+        if (pair.mult) {
+          pair.mult.style.transition = 'none';
+          pair.mult.style.transform = 'scale(1)';
+          pair.mult.style.filter = '';
+        }
+      });
+      var introAnims = [];
+      numberEls.forEach(function (pair) {
+        [pair.base, pair.mult].forEach(function (el) {
+          if (!el) return;
+          var anim = el.animate([
+            { transform: 'scale(1)' },
+            { transform: 'scale(1.5)' }
+          ], { duration: 500, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' });
+          introAnims.push({ anim: anim, el: el });
+        });
+      });
+      await Promise.all(introAnims.map(function (x) { return x.anim.finished; }));
+      introAnims.forEach(function (x) {
+        x.el.style.transform = 'scale(1.5)';
+        x.anim.finished.catch(function () {});
+        try { x.anim.cancel(); } catch (e) {}
+      });
+      await sleep(500);
+      var finalAnims = [];
+      numberEls.forEach(function (pair) {
+        if (pair.base) {
+          finalAnims.push(pair.base.animate([
+            { transform: 'scale(1.5)', filter: 'drop-shadow(0 0 0 rgba(47,134,255,0))' },
+            { transform: 'scale(2)', filter: 'drop-shadow(0 0 7px rgba(47,134,255,.85)) drop-shadow(0 0 20px rgba(47,134,255,.48))' }
+          ], { duration: 620, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' }));
+        }
+        if (pair.mult) {
+          finalAnims.push(pair.mult.animate([
+            { transform: 'scale(1.5)' },
+            { transform: 'scale(1)' }
+          ], { duration: 620, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' }));
+        }
+      });
+      G.finalAnims = finalAnims;
+      var tickTimer = setInterval(function () {
+        sfx('counterTick', { eventId: 'finalTick:' + Date.now() });
+      }, 170);
+      var rolls = [];
+      players.forEach(function (p) {
+        var fromBase = Number(p.base || 0);
+        var toBase = Number(p.roundScore || 0);
+        var fromMult = Number(p.mult || 1);
+        rolls.push(rollCounter(p.id, 'base', fromBase, toBase, '本局最终得分', { noScale: true }));
+        rolls.push(rollCounter(p.id, 'mult', fromMult, 0, '本局结算', { noScale: true }));
+      });
+      await Promise.all(rolls);
+      clearInterval(tickTimer);
+
+      if (final) {
+        await sleep(2000);
+        var histories = [];
+        players.forEach(function (p) {
+          var r2 = roundHistoryScores(1, p.id);
+          var r1 = roundHistoryScores(0, p.id);
+          var host = makeFinalHistory(p.id, r2, r1);
+          if (host) histories.push({ host: host, r2: r2, r1: r1, p: p });
+        });
+        histories.forEach(function (h) {
+          h.host.children[0].classList.add('show');
+        });
+        await sleep(750);
+        histories.forEach(function (h) {
+          h.host.children[1].classList.add('show');
+        });
+        await sleep(1000);
+
+        var merges = histories.map(function (h) {
+          var totalEl = $('score-' + h.p.id);
+          var startTotal = Number(h.p.totalScore || 0) - h.r2 - h.r1;
+          if (totalEl) totalEl.textContent = startTotal.toFixed(2);
+          var c2 = h.host.children[0];
+          var c1 = h.host.children[1];
+          var t2 = h.r2, t1 = h.r1;
+          var start = performance.now();
+          return new Promise(function (resolve) {
+            function frame(now) {
+              var k = Math.min(1, (now - start) / 760);
+              var e = 1 - Math.pow(1 - k, 3);
+              c2.textContent = '第二局 +' + (t2 * (1 - e)).toFixed(2);
+              c1.textContent = '第一局 +' + (t1 * (1 - e)).toFixed(2);
+              if (totalEl) totalEl.textContent = (startTotal + (h.r2 + h.r1) * e).toFixed(2);
+              if (k < 1) requestAnimationFrame(frame);
+              else { resolve(); }
+            }
+            requestAnimationFrame(frame);
+          });
+        });
+        await Promise.all(merges);
+        histories.forEach(function (h) { h.host.remove(); });
+      }
+      await sleep(2000);
+      players.forEach(function (p) { p.base = Number(p.roundScore || 0); p.mult = 0; });
+      restoreFinalCounterSizes(players);
+      G.finalizing = false;
+      sfx(resultCue, { eventId: 'settlement:' + G.epoch + ':' + roundNo });
+      $('gameover-screen').hidden = false;
+      animateScoreCounts();
+    } catch (e) {
+      G.finalizing = false;
+      $('gameover-screen').hidden = false;
+      animateScoreCounts();
+    }
   }
 
   function animateScoreCounts() {
@@ -13836,7 +15663,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     G.clock.paused = false;
     G.clock.warned = false;
     G.clock.label = label || '出牌倒计时';
-    G.el.turnClock.classList.remove('hidden', 'warning', 'paused');
+    G.el.turnClock.classList.remove('hidden', 'warning', 'paused', 'infinite');
     G.el.clockLabel.textContent = G.clock.label;
     updateClockUI();
     G.clock.interval = setInterval(tickClock, 100);
@@ -14122,6 +15949,13 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
 
   function renderHud() {
     var g = G.game;
+    if (g.tutorialNoExtras) {
+      ['hud-round', 'hud-decree', 'hud-extra', 'hud-score-cards', 'hud-mult-cards'].forEach(function (id) {
+        $(id).textContent = '—';
+        $(id).className = '';
+      });
+      return;
+    }
     $('hud-round').textContent = g.roundNo ? String(g.roundNo).padStart(2, '0') : (g.round ? String(g.round).padStart(2, '0') : '—');
     $('hud-decree').textContent = g.decree ? E.decreeName(g.decree) : '—';
     var suitMap = {
@@ -14167,12 +16001,8 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       arrow.style.transition = '';
     }
     arrow.classList.add('show');
-    if (!silent && wasShown && previous != null && previous !== playerId) {
-      G.turnArrowSeq = (G.turnArrowSeq || 0) + 1;
-      sfx('turnStart', {
-        eventId: 'turnStart:arrow:' + G.epoch + ':' + previous + '>' + playerId + ':' + G.turnArrowSeq
-      });
-    }
+    // turnStart 的唯一钩子是倒三角的 left/top transitionrun（见 bindEvents）。
+    if (silent) G.arrowSilentMoveUntil = Date.now() + 800;
   }
 
   function consumeSourceList(arr) {
@@ -14291,7 +16121,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
         strip.style.transform = 'translateY(-' + newD + 'em)';
       }));
     });
-    var scale = options.keepScale ? Promise.resolve() : el.animate([
+    var scale = (options.keepScale || options.noScale || G.finalizing) ? Promise.resolve() : el.animate([
       { transform: 'scale(1.5)', offset: 0 },
       { transform: 'scale(1.5)', offset: 0.5 },
       { transform: 'scale(1)', offset: 1 }
@@ -14347,6 +16177,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
         else if (mark.type === 'mult') mult += 0.10;
       }
       if (extra && c.suit === extra && c._decreePending) base += 20;
+      if (g.decree === 'rapid') base += Number(c.point) || 0;
       if (base || mult) {
         entries.push({ card: c, base: base, mult: mult });
         totalBase += base;
@@ -15178,6 +17009,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     if (G.mode === 'guowu-choice' || G.mode === 'yuanmen-choice' || G.mode === 'sanren-choose') selectable = true;
     else if (G.mode === 'sanren-return' && g.pending && g.pending.actor === 0) selectable = true;
     else if (canHumanAct()) selectable = true;
+    if (G.scenario && (G.scenario.passOnly || G.scenario.lockHand)) selectable = false;
 
     var ordered = G.sortDesc ? R.sortCards(hand, true) : R.sortCards(hand, false);
     var sanrenChoosing = G.mode === 'sanren-choose';
@@ -15321,7 +17153,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     playBtn.className = 'btn btn-primary sanren-choice-confirm';
     passBtn.className = 'btn btn-ghost sanren-choice-cancel';
     playBtn.disabled = !sanrenChoiceValid();
-    passBtn.disabled = false;
+    passBtn.disabled = !!(G.scenario && G.scenario.id === 'decree');
     hintBtn.hidden = true;
     hintBtn.disabled = true;
   }
@@ -15335,10 +17167,10 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     }
     var act = canHumanAct();
     var selected = selectedCards();
-    var combo = selected.length ? R.detectCombo(selected) : null;
+    var combo = selected.length ? R.detectCombo(selected, { rapid: g.decree === 'rapid' }) : null;
     if (combo && g.decree === 'royal' && !R.isRoyalComboLegal(selected, combo)) combo = null;
     var beats = true;
-    if (combo && g.lastPlay) beats = R.canBeat(combo, g.lastPlay.combo);
+    if (combo && g.lastPlay) beats = R.canBeat(combo, g.lastPlay.combo, { rapid: g.decree === 'rapid' });
     var valid = !!(combo && beats);
 
     var playBtn = $('btn-play');
@@ -15347,7 +17179,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     $('btn-pass').textContent = '不出';
     $('btn-pass').className = 'btn btn-ghost';
     $('btn-hint').hidden = false;
-    playBtn.disabled = !(act && valid);
+    playBtn.disabled = !(act && valid) || !!(G.scenario && (G.scenario.passOnly || G.scenario.lockHand));
     $('btn-pass').disabled = !(act && !!g.lastPlay);
     $('btn-hint').disabled = !act;
     $('btn-hint').textContent = G.hintActive ? '取消' : '提示';
@@ -15416,7 +17248,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
 
   function findSiliangMove(g) {
     if (!g || g.turn !== 0 || g.phase !== 'playing' || g.pending || g.reaction) return null;
-    var moves = R.legalMoves(g.players[0].hand, g.lastPlay ? g.lastPlay.combo : null, { royal: g.decree === 'royal' });
+    var moves = R.legalMoves(g.players[0].hand, g.lastPlay ? g.lastPlay.combo : null, { royal: g.decree === 'royal', rapid: g.decree === 'rapid' });
     return moves.find(function (m) { return m.combo.type === '42'; }) ||
       moves.find(function (m) { return m.combo.type === 'superBomb'; }) || null;
   }
@@ -15506,6 +17338,15 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       if (E.canUseYuanmen(g, 0)) { states.yuanmen = true; available.push('yuanmen'); }
     }
 
+    if (G.scenario) {
+      if (G.scenario.id === 'decree') {
+        if (G.scenario.step === 'decreeSanren') available = ['sanren'];
+        else if (G.scenario.step === 'decree42') available = ['siliang'];
+        else available = [];
+      } else {
+        available = G.scenario.showSkill ? ['siliang'] : [];
+      }
+    }
     // 只装填前 6 个可用的技能窗口；其余位置保持空槽。
     available = available.slice(0, 6);
     var slots = all('.skill-slot', grid);
@@ -15529,7 +17370,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
         '<span class="skill-lamp"></span></button>';
       slot.setAttribute('data-filled-skill', key);
     });
-    notifySkillReady(states);
+    if (!G.scenario) notifySkillReady(states);
   }
 
   function positionSpeech(id) {
@@ -15662,7 +17503,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       return Math.random() < 0.55 ? 'speechless' : 'sad';
     }
     if (action.type === 'play' && action.cards && action.cards.length) {
-      var combo = R.detectCombo(action.cards);
+      var combo = R.detectCombo(action.cards, { rapid: g.decree === 'rapid' });
       var left = p.hand.length - action.cards.length;
       if (combo && (combo.type === 'bomb' || combo.type === 'rocket' || combo.type === 'superBomb')) return 'showoff';
       if (left <= 2) return 'happy';
@@ -16196,6 +18037,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     else titleEl.textContent = title;
     titleEl.className = 'cinematic-title' + (title.length <= 4 ? ' short' : '');
     $('cinematic-sub').textContent = subtitle;
+    $('cinematic-sub').hidden = !subtitle;
     // 强制重启动画，保证每次技能演出都从第一帧出现，而不是沿用上一次已完成的 CSS 动画。
     [ $('cinematic-kicker'), titleEl, $('cinematic-sub') ].forEach(function (node) {
       node.style.animation = 'none';
@@ -16252,6 +18094,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     }
     pauseForOverlay('settings');
     updateSoundButton();
+    updateFastButton();
     applyUiScale(G.uiScalePreferred, false);
     $('settings-modal').hidden = false;
     sfx('panelOpen', { eventId: 'settings-open:' + Date.now() });
@@ -16383,7 +18226,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   var sharedAudioContext = null;
   var audioWarmStarted = false;
   var audioWarmPromise = null;
-  var AUDIO_CORE = ['click', 'select', 'error', 'deal', 'play', 'pass', 'bomb', 'harvest', 'scoreRise', 'win', 'lose'];
+  var AUDIO_CORE = ['click', 'select', 'error', 'deal', 'play', 'pass', 'bomb', 'harvest', 'scoreRise', 'turnStart', 'win', 'lose'];
 
   function ensureAudio() {
     if (audioFx) return audioFx;
@@ -16483,10 +18326,27 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     if (label) label.textContent = G.sound ? '开' : '关';
   }
 
+  function toggleFastMode() {
+    G.fastMode = !G.fastMode;
+    try { localStorage.setItem('jh_ddz_fast', G.fastMode ? 'on' : 'off'); } catch (e) {}
+    updateFastButton();
+    if (G.sound) sfx('click', { eventId: 'fast-mode:' + Date.now() });
+  }
+
+  function updateFastButton() {
+    var sw = $('btn-setting-fast');
+    if (!sw) return;
+    sw.classList.toggle('on', !!G.fastMode);
+    sw.setAttribute('aria-checked', G.fastMode ? 'true' : 'false');
+    var label = $('setting-fast-label');
+    if (label) label.textContent = G.fastMode ? '开' : '关';
+  }
+
   function loadSettings() {
     var savedScale = 1;
     try {
       G.sound = localStorage.getItem('jh_ddz_sound') !== 'off';
+      G.fastMode = localStorage.getItem('jh_ddz_fast') === 'on';
       var rawScale = parseFloat(localStorage.getItem('jh_ddz_scale'));
       if (isFinite(rawScale)) savedScale = rawScale;
       var s = JSON.parse(localStorage.getItem('jh_ddz_stats') || '{}');
@@ -16494,9 +18354,11 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       G.stats.losses = Number(s.losses) || 0;
     } catch (e) {
       G.sound = true;
+      G.fastMode = false;
     }
     applyUiScale(savedScale, false);
     updateSoundButton();
+    updateFastButton();
   }
 
   function saveStats() {
