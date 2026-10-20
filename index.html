@@ -4888,8 +4888,10 @@ body { font-size: 17px; }
 .scenario-prompt .btn{pointer-events:auto;flex:none;height:34px;padding:0 16px;font-size:13px}
 .scenario-prompt.shake{animation:scenarioShake .25s ease}
 @keyframes scenarioShake{0%,100%{transform:translateX(-50%)}25%{transform:translateX(calc(-50% - 5px))}75%{transform:translateX(calc(-50% + 5px))}}
-.scenario-highlight{position:fixed;z-index:185;border:3px solid #ff4c3d;border-radius:50%;box-shadow:0 0 0 5px rgba(255,75,60,.22),0 0 28px 10px rgba(255,68,54,.55),0 0 70px 22px rgba(255,40,28,.32),inset 0 0 18px rgba(255,95,70,.3);pointer-events:none;animation:scenarioHighlightIn .46s cubic-bezier(.18,.75,.2,1)}
+.scenario-highlight-layer{position:absolute;inset:0;z-index:185;pointer-events:none;overflow:visible}
+.scenario-highlight{position:absolute;z-index:1;border:3px solid #ff4c3d;border-radius:50%;box-shadow:0 0 0 5px rgba(255,75,60,.22),0 0 28px 10px rgba(255,68,54,.55),0 0 70px 22px rgba(255,40,28,.32),inset 0 0 18px rgba(255,95,70,.3);pointer-events:none;animation:scenarioHighlightIn .46s cubic-bezier(.18,.75,.2,1)}
 .scenario-highlight.box{border-radius:12px}
+.scenario-highlight-extra{z-index:2}
 @keyframes scenarioHighlightIn{0%{transform:scale(2.2);opacity:0}55%{opacity:1}100%{transform:scale(1);opacity:1}}
 @media (max-width:640px){.scenario-prompt{top:190px;width:calc(var(--ui-vw)*92/100);padding:9px 10px}.scenario-prompt p{font-size:12px}.scenario-prompt .btn{height:30px;padding:0 10px;font-size:11px}.home-actions{margin-top:18px;gap:10px}.home-action{min-height:62px}.home-action b{font-size:23px}.home-start{min-height:58px}.home-start span{font-size:23px}.teaching-modal{height:calc(var(--ui-vh)*90/100)}}
 
@@ -5284,7 +5286,9 @@ body { font-size: 17px; }
     <p id="scenario-prompt-text"></p>
     <button class="btn btn-primary" id="scenario-next" type="button">下一步</button>
   </div>
-  <div class="scenario-highlight" id="scenario-highlight" hidden aria-hidden="true"></div>
+  <div class="scenario-highlight-layer" id="scenario-highlight-layer" aria-hidden="true">
+    <div class="scenario-highlight" id="scenario-highlight" hidden></div>
+  </div>
   <div class="tutorial-complete" id="tutorial-complete" hidden aria-live="polite"><span>完成</span></div>
 
 
@@ -10408,6 +10412,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     if ($('sticker-layer')) $('sticker-layer').innerHTML = '';
     computeHandOverlap();
     if (G.turnArrowId != null) positionTurnArrow(G.turnArrowId, true);
+    scheduleScenarioHighlightRefresh();
   }
 
   // ============================================================
@@ -10425,6 +10430,9 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     cacheStatic();
     bindEvents();
     loadSettings();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { scheduleScenarioHighlightRefresh(); }).catch(function () {});
+    }
     renderDecreeRulesPage();
     $('start-screen').hidden = true;
     updateStartStats();
@@ -10506,10 +10514,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     $('btn-start').addEventListener('click', startSession);
     $('btn-teaching').addEventListener('click', function () { openTeaching('rules'); });
     window.addEventListener('resize', function () {
-      if (!G.scenario || !G.scenario.highlightTarget) return;
-      var ht = G.scenario.highlightTarget;
-      if (ht.type === 'group') scenarioHighlightGroup(ht.selectors, ht.box);
-      else scenarioHighlightMany(ht);
+      scheduleScenarioHighlightRefresh();
     });
     $('btn-teaching-close').addEventListener('click', closeTeaching);
     $('btn-teaching-close-foot').addEventListener('click', closeTeaching);
@@ -10731,11 +10736,13 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     window.addEventListener('resize', function () {
       applyUiScale(G.uiScalePreferred, false);
       computePlayedOverlap();
+      scheduleScenarioHighlightRefresh();
     });
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', function () {
         updateAppMetrics();
         computeHandOverlap();
+        scheduleScenarioHighlightRefresh();
       });
     }
     document.addEventListener('keydown', onKeyDown);
@@ -10892,75 +10899,231 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     return g;
   }
 
-  function scenarioClearHighlight() {
-    var h = $('scenario-highlight');
-    if (h) h.hidden = true;
-    all('.scenario-highlight-extra').forEach(function (x) { x.remove(); });
-    if (G.scenario) G.scenario.highlightTarget = null;
+  var scenarioHighlightRaf = 0;
+  var scenarioHighlightObserver = null;
+  var scenarioObservedTargets = [];
+
+  function scenarioHighlightLayer() {
+    return $('scenario-highlight-layer');
   }
 
-  function scenarioPositionHighlight(h, el, box) {
-    var r = rectOf(el);
-    if (!r) { h.hidden = true; return false; }
+  // 教学高亮统一使用高亮层自身的局部坐标：扣除层原点，再按层实际缩放换算。
+  // 不依赖 G.uiScale，也不把屏幕坐标直接塞进 #app 的 transform 坐标系。
+  function localRectInLayer(el, layer) {
+    if (!el || !el.isConnected || !layer) return null;
+    var r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return null;
+    var lr = layer.getBoundingClientRect();
+    if (!lr.width || !lr.height) return null;
+    var lw = layer.offsetWidth || (layer.clientWidth || 0);
+    var lh = layer.offsetHeight || (layer.clientHeight || 0);
+    var sx = lw ? lr.width / lw : 1;
+    var sy = lh ? lr.height / lh : 1;
+    if (!isFinite(sx) || !isFinite(sy) || sx <= 0 || sy <= 0) return null;
+    return {
+      x: (r.left - lr.left) / sx,
+      y: (r.top - lr.top) / sy,
+      w: r.width / sx,
+      h: r.height / sy
+    };
+  }
+
+  function scenarioLocalRect(el) {
+    return localRectInLayer(el, scenarioHighlightLayer());
+  }
+
+  function scenarioTargetVisible(el) {
+    if (!el || !el.isConnected) return false;
+    if (el.closest && el.closest('[hidden]')) return false;
+    var r = el.getBoundingClientRect();
+    return !!(r.width && r.height);
+  }
+
+  function scenarioEnsureExtra(index) {
+    var layer = scenarioHighlightLayer();
+    if (!layer) return null;
+    var extras = all('.scenario-highlight-extra', layer);
+    while (extras.length < index) {
+      var h = document.createElement('div');
+      h.className = 'scenario-highlight scenario-highlight-extra';
+      h.hidden = true;
+      layer.appendChild(h);
+      extras.push(h);
+    }
+    return extras[index - 1] || null;
+  }
+
+  function scenarioTrimExtras(count) {
+    var layer = scenarioHighlightLayer();
+    if (!layer) return;
+    all('.scenario-highlight-extra', layer).forEach(function (h, i) {
+      if (i >= count) h.remove();
+    });
+  }
+
+  function scenarioCancelRefresh() {
+    if (scenarioHighlightRaf) {
+      cancelAnimationFrame(scenarioHighlightRaf);
+      scenarioHighlightRaf = 0;
+    }
+  }
+
+  function scenarioDisconnectObserver() {
+    if (scenarioHighlightObserver) scenarioHighlightObserver.disconnect();
+    scenarioObservedTargets = [];
+  }
+
+  function scenarioObserveTargets(targets) {
+    var next = (targets || []).filter(Boolean);
+    if (next.length === scenarioObservedTargets.length &&
+        next.every(function (el, i) { return el === scenarioObservedTargets[i]; })) {
+      return;
+    }
+    scenarioDisconnectObserver();
+    if (!window.ResizeObserver) return;
+    if (!scenarioHighlightObserver) {
+      scenarioHighlightObserver = new ResizeObserver(function () {
+        scheduleScenarioHighlightRefresh();
+      });
+    }
+    next.forEach(function (el) { scenarioHighlightObserver.observe(el); });
+    scenarioObservedTargets = next;
+  }
+
+  function scheduleScenarioHighlightRefresh() {
+    if (!G.scenario || !G.scenario.highlightTarget) return;
+    if (scenarioHighlightRaf) return;
+    scenarioHighlightRaf = requestAnimationFrame(function () {
+      scenarioHighlightRaf = requestAnimationFrame(function () {
+        scenarioHighlightRaf = 0;
+        if (!G.scenario) return;
+        scenarioRefreshHighlight();
+      });
+    });
+  }
+
+  function scenarioApplyBounds(h, bounds, box, animate) {
+    if (!h || !bounds) return false;
+    var wasHidden = h.hidden;
     h.hidden = false;
     h.classList.toggle('box', !!box);
-    h.style.animation = 'none';
-    void h.offsetWidth;
-    h.style.animation = '';
-    h.style.left = (r.x - 7) + 'px';
-    h.style.top = (r.y - 7) + 'px';
-    h.style.width = (r.w + 14) + 'px';
-    h.style.height = (r.h + 14) + 'px';
+    h.style.left = (bounds.x - 7) + 'px';
+    h.style.top = (bounds.y - 7) + 'px';
+    h.style.width = (bounds.w + 14) + 'px';
+    h.style.height = (bounds.h + 14) + 'px';
+    if (animate || wasHidden) {
+      h.style.animation = 'none';
+      void h.offsetWidth;
+      h.style.animation = '';
+    }
     return true;
   }
 
-  function scenarioHighlightMany(items) {
-    scenarioClearHighlight();
-    if (!G.scenario || !items || !items.length) return;
-    var used = [];
-    items.forEach(function (item, index) {
-      var selector = item.selector;
-      var el = typeof selector === 'string' ? ($(selector) || one(selector)) : selector;
-      if (!el) return;
-      var h;
-      if (index === 0) h = $('scenario-highlight');
-      else {
-        h = document.createElement('div');
-        h.className = 'scenario-highlight scenario-highlight-extra';
-        document.body.appendChild(h);
+  function scenarioPositionHighlight(h, el, box, animate) {
+    var r = scenarioLocalRect(el);
+    if (!r) {
+      if (h) {
+        h.hidden = true;
+        h.style.animation = '';
       }
-      if (!h) return;
-      if (scenarioPositionHighlight(h, el, !!item.box)) {
-        used.push({ selector: selector, box: !!item.box });
-      }
-    });
-    if (used.length) G.scenario.highlightTarget = used;
+      return false;
+    }
+    return scenarioApplyBounds(h, r, box, animate);
   }
 
-  function scenarioHighlightGroup(selectors, box) {
-    scenarioClearHighlight();
-    if (!G.scenario || !selectors || !selectors.length) return;
+  function scenarioApplyMany(items, animate) {
+    var main = $('scenario-highlight');
+    var requested = [];
+    var used = [];
+    var targets = [];
+    (items || []).forEach(function (item) {
+      var selector = item && item.selector;
+      var box = !!(item && item.box);
+      requested.push({ selector: selector, box: box });
+      var el = typeof selector === 'string' ? one(selector) : selector;
+      if (!scenarioTargetVisible(el)) return;
+      var index = used.length;
+      var h = index === 0 ? main : scenarioEnsureExtra(index);
+      if (!h) return;
+      if (scenarioPositionHighlight(h, el, box, animate)) {
+        used.push({ selector: selector, box: box });
+        targets.push(el);
+      }
+    });
+    scenarioTrimExtras(Math.max(0, used.length - 1));
+    if (main && !used.length) {
+      main.hidden = true;
+      main.style.animation = '';
+    }
+    if (G.scenario) {
+      G.scenario.highlightTarget = requested.length ? { type: 'many', items: requested } : null;
+    }
+    scenarioObserveTargets(targets);
+    return used.length > 0;
+  }
+
+  function scenarioApplyGroup(selectors, box, animate) {
+    var main = $('scenario-highlight');
     var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    selectors.forEach(function (selector) {
-      var el = $(selector) || one(selector);
-      var r = el && rectOf(el);
+    var targets = [];
+    (selectors || []).forEach(function (selector) {
+      var el = typeof selector === 'string' ? one(selector) : selector;
+      if (!scenarioTargetVisible(el)) return;
+      var r = scenarioLocalRect(el);
       if (!r) return;
+      targets.push(el);
       minX = Math.min(minX, r.x); minY = Math.min(minY, r.y);
       maxX = Math.max(maxX, r.x + r.w); maxY = Math.max(maxY, r.y + r.h);
     });
-    if (!isFinite(minX)) return;
+    scenarioTrimExtras(0);
+    if (!isFinite(minX) || !targets.length) {
+      if (main) {
+        main.hidden = true;
+        main.style.animation = '';
+      }
+      if (G.scenario) G.scenario.highlightTarget = (selectors && selectors.length) ? { type: 'group', selectors: selectors, box: !!box } : null;
+      scenarioObserveTargets([]);
+      return false;
+    }
+    scenarioApplyBounds(main, { x: minX, y: minY, w: maxX - minX, h: maxY - minY }, box, animate);
+    if (G.scenario) G.scenario.highlightTarget = { type: 'group', selectors: selectors, box: !!box };
+    scenarioObserveTargets(targets);
+    return true;
+  }
+
+  function scenarioRefreshHighlight() {
+    if (!G.scenario) return;
+    var target = G.scenario.highlightTarget;
+    if (!target) return;
+    if (target.type === 'group') scenarioApplyGroup(target.selectors, target.box, false);
+    else if (target.items) scenarioApplyMany(target.items, false);
+  }
+
+  function scenarioClearHighlight() {
+    scenarioCancelRefresh();
+    scenarioDisconnectObserver();
     var h = $('scenario-highlight');
-    if (!h) return;
-    h.hidden = false;
-    h.classList.toggle('box', !!box);
-    h.style.animation = 'none';
-    void h.offsetWidth;
-    h.style.animation = '';
-    h.style.left = (minX - 7) + 'px';
-    h.style.top = (minY - 7) + 'px';
-    h.style.width = (maxX - minX + 14) + 'px';
-    h.style.height = (maxY - minY + 14) + 'px';
-    G.scenario.highlightTarget = { type: 'group', selectors: selectors, box: !!box };
+    if (h) {
+      h.hidden = true;
+      h.style.animation = '';
+    }
+    scenarioTrimExtras(0);
+    all('.scenario-highlight-extra', document.body).forEach(function (x) { x.remove(); });
+    if (G.scenario) G.scenario.highlightTarget = null;
+  }
+
+  function scenarioHighlightMany(items) {
+    if (!G.scenario || !items || !items.length) return;
+    scenarioClearHighlight();
+    scenarioApplyMany(items, true);
+    scheduleScenarioHighlightRefresh();
+  }
+
+  function scenarioHighlightGroup(selectors, box) {
+    if (!G.scenario || !selectors || !selectors.length) return;
+    scenarioClearHighlight();
+    scenarioApplyGroup(selectors, box, true);
+    scheduleScenarioHighlightRefresh();
   }
 
   function scenarioHighlight(selector, box) {
@@ -15946,6 +16109,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     renderLog();
     renderBidPanel();
     updateStickerDock();
+    scheduleScenarioHighlightRefresh();
   }
 
   function renderHud() {
@@ -16356,14 +16520,40 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
   }
 
   function harvestPoint(baseEl, multEl) {
-    if (!baseEl || !multEl) return null;
-    var a = baseEl.getBoundingClientRect(), b = multEl.getBoundingClientRect();
-    if (!a.width || !b.width) return null;
-    return { x: (a.left + a.width / 2 + b.left + b.width / 2) / 2, y: (a.top + a.height / 2 + b.top + b.height / 2) / 2 };
+    var layer = $('fly-layer');
+    if (!layer) return null;
+    var a = localRectInLayer(baseEl, layer);
+    var b = localRectInLayer(multEl, layer);
+    if (!a || !b) return null;
+    return {
+      x: (a.x + a.w / 2 + b.x + b.w / 2) / 2,
+      y: (a.y + a.h / 2 + b.y + b.h / 2) / 2
+    };
+  }
+
+  function sizeHarvestCanvas(canvas, ctx, layer) {
+    var w = layer.offsetWidth || appWidth();
+    var h = layer.offsetHeight || appHeight();
+    if (!w || !h) return null;
+    var dpr = window.devicePixelRatio || 1;
+    var bw = Math.max(1, Math.round(w * dpr));
+    var bh = Math.max(1, Math.round(h * dpr));
+    if (canvas.width !== bw || canvas.height !== bh) {
+      canvas.width = bw;
+      canvas.height = bh;
+    }
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    canvas._logicalW = w;
+    canvas._logicalH = h;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { w: w, h: h, dpr: dpr };
   }
 
   function drawHarvestLine(canvas, ctx, sx, sy, ex, ey, progress, erase) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var w = canvas._logicalW || canvas.width;
+    var h = canvas._logicalH || canvas.height;
+    ctx.clearRect(0, 0, w, h);
     var p = harvestEase(Math.max(0, Math.min(1, progress)));
     var hx = sx + (ex - sx) * p;
     var hy = sy + (ey - sy) * p;
@@ -16390,14 +16580,25 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     ctx.restore();
   }
 
-  function animateCanvasLine(canvas, ctx, sx, sy, ex, ey, duration, erase) {
+  function animateCanvasLine(canvas, ctx, getGeometry, duration, erase) {
     return new Promise(function (resolve) {
       var start = performance.now();
       function frame(now) {
+        var layer = $('fly-layer');
+        if (!layer || !canvas.isConnected) {
+          resolve(false);
+          return;
+        }
+        var size = sizeHarvestCanvas(canvas, ctx, layer);
+        var g = getGeometry();
+        if (!size || !g) {
+          resolve(false);
+          return;
+        }
         var t = Math.min(1, (now - start) / duration);
-        drawHarvestLine(canvas, ctx, sx, sy, ex, ey, t, erase);
+        drawHarvestLine(canvas, ctx, g.sx, g.sy, g.ex, g.ey, t, erase);
         if (t < 1) requestAnimationFrame(frame);
-        else resolve();
+        else resolve(true);
       }
       requestAnimationFrame(frame);
     });
@@ -16422,32 +16623,38 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     pendingMult.textContent = Number(anim.pendingMult).toFixed(2);
     targetBase.textContent = String(anim.beforeBase);
     targetMult.textContent = Number(anim.beforeMult).toFixed(2);
-    var start = harvestPoint(pendingBase, pendingMult);
-    var end = harvestPoint(targetBase, targetMult);
     var fly = $('fly-layer');
-    if (!start || !end || !fly) {
+    if (!fly || !harvestPoint(pendingBase, pendingMult) || !harvestPoint(targetBase, targetMult)) {
       finishPendingHarvest(anim);
       return;
     }
     sfx('harvest', { eventId: 'harvest:' + G.epoch + ':' + (G.game ? G.game.roundNo + ':' + G.game.trick : '') + ':' + id + ':' + anim.pendingBase + ':' + anim.pendingMult });
     var canvas = document.createElement('canvas');
     canvas.className = 'harvest-line-canvas';
-    var dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.round(window.innerWidth * dpr);
-    canvas.height = Math.round(window.innerHeight * dpr);
-    canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
     fly.appendChild(canvas);
     var ctx = canvas.getContext('2d');
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var sx = start.x, sy = start.y, ex = end.x, ey = end.y;
+    var geometry = function () {
+      if (ep !== G.epoch || !canvas.isConnected) return null;
+      if (!pendingBase.isConnected || !targetBase.isConnected || !targetMult.isConnected) return null;
+      var s = harvestPoint(pendingBase, pendingMult);
+      var e = harvestPoint(targetBase, targetMult);
+      if (!s || !e) return null;
+      return { sx: s.x, sy: s.y, ex: e.x, ey: e.y };
+    };
     var pendingClearRolls = [];
     if (anim.pendingBase) pendingClearRolls.push(rollPendingValue('base', anim.pendingBase, 0));
     if (anim.pendingMult) pendingClearRolls.push(rollPendingValue('mult', anim.pendingMult, 0));
     // 收割期间赢分者数字同样放大到 1.5 倍并保持，收割完成后再缩回。
     targetBase.style.transform = 'scale(1.5)';
     targetMult.style.transform = 'scale(1.5)';
-    await animateCanvasLine(canvas, ctx, sx, sy, ex, ey, 400, false);
+    var reached = await animateCanvasLine(canvas, ctx, geometry, 400, false);
+    if (!reached) {
+      targetBase.style.transform = '';
+      targetMult.style.transform = '';
+      canvas.remove();
+      finishPendingHarvest(anim);
+      return;
+    }
     if (ep !== G.epoch) { canvas.remove(); finishPendingHarvest(anim); return; }
     if (pendingClearRolls.length) await Promise.all(pendingClearRolls);
     // 线到终点后，赢分者数字才滚动增长；同一到账事务只播一组三连音。
@@ -16464,7 +16671,14 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
     }
     if (harvestRolls.length) await Promise.all(harvestRolls);
     if (ep !== G.epoch) { canvas.remove(); finishPendingHarvest(anim); return; }
-    await animateCanvasLine(canvas, ctx, sx, sy, ex, ey, 400, true);
+    var erased = await animateCanvasLine(canvas, ctx, geometry, 400, true);
+    if (!erased) {
+      targetBase.style.transform = '';
+      targetMult.style.transform = '';
+      canvas.remove();
+      finishPendingHarvest(anim);
+      return;
+    }
     var targetBack = [
       targetBase.animate([{ transform: 'scale(1.5)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'ease-out' }).finished,
       targetMult.animate([{ transform: 'scale(1.5)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'ease-out' }).finished
@@ -17000,6 +17214,7 @@ define('scoreRise','分数增长','ui',.22,.050,50,false,1,function(w){[660,880,
       el.classList.toggle('drawn', G.drawnId === id);
       if (el.tagName === 'BUTTON') el.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
+    scheduleScenarioHighlightRefresh();
   }
 
   function renderHand(animate, armDeal) {
